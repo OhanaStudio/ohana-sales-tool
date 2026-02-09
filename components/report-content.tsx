@@ -79,10 +79,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </button>
       </div>
 
-      <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12">
-        <div className="pt-8 md:pt-12 pb-8 border-b border-border mb-8">
-          <img src="/ohaha-logo.svg" alt="Ohana" className="h-7 w-auto mb-1" />
-          <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground mb-4 text-balance">
+      <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12 print:px-0 print:max-w-none">
+        {/* Cover / Title Section */}
+        <div className="pt-8 md:pt-12 pb-8 border-b border-border mb-8 print:pt-4 print:pb-6 print:mb-6 print-break-avoid">
+          <img src="/ohaha-logo.svg" alt="Ohana" className="h-7 w-auto mb-1 print:h-6" />
+          <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground mb-4 text-balance print:text-4xl print:leading-tight print:mb-3">
             Website Health Check
           </h1>
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
@@ -92,12 +93,12 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
 
           {result.platformInfo && (
-            <div className="mb-10 print:break-inside-avoid">
+            <div className="mb-10 print-break-avoid print-compact">
               <PlatformInfoSection info={result.platformInfo} />
             </div>
           )}
 
-          <div className="mb-10 print:break-inside-avoid">
+          <div className="mb-10 print-break-avoid print-compact">
             <SiteScreenshots
             url={result.url}
             desktopScreenshot={result.desktop.screenshot}
@@ -105,8 +106,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
           />
         </div>
 
-        <div className="mb-10 print:break-inside-avoid">
-          <h2 className="font-sans text-2xl text-foreground mb-6">Executive summary</h2>
+        <div className="mb-10 print-compact">
+          <h2 className="font-sans text-2xl text-foreground mb-6 print:text-xl print:mb-4">Executive summary</h2>
           <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
           <div className="flex flex-col gap-4 mt-8">
             <RiskCard card={result.riskCards.visibility} variant="featured" />
@@ -115,8 +116,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </div>
         </div>
 
-        <div className="mb-10 print:break-inside-avoid">
-          <h2 className="font-sans text-2xl text-foreground mb-4">Performance overview</h2>
+        <div className="mb-10 print-break-before print-compact">
+          <h2 className="font-sans text-2xl text-foreground mb-4 print:text-xl print:mb-3">Performance overview</h2>
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
             Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
           </p>
@@ -223,30 +224,30 @@ export function ReportContent({ result }: { result: AuditResult }) {
           )}
         </div>
 
-        <div className="mb-10 print:break-inside-avoid">
+        <div className="mb-10 print-break-before print-compact">
           <UXIndicatorsSection indicators={result.uxIndicators} />
         </div>
 
         {result.designIndicators && (
-          <div className="mb-10 print:break-inside-avoid">
+          <div className="mb-10 print-break-before print-compact">
             <DesignIndicatorsSection indicators={result.designIndicators} />
           </div>
         )}
 
         {result.advancedUX && (
-          <div className="mb-10 print:break-inside-avoid">
+          <div className="mb-10 print-break-before print-compact">
             <AdvancedUXSection indicators={result.advancedUX} />
           </div>
         )}
 
         {result.accessibilityIndicators && (
-          <div className="mb-10 print:break-inside-avoid">
+          <div className="mb-10 print-break-before print-compact">
             <AccessibilitySection indicators={result.accessibilityIndicators} />
           </div>
         )}
 
-        <div className="mb-10 print:break-inside-avoid">
-          <h2 className="font-sans text-2xl text-foreground mb-4">Recommended next step</h2>
+        <div className="mb-10 print-break-before print-compact">
+          <h2 className="font-sans text-2xl text-foreground mb-4 print:text-xl print:mb-3">Recommended next step</h2>
           <div className="rounded-lg border-2 border-border bg-card p-6 md:p-8">
             <div className="space-y-4">
               <div>
@@ -265,10 +266,13 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </div>
         </div>
 
-        <div className="border-t border-border pt-6 pb-8">
-          <p className="text-xs text-muted-foreground text-center">
-            High-level diagnostic, not a full audit. Generated by Ohana Website Health Check.
-          </p>
+        <div className="border-t border-border pt-6 pb-8 print:pt-4 print:pb-4 print:mt-8">
+          <div className="flex items-center justify-between">
+            <img src="/ohaha-logo.svg" alt="Ohana" className="h-5 w-auto hidden print:block opacity-50" />
+            <p className="text-xs text-muted-foreground text-center print:text-right flex-1">
+              High-level diagnostic, not a full audit. Generated by Ohana Website Health Check.
+            </p>
+          </div>
         </div>
       </div>
     </div>

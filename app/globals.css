@@ -58,9 +58,84 @@
   .no-print {
     display: none !important;
   }
+
+  /* Force colour rendering for borders, badges, and backgrounds */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   body {
     background: white !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 1.5cm 1.5cm 2cm 1.5cm;
+  }
+
+  /* Prevent orphans and widows */
+  p, li, h1, h2, h3, h4 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Keep headings with their content */
+  h1, h2, h3, h4 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* Cards, tiles, and sections should not break */
+  .print-break-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Force page breaks where needed */
+  .print-break-before {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* Tighten spacing for print */
+  .print-compact {
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Ensure images don't overflow pages */
+  img {
+    max-height: 40vh;
+    object-fit: contain;
+  }
+
+  /* SVG gauge should be smaller for print */
+  svg {
+    max-height: 150px;
+  }
+
+  /* Remove shadows for cleaner print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure links show their URL after text */
+  a[href^="http"]::after {
+    content: none; /* Disable for report, would be too noisy */
+  }
+
+  /* Reduce padding in cards for print */
+  .rounded-xl {
+    border-radius: 6px !important;
+  }
+
+  .rounded-lg {
+    border-radius: 4px !important;
   }
 }

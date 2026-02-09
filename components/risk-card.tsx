@@ -46,7 +46,7 @@ export function RiskCard({
     return (
       <div
         className={cn(
-          "rounded-xl border bg-card overflow-hidden",
+          "rounded-xl border bg-card overflow-hidden print-break-avoid",
           config.border
         )}
       >
@@ -96,7 +96,7 @@ export function RiskCard({
   return (
     <div
       className={cn(
-        "rounded-xl border p-6 bg-card h-full flex flex-col",
+        "rounded-xl border p-6 bg-card h-full flex flex-col print-break-avoid",
         config.border
       )}
     >

@@ -50,7 +50,7 @@ export function MetricTile({
 
   return (
     <div
-      className={`rounded-lg border bg-card p-4 ${
+      className={`rounded-lg border bg-card p-4 print-break-avoid ${
         tileBorder ? statusBorderColor[tileBorder] : "border-border"
       }`}
     >
