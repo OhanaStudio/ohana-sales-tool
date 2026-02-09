@@ -412,7 +412,7 @@ function analyseUXIndicators(html: string, blocked: boolean, mobileAudits?: any)
   // Infer from Lighthouse scores: if link-name/button-name pass, elements exist
   const lhLinkPasses = mobileAudits?.["link-name"]?.score === 1
   const lhButtonPasses = mobileAudits?.["button-name"]?.score === 1
-  if (foundCtas.size === 0 && blocked && (lhLinkPasses || lhButtonPasses)) {
+  if (foundCtas.size === 0 && (lhLinkPasses || lhButtonPasses)) {
     // We know interactive elements exist (Lighthouse confirmed they have proper names)
     // but we can't see the text. Mark as found with inferred flag.
     foundCtas.add("(detected by Lighthouse)")
@@ -421,73 +421,91 @@ function analyseUXIndicators(html: string, blocked: boolean, mobileAudits?: any)
   result.ctaKeywords = Array.from(foundCtas)
   result.ctaFound = foundCtas.size > 0
 
-  if (!html && blocked) return result
-
-    const lowerHtml = html.toLowerCase()
-
-    // Trust keywords
-    const trustPatterns = [
-      "reviews",
-      "testimonials",
-      "case studies",
-      "clients",
-      "trusted by",
-      "awards",
-    ]
-    const foundTrust = new Set<string>()
-    for (const kw of trustPatterns) {
-      if (lowerHtml.includes(kw)) foundTrust.add(kw)
+  // --- Gather ALL text visible to Lighthouse (rendered DOM snippets) ---
+  // This catches content on JS-rendered sites where raw HTML fetch returns empty/minimal HTML
+  const allLighthouseText: string[] = []
+  if (mobileAudits) {
+    const textSources = ["link-name", "button-name", "tap-targets", "crawlable-anchors", "heading-order", "link-text"]
+    for (const auditName of textSources) {
+      const items = mobileAudits[auditName]?.details?.items || []
+      for (const item of items) {
+        const snippet = (item.text || item.node?.snippet || item.snippet || item.tapTarget?.snippet || item.headingText || "")
+          .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").toLowerCase().trim()
+        if (snippet) allLighthouseText.push(snippet)
+      }
     }
-    result.trustKeywords = Array.from(foundTrust)
-    result.trustSignalsFound = foundTrust.size > 0
+  }
+  const lighthouseTextBlob = allLighthouseText.join(" ")
 
-    // Social proof above the fold heuristic:
-    // Modern HTML has verbose class names/attributes, so use 20k chars
-    // to reliably cover the header, hero, and first visible section.
-    const aboveFoldHtml = lowerHtml.slice(0, 20000)
-    const aboveFoldTrust = new Set<string>()
-    for (const kw of trustPatterns) {
-      if (aboveFoldHtml.includes(kw)) aboveFoldTrust.add(kw)
-    }
-    result.socialProofKeywordsAboveFold = Array.from(aboveFoldTrust)
-    result.socialProofAboveFold = aboveFoldTrust.size > 0
+  const lowerHtml = html ? html.toLowerCase() : ""
+  // Combine raw HTML + Lighthouse rendered text for analysis
+  const combinedText = lowerHtml + " " + lighthouseTextBlob
 
-    // Verified third-party testimonial sources
-    const thirdPartySources: Record<string, string> = {
-      "trustpilot": "Trustpilot",
-      "google.com/maps": "Google Reviews",
-      "google reviews": "Google Reviews",
-      "goog-gt-review": "Google Reviews",
-      "yelp.com": "Yelp",
-      "facebook.com/pg": "Facebook Reviews",
-      "fb.com": "Facebook Reviews",
-      "tripadvisor": "TripAdvisor",
-      "g2.com": "G2",
-      "capterra": "Capterra",
-      "bbb.org": "BBB",
-      "feefo": "Feefo",
-      "reviews.io": "Reviews.io",
-      "yotpo": "Yotpo",
-      "birdeye": "Birdeye",
-      "podium": "Podium",
-      "elfsight": "Elfsight Widget",
-      "schema.org/review": "Structured Review Data",
-      "aggregaterating": "Structured Review Data",
-    }
-    const foundSources = new Set<string>()
-    for (const [pattern, sourceName] of Object.entries(thirdPartySources)) {
-      if (lowerHtml.includes(pattern)) foundSources.add(sourceName)
-    }
-    result.verifiedSources = Array.from(foundSources)
-    result.testimonialsVerified = foundSources.size > 0
+  // Trust keywords
+  const trustPatterns = [
+    "reviews",
+    "testimonials",
+    "case studies",
+    "clients",
+    "trusted by",
+    "awards",
+  ]
+  const foundTrust = new Set<string>()
+  for (const kw of trustPatterns) {
+    if (combinedText.includes(kw)) foundTrust.add(kw)
+  }
+  result.trustKeywords = Array.from(foundTrust)
+  result.trustSignalsFound = foundTrust.size > 0
 
-    // Phone regex
-    const phoneRegex = /(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/
-    result.phoneFound = phoneRegex.test(html)
+  // Social proof above the fold heuristic:
+  // Modern HTML has verbose class names/attributes, so use 20k chars
+  // to reliably cover the header, hero, and first visible section.
+  // Also check Lighthouse text since it represents rendered content
+  const aboveFoldHtml = lowerHtml.slice(0, 20000) + " " + lighthouseTextBlob
+  const aboveFoldTrust = new Set<string>()
+  for (const kw of trustPatterns) {
+    if (aboveFoldHtml.includes(kw)) aboveFoldTrust.add(kw)
+  }
+  result.socialProofKeywordsAboveFold = Array.from(aboveFoldTrust)
+  result.socialProofAboveFold = aboveFoldTrust.size > 0
 
-    // Email regex
-    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
-    result.emailFound = emailRegex.test(html)
+  // Verified third-party testimonial sources
+  const thirdPartySources: Record<string, string> = {
+    "trustpilot": "Trustpilot",
+    "google.com/maps": "Google Reviews",
+    "google reviews": "Google Reviews",
+    "goog-gt-review": "Google Reviews",
+    "yelp.com": "Yelp",
+    "facebook.com/pg": "Facebook Reviews",
+    "fb.com": "Facebook Reviews",
+    "tripadvisor": "TripAdvisor",
+    "g2.com": "G2",
+    "capterra": "Capterra",
+    "bbb.org": "BBB",
+    "feefo": "Feefo",
+    "reviews.io": "Reviews.io",
+    "yotpo": "Yotpo",
+    "birdeye": "Birdeye",
+    "podium": "Podium",
+    "elfsight": "Elfsight Widget",
+    "schema.org/review": "Structured Review Data",
+    "aggregaterating": "Structured Review Data",
+  }
+  const foundSources = new Set<string>()
+  for (const [pattern, sourceName] of Object.entries(thirdPartySources)) {
+    if (combinedText.includes(pattern)) foundSources.add(sourceName)
+  }
+  result.verifiedSources = Array.from(foundSources)
+  result.testimonialsVerified = foundSources.size > 0
+
+  // Phone regex - check both raw HTML and Lighthouse snippets
+  const phoneRegex = /(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/
+  const allTextForRegex = html + " " + allLighthouseText.join(" ")
+  result.phoneFound = phoneRegex.test(allTextForRegex)
+
+  // Email regex
+  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
+  result.emailFound = emailRegex.test(allTextForRegex)
 
   return result
 }

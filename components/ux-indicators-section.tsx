@@ -74,51 +74,45 @@ export function UXIndicatorsSection({
           found={indicators.trustSignalsFound}
           label="Trust signals"
           detail={
-            indicators.fetchBlocked
-              ? undefined
-              : indicators.trustSignalsFound
-                ? `Found: ${indicators.trustKeywords.join(", ")}`
-                : "No obvious trust indicators detected"
+            indicators.trustSignalsFound
+              ? `Found: ${indicators.trustKeywords.join(", ")}`
+              : "No obvious trust indicators detected"
           }
-          blocked={indicators.fetchBlocked}
+          blocked={!indicators.trustSignalsFound && indicators.fetchBlocked}
         />
         <Indicator
           found={indicators.socialProofAboveFold}
           label="Social proof above the fold"
           detail={
-            indicators.fetchBlocked
-              ? undefined
-              : indicators.socialProofAboveFold
-                ? `Above the fold: ${indicators.socialProofKeywordsAboveFold.join(", ")}`
-                : indicators.trustSignalsFound
-                  ? "Social proof was found, but appears to be below the fold"
-                  : "No social proof detected"
+            indicators.socialProofAboveFold
+              ? `Above the fold: ${indicators.socialProofKeywordsAboveFold.join(", ")}`
+              : indicators.trustSignalsFound
+                ? "Social proof was found, but appears to be below the fold"
+                : "No social proof detected"
           }
-          blocked={indicators.fetchBlocked}
+          blocked={!indicators.socialProofAboveFold && !indicators.trustSignalsFound && indicators.fetchBlocked}
         />
         <Indicator
           found={indicators.testimonialsVerified}
           label="Verified third-party reviews"
           detail={
-            indicators.fetchBlocked
-              ? undefined
-              : indicators.testimonialsVerified
-                ? `Sources: ${indicators.verifiedSources.join(", ")}`
-                : indicators.trustSignalsFound
-                  ? "Testimonials appear self-hosted, not from a verified third-party source"
-                  : "No review sources detected"
+            indicators.testimonialsVerified
+              ? `Sources: ${indicators.verifiedSources.join(", ")}`
+              : indicators.trustSignalsFound
+                ? "Testimonials appear self-hosted, not from a verified third-party source"
+                : "No review sources detected"
           }
-          blocked={indicators.fetchBlocked}
+          blocked={!indicators.testimonialsVerified && !indicators.trustSignalsFound && indicators.fetchBlocked}
         />
         <Indicator
           found={indicators.phoneFound}
           label="Phone number visible"
-          blocked={indicators.fetchBlocked}
+          blocked={!indicators.phoneFound && indicators.fetchBlocked}
         />
         <Indicator
           found={indicators.emailFound}
           label="Email address visible"
-          blocked={indicators.fetchBlocked}
+          blocked={!indicators.emailFound && indicators.fetchBlocked}
         />
       </div>
     </div>
