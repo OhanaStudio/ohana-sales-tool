@@ -67,7 +67,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
 
       <div>
         <h3 className="font-serif text-xl text-foreground mb-4">Risk overview</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex flex-col gap-4">
           <RiskCard card={result.riskCards.visibility} />
           <RiskCard card={result.riskCards.conversion} />
           <RiskCard card={result.riskCards.trust} />
