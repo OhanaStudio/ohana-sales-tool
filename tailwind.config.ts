@@ -63,8 +63,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-dm-serif)', 'Georgia', 'serif'],
+        sans: ['neue-haas-grotesk-display', 'system-ui', 'sans-serif'],
+        serif: ['mencken-std-narrow', 'Georgia', 'serif'],
+        mono: ['code-saver', 'monospace'],
       },
       borderRadius: {
         lg: 'var(--radius)',
