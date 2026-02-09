@@ -99,9 +99,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <div className="flex flex-col gap-4 mt-8">
             <RiskCard card={result.riskCards.visibility} variant="featured" />
             <RiskCard card={result.riskCards.conversion} variant="featured" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <RiskCard card={result.riskCards.trust} />
-            </div>
+            <RiskCard card={result.riskCards.trust} variant="featured" />
           </div>
         </div>
 
