@@ -46,12 +46,12 @@ export function RiskCard({ card }: { card: RiskCardType }) {
             key={`bullet-${card.label}-${i}`}
             className="text-sm text-muted-foreground leading-relaxed flex gap-2"
           >
-            <span className="text-muted-foreground/50 shrink-0 mt-0.5">{"--"}</span>
+            <span className="text-muted-foreground shrink-0 mt-0.5">{"--"}</span>
             <span>{bullet}</span>
           </li>
         ))}
       </ul>
-      <p className="text-xs text-muted-foreground/70 italic leading-relaxed">
+      <p className="text-xs text-muted-foreground italic leading-relaxed">
         {card.whyItMatters}
       </p>
     </div>

@@ -75,7 +75,7 @@ export function DesignIndicatorsSection({
       <h3 className="font-sans text-xl text-foreground mb-1">
         Design & image quality
       </h3>
-      <p className="text-xs text-muted-foreground/60 mb-4 italic">
+      <p className="text-xs text-muted-foreground mb-4 italic">
         Checks based on Lighthouse audits and page analysis.
       </p>
       <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
@@ -101,7 +101,7 @@ export function DesignIndicatorsSection({
         {/* Image issue breakdown */}
         {totalImageIssues > 0 && (
           <div className="pt-3">
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
               Image breakdown
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -110,7 +110,7 @@ export function DesignIndicatorsSection({
                   <p className="text-xs font-medium text-red-800">
                     {img.oversizedCount} oversized
                   </p>
-                  <p className="text-[10px] text-red-600">Larger than display size</p>
+                  <p className="text-xs text-red-600">Larger than display size</p>
                 </div>
               )}
               {img.unoptimizedCount > 0 && (
@@ -118,7 +118,7 @@ export function DesignIndicatorsSection({
                   <p className="text-xs font-medium text-amber-800">
                     {img.unoptimizedCount} unoptimised
                   </p>
-                  <p className="text-[10px] text-amber-600">Could be better compressed</p>
+                  <p className="text-xs text-amber-600">Could be better compressed</p>
                 </div>
               )}
               {img.unsizedCount > 0 && (
@@ -126,7 +126,7 @@ export function DesignIndicatorsSection({
                   <p className="text-xs font-medium text-amber-800">
                     {img.unsizedCount} unsized
                   </p>
-                  <p className="text-[10px] text-amber-600">Missing width/height</p>
+                  <p className="text-xs text-amber-600">Missing width/height</p>
                 </div>
               )}
               {img.incorrectAspectRatio > 0 && (
@@ -134,7 +134,7 @@ export function DesignIndicatorsSection({
                   <p className="text-xs font-medium text-red-800">
                     {img.incorrectAspectRatio} distorted
                   </p>
-                  <p className="text-[10px] text-red-600">Wrong aspect ratio</p>
+                  <p className="text-xs text-red-600">Wrong aspect ratio</p>
                 </div>
               )}
               {img.modernFormatMissing > 0 && (
@@ -142,7 +142,7 @@ export function DesignIndicatorsSection({
                   <p className="text-xs font-medium text-amber-800">
                     {img.modernFormatMissing} legacy format
                   </p>
-                  <p className="text-[10px] text-amber-600">Not WebP/AVIF</p>
+                  <p className="text-xs text-amber-600">Not WebP/AVIF</p>
                 </div>
               )}
               {img.offscreenCount > 0 && (
@@ -150,7 +150,7 @@ export function DesignIndicatorsSection({
                   <p className="text-xs font-medium text-amber-800">
                     {img.offscreenCount} not lazy-loaded
                   </p>
-                  <p className="text-[10px] text-amber-600">Off-screen images</p>
+                  <p className="text-xs text-amber-600">Off-screen images</p>
                 </div>
               )}
             </div>

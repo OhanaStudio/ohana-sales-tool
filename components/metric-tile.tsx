@@ -49,12 +49,12 @@ export function MetricTile({
         tileBorder ? statusBorderColor[tileBorder] : "border-border"
       }`}
     >
-      <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-3">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">
         {label}
       </p>
       <div className="flex items-end gap-4">
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-0.5">
             Mobile
           </p>
           <div className="flex items-center gap-1.5">
@@ -75,7 +75,7 @@ export function MetricTile({
           </div>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-0.5">
             Desktop
           </p>
           <div className="flex items-center gap-1.5">

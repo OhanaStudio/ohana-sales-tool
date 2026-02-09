@@ -97,16 +97,16 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border bg-muted/50">
-                <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   URL
                 </th>
-                <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   Date
                 </th>
-                <th className="text-right px-4 py-3 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   Score
                 </th>
-                <th className="text-right px-4 py-3 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   Actions
                 </th>
               </tr>

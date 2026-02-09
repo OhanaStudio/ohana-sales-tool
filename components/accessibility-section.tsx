@@ -48,7 +48,7 @@ function A11yRow({
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">{detail}</p>
         {wcagRef && (
-          <p className="text-[10px] text-muted-foreground/50 mt-0.5">{wcagRef}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{wcagRef}</p>
         )}
       </div>
     </div>
@@ -81,7 +81,7 @@ export function AccessibilitySection({
       <h3 className="font-sans text-xl text-foreground mb-1">
         Accessibility & EAA compliance
       </h3>
-      <p className="text-xs text-muted-foreground/60 mb-2 italic">
+      <p className="text-xs text-muted-foreground mb-2 italic">
         Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.
       </p>
       <div className={`text-xs font-medium mb-4 ${overallColor}`}>
@@ -257,7 +257,7 @@ export function AccessibilitySection({
       {/* EAA summary issues */}
       {a.eaaIssues.length > 0 && (
         <div className="mt-4 rounded-lg border border-border bg-card p-5">
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-3">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">
             EAA / WCAG issue summary
           </p>
           <ul className="space-y-1.5">

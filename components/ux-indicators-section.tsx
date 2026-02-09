@@ -129,7 +129,7 @@ export function UXIndicatorsSection({
       <h3 className="font-sans text-xl text-foreground mb-1">
         UX indicators
       </h3>
-      <p className="text-xs text-muted-foreground/60 mb-4 italic">
+      <p className="text-xs text-muted-foreground mb-4 italic">
         These indicators are based on an AI analysis of the page screenshots.
       </p>
       <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">

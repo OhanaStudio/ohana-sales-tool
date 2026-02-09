@@ -132,7 +132,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           />
         </div>
         {result.mobile.notes.length > 0 && (
-          <p className="text-xs text-muted-foreground/60 mt-3 italic">
+          <p className="text-xs text-muted-foreground mt-3 italic">
             {result.mobile.notes[0]}
           </p>
         )}
@@ -156,21 +156,21 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
         <h3 className="font-sans text-xl text-foreground mb-4">Summary</h3>
         <div className="space-y-4 rounded-lg border border-border bg-card p-5 md:p-6">
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">What we found</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">What we found</p>
             <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whatWeFound}</p>
           </div>
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Why it matters</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Why it matters</p>
             <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whyItMatters}</p>
           </div>
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Suggested next step</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Suggested next step</p>
             <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.suggestedNextStep}</p>
           </div>
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground/50 text-center pb-8">
+      <p className="text-xs text-muted-foreground text-center pb-8">
         High-level diagnostic, not a full audit.
       </p>
     </div>

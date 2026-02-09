@@ -57,7 +57,7 @@ function StatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded border ${colorClasses[color]}`}
+      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded border ${colorClasses[color]}`}
     >
       {statusLabel(status)}
     </span>
@@ -117,7 +117,7 @@ function CategorySection({
       )}
 
       {open && bullets.length === 0 && (
-        <p className="mt-2 ml-7 text-xs text-muted-foreground/60 italic">
+        <p className="mt-2 ml-7 text-xs text-muted-foreground italic">
           No issues detected in this area.
         </p>
       )}
@@ -175,7 +175,7 @@ export function AdvancedUXSection({
       <h3 className="font-sans text-xl text-foreground mb-1">
         UX friction analysis
       </h3>
-      <p className="text-xs text-muted-foreground/60 mb-2 italic leading-relaxed">
+      <p className="text-xs text-muted-foreground mb-2 italic leading-relaxed">
         AI-powered analysis of visual friction patterns based on page
         screenshots.
       </p>

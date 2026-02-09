@@ -45,7 +45,7 @@ export function SiteScreenshots({
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
-                <span className="ml-2 text-[10px] text-muted-foreground/50 truncate flex-1">
+                <span className="ml-2 text-xs text-muted-foreground truncate flex-1">
                   {hostname}
                 </span>
               </div>
