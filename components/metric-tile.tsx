@@ -49,7 +49,7 @@ export function MetricTile({
         tileBorder ? statusBorderColor[tileBorder] : "border-border"
       }`}
     >
-      <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-3">
         {label}
       </p>
       <div className="flex items-end gap-4">
