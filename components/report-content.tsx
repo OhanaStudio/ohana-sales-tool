@@ -125,6 +125,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
               mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
               desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
             />
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-3">
             <MetricTile
               label="Total Blocking Time"
               mobileValue={formatMs(result.mobile.metrics.tbt)}
