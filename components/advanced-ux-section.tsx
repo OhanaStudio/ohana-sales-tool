@@ -1,0 +1,246 @@
+"use client"
+
+import React from "react"
+
+import { useState } from "react"
+import type { AdvancedUXIndicators } from "@/lib/types"
+import {
+  ChevronDown,
+  Eye,
+  Navigation,
+  AlignLeft,
+  MousePointerClick,
+  FormInput,
+  ShieldCheck,
+  Smartphone,
+} from "lucide-react"
+
+type StatusColor = "emerald" | "amber" | "red"
+
+function statusColor(
+  status: string
+): StatusColor {
+  const green = ["clear", "low", "scannable", "clear_path", "strong"]
+  const amber = ["mixed", "medium", "partial", "moderate"]
+  if (green.includes(status)) return "emerald"
+  if (amber.includes(status)) return "amber"
+  return "red"
+}
+
+function statusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    clear: "Clear",
+    mixed: "Mixed",
+    unclear: "Unclear",
+    low: "Low friction",
+    medium: "Medium friction",
+    high: "High friction",
+    scannable: "Scannable",
+    dense: "Dense",
+    clear_path: "Clear path",
+    partial: "Partial",
+    broken: "Broken",
+    strong: "Strong",
+    moderate: "Moderate",
+    weak: "Weak",
+  }
+  return labels[status] || status
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const color = statusColor(status)
+  const colorClasses: Record<StatusColor, string> = {
+    emerald: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    amber: "bg-amber-50 text-amber-700 border-amber-200",
+    red: "bg-red-50 text-red-700 border-red-200",
+  }
+
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded border ${colorClasses[color]}`}
+    >
+      {statusLabel(status)}
+    </span>
+  )
+}
+
+function CategorySection({
+  icon,
+  title,
+  status,
+  bullets,
+  defaultOpen = false,
+}: {
+  icon: React.ReactNode
+  title: string
+  status: string
+  bullets: string[]
+  defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+
+  return (
+    <div className="py-3 first:pt-0 last:pb-0">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex items-center justify-between w-full text-left gap-3 min-h-[44px] bg-transparent border-0 p-0"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="text-muted-foreground shrink-0">{icon}</span>
+          <span className="text-sm font-medium text-foreground truncate">
+            {title}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <StatusBadge status={status} />
+          <ChevronDown
+            className={`h-4 w-4 text-muted-foreground transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+      </button>
+
+      {open && bullets.length > 0 && (
+        <ul className="mt-2 ml-7 space-y-1.5">
+          {bullets.map((bullet, i) => (
+            <li
+              key={i}
+              className="text-xs text-muted-foreground leading-relaxed pl-3 border-l-2 border-border"
+            >
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {open && bullets.length === 0 && (
+        <p className="mt-2 ml-7 text-xs text-muted-foreground/60 italic">
+          No issues detected in this area.
+        </p>
+      )}
+    </div>
+  )
+}
+
+export function AdvancedUXSection({
+  indicators,
+}: {
+  indicators: AdvancedUXIndicators
+}) {
+  const d = indicators
+
+  // Count total issues across all categories
+  const totalIssues = [
+    d.firstImpression.bullets,
+    d.navigationFriction.bullets,
+    d.scanability.bullets,
+    d.conversionPath.bullets,
+    d.formFriction.bullets,
+    d.trustDepth.bullets,
+    d.mobileFriction.bullets,
+  ].reduce((sum, b) => sum + b.length, 0)
+
+  // Count red/amber categories
+  const redCategories = [
+    d.firstImpression.status,
+    d.navigationFriction.status,
+    d.scanability.status,
+    d.conversionPath.status,
+    d.formFriction.status,
+    d.trustDepth.status,
+    d.mobileFriction.status,
+  ].filter((s) => statusColor(s) === "red").length
+
+  const amberCategories = [
+    d.firstImpression.status,
+    d.navigationFriction.status,
+    d.scanability.status,
+    d.conversionPath.status,
+    d.formFriction.status,
+    d.trustDepth.status,
+    d.mobileFriction.status,
+  ].filter((s) => statusColor(s) === "amber").length
+
+  const summaryColor =
+    redCategories > 0
+      ? "text-red-600"
+      : amberCategories > 0
+        ? "text-amber-600"
+        : "text-emerald-600"
+
+  const summaryText =
+    redCategories > 0
+      ? `${totalIssues} friction point(s) found across ${redCategories + amberCategories} area(s)`
+      : amberCategories > 0
+        ? `${totalIssues} minor issue(s) across ${amberCategories} area(s)`
+        : "No significant friction detected"
+
+  return (
+    <div>
+      <h3 className="font-serif text-xl text-foreground mb-1">
+        UX friction analysis
+      </h3>
+      <p className="text-xs text-muted-foreground/60 mb-2 italic leading-relaxed">
+        These checks highlight common friction patterns. They indicate potential
+        risk, not certainty.
+      </p>
+      <div className={`text-xs font-medium mb-4 ${summaryColor}`}>
+        {summaryText}
+      </div>
+      <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
+        <CategorySection
+          icon={<Eye className="h-4 w-4" />}
+          title="First-impression clarity"
+          status={d.firstImpression.status}
+          bullets={d.firstImpression.bullets}
+          defaultOpen={statusColor(d.firstImpression.status) === "red"}
+        />
+        <CategorySection
+          icon={<Navigation className="h-4 w-4" />}
+          title="Decision friction"
+          status={d.navigationFriction.status}
+          bullets={d.navigationFriction.bullets}
+          defaultOpen={statusColor(d.navigationFriction.status) === "red"}
+        />
+        <CategorySection
+          icon={<AlignLeft className="h-4 w-4" />}
+          title="Scanability"
+          status={d.scanability.status}
+          bullets={d.scanability.bullets}
+          defaultOpen={statusColor(d.scanability.status) === "red"}
+        />
+        <CategorySection
+          icon={<MousePointerClick className="h-4 w-4" />}
+          title="Conversion path"
+          status={d.conversionPath.status}
+          bullets={d.conversionPath.bullets}
+          defaultOpen={statusColor(d.conversionPath.status) === "red"}
+        />
+        <CategorySection
+          icon={<FormInput className="h-4 w-4" />}
+          title="Form friction"
+          status={d.formFriction.status}
+          bullets={d.formFriction.bullets}
+          defaultOpen={statusColor(d.formFriction.status) === "red"}
+        />
+        <CategorySection
+          icon={<ShieldCheck className="h-4 w-4" />}
+          title="Trust depth"
+          status={d.trustDepth.status}
+          bullets={d.trustDepth.bullets}
+          defaultOpen={statusColor(d.trustDepth.status) === "red"}
+        />
+        <CategorySection
+          icon={<Smartphone className="h-4 w-4" />}
+          title="Mobile friction"
+          status={d.mobileFriction.status}
+          bullets={d.mobileFriction.bullets}
+          defaultOpen={statusColor(d.mobileFriction.status) === "red"}
+        />
+      </div>
+    </div>
+  )
+}
