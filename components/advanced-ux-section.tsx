@@ -50,9 +50,9 @@ function statusLabel(status: string): string {
 function StatusBadge({ status }: { status: string }) {
   const color = statusColor(status)
   const colorClasses: Record<StatusColor, string> = {
-    emerald: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    amber: "bg-amber-50 text-amber-700 border-amber-200",
-    red: "bg-red-50 text-red-700 border-red-200",
+    emerald: "bg-emerald-50 text-emerald-700 border-[#a7f3d0]",
+    amber: "bg-amber-50 text-amber-700 border-[#fde68a]",
+    red: "bg-red-50 text-red-700 border-[#fecaca]",
   }
 
   return (

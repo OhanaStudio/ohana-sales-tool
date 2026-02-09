@@ -4,17 +4,17 @@ import { cn } from "@/lib/utils"
 const levelConfig = {
   red: {
     badge: "bg-red-100 text-red-800",
-    border: "border-red-200",
+    border: "border-[#fecaca]",
     label: "High Risk",
   },
   amber: {
     badge: "bg-amber-100 text-amber-800",
-    border: "border-amber-200",
+    border: "border-[#fde68a]",
     label: "Moderate",
   },
   green: {
     badge: "bg-emerald-100 text-emerald-800",
-    border: "border-emerald-200",
+    border: "border-[#a7f3d0]",
     label: "Low Risk",
   },
 }

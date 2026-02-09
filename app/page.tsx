@@ -99,7 +99,7 @@ export default function Page() {
 
         {/* Error */}
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 mb-6">
+          <div className="rounded-lg border border-[#fecaca] bg-red-50 p-4 mb-6">
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}

@@ -106,7 +106,7 @@ export function DesignIndicatorsSection({
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {img.oversizedCount > 0 && (
-                <div className="rounded-md bg-red-50 border border-red-100 px-3 py-2">
+                <div className="rounded-md bg-red-50 border border-[#fee2e2] px-3 py-2">
                   <p className="text-xs font-medium text-red-800">
                     {img.oversizedCount} oversized
                   </p>
@@ -114,7 +114,7 @@ export function DesignIndicatorsSection({
                 </div>
               )}
               {img.unoptimizedCount > 0 && (
-                <div className="rounded-md bg-amber-50 border border-amber-100 px-3 py-2">
+                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
                   <p className="text-xs font-medium text-amber-800">
                     {img.unoptimizedCount} unoptimised
                   </p>
@@ -122,7 +122,7 @@ export function DesignIndicatorsSection({
                 </div>
               )}
               {img.unsizedCount > 0 && (
-                <div className="rounded-md bg-amber-50 border border-amber-100 px-3 py-2">
+                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
                   <p className="text-xs font-medium text-amber-800">
                     {img.unsizedCount} unsized
                   </p>
@@ -130,7 +130,7 @@ export function DesignIndicatorsSection({
                 </div>
               )}
               {img.incorrectAspectRatio > 0 && (
-                <div className="rounded-md bg-red-50 border border-red-100 px-3 py-2">
+                <div className="rounded-md bg-red-50 border border-[#fee2e2] px-3 py-2">
                   <p className="text-xs font-medium text-red-800">
                     {img.incorrectAspectRatio} distorted
                   </p>
@@ -138,7 +138,7 @@ export function DesignIndicatorsSection({
                 </div>
               )}
               {img.modernFormatMissing > 0 && (
-                <div className="rounded-md bg-amber-50 border border-amber-100 px-3 py-2">
+                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
                   <p className="text-xs font-medium text-amber-800">
                     {img.modernFormatMissing} legacy format
                   </p>
@@ -146,7 +146,7 @@ export function DesignIndicatorsSection({
                 </div>
               )}
               {img.offscreenCount > 0 && (
-                <div className="rounded-md bg-amber-50 border border-amber-100 px-3 py-2">
+                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
                   <p className="text-xs font-medium text-amber-800">
                     {img.offscreenCount} not lazy-loaded
                   </p>
