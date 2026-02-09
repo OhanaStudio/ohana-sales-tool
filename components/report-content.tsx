@@ -68,7 +68,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
       <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12">
         <div className="pt-8 md:pt-12 pb-8 border-b border-border mb-8">
-          <p className="font-sans text-lg text-foreground mb-1">Ohana</p>
+          <img src="/ohaha-logo.svg" alt="Ohana" className="h-7 w-auto mb-1" />
           <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground mb-4 text-balance">
             Website Health Check
           </h1>
