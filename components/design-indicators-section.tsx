@@ -98,68 +98,62 @@ export function DesignIndicatorsSection({
           detail={indicators.spacingDetails}
         />
 
-        {/* Image issue breakdown */}
-        {totalImageIssues > 0 && (
-          <div className="pt-3">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
-              Image breakdown
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {img.oversizedCount > 0 && (
-                <div className="rounded-md bg-red-50 border border-[#fee2e2] px-3 py-2">
-                  <p className="text-xs font-medium text-red-800">
-                    {img.oversizedCount} oversized
-                  </p>
-                  <p className="text-xs text-red-600">Larger than display size</p>
-                </div>
-              )}
-              {img.unoptimizedCount > 0 && (
-                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
-                  <p className="text-xs font-medium text-amber-800">
-                    {img.unoptimizedCount} unoptimised
-                  </p>
-                  <p className="text-xs text-amber-600">Could be better compressed</p>
-                </div>
-              )}
-              {img.unsizedCount > 0 && (
-                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
-                  <p className="text-xs font-medium text-amber-800">
-                    {img.unsizedCount} unsized
-                  </p>
-                  <p className="text-xs text-amber-600">Missing width/height</p>
-                </div>
-              )}
-              {img.incorrectAspectRatio > 0 && (
-                <div className="rounded-md bg-red-50 border border-[#fee2e2] px-3 py-2">
-                  <p className="text-xs font-medium text-red-800">
-                    {img.incorrectAspectRatio} distorted
-                  </p>
-                  <p className="text-xs text-red-600">Wrong aspect ratio</p>
-                </div>
-              )}
-              {img.modernFormatMissing > 0 && (
-                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
-                  <p className="text-xs font-medium text-amber-800">
-                    {img.modernFormatMissing} legacy format
-                  </p>
-                  <p className="text-xs text-amber-600">Not WebP/AVIF</p>
-                </div>
-              )}
-              {img.offscreenCount > 0 && (
-                <div className="rounded-md bg-amber-50 border border-[#fef3c7] px-3 py-2">
-                  <p className="text-xs font-medium text-amber-800">
-                    {img.offscreenCount} not lazy-loaded
-                  </p>
-                  <p className="text-xs text-amber-600">Off-screen images</p>
-                </div>
-              )}
-            </div>
-            {img.totalSavingsKb > 50 && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Estimated savings: ~{img.totalSavingsKb} KB
-              </p>
-            )}
-          </div>
+        {/* Image issue breakdown - same row style as above */}
+        {img.oversizedCount > 0 && (
+          <DesignRow
+            icon={<ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`${img.oversizedCount} oversized image(s)`}
+            status="fail"
+            detail="Larger than their display size, wasting bandwidth and slowing page load."
+          />
+        )}
+        {img.unoptimizedCount > 0 && (
+          <DesignRow
+            icon={<ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`${img.unoptimizedCount} unoptimised image(s)`}
+            status="warn"
+            detail="Could be better compressed to reduce file size without visible quality loss."
+          />
+        )}
+        {img.unsizedCount > 0 && (
+          <DesignRow
+            icon={<ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`${img.unsizedCount} unsized image(s)`}
+            status="warn"
+            detail="Missing explicit width and height attributes, which can cause layout shifts."
+          />
+        )}
+        {img.incorrectAspectRatio > 0 && (
+          <DesignRow
+            icon={<ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`${img.incorrectAspectRatio} distorted image(s)`}
+            status="fail"
+            detail="Displayed at an incorrect aspect ratio, appearing stretched or squashed."
+          />
+        )}
+        {img.modernFormatMissing > 0 && (
+          <DesignRow
+            icon={<ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`${img.modernFormatMissing} legacy format image(s)`}
+            status="warn"
+            detail="Not using modern formats like WebP or AVIF, which offer better compression."
+          />
+        )}
+        {img.offscreenCount > 0 && (
+          <DesignRow
+            icon={<ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`${img.offscreenCount} off-screen image(s) not lazy-loaded`}
+            status="warn"
+            detail="Images below the fold are loaded immediately, delaying the initial page render."
+          />
+        )}
+        {img.totalSavingsKb > 50 && (
+          <DesignRow
+            icon={<AlertTriangle className="h-3.5 w-3.5 text-muted-foreground" />}
+            label={`~${img.totalSavingsKb} KB potential savings`}
+            status="warn"
+            detail="Estimated data that could be saved by optimising the images listed above."
+          />
         )}
       </div>
     </div>
