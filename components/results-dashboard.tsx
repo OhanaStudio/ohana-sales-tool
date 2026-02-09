@@ -133,6 +133,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
             label="Performance"
             mobileValue={String(result.mobile.performanceScore)}
             desktopValue={String(result.desktop.performanceScore)}
+            maxScore={100}
             mobileStatus={getScoreStatus(result.mobile.performanceScore)}
             desktopStatus={getScoreStatus(result.desktop.performanceScore)}
           />

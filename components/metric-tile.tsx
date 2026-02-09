@@ -5,6 +5,7 @@ interface MetricTileProps {
   mobileValue: string | null
   desktopValue: string | null
   unit?: string
+  maxScore?: number
   mobileStatus?: RiskLevel
   desktopStatus?: RiskLevel
 }
@@ -38,6 +39,7 @@ export function MetricTile({
   mobileValue,
   desktopValue,
   unit = "",
+  maxScore,
   mobileStatus,
   desktopStatus,
 }: MetricTileProps) {
@@ -71,6 +73,9 @@ export function MetricTile({
                   {unit}
                 </span>
               ) : null}
+              {mobileValue && maxScore ? (
+                <span className="text-xs text-muted-foreground">/{maxScore}</span>
+              ) : null}
             </p>
           </div>
         </div>
@@ -91,6 +96,9 @@ export function MetricTile({
                 <span className="text-xs text-muted-foreground ml-0.5">
                   {unit}
                 </span>
+              ) : null}
+              {desktopValue && maxScore ? (
+                <span className="text-xs text-muted-foreground">/{maxScore}</span>
               ) : null}
             </p>
           </div>

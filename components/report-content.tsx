@@ -152,6 +152,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               label="Performance"
               mobileValue={String(result.mobile.performanceScore)}
               desktopValue={String(result.desktop.performanceScore)}
+              maxScore={100}
               mobileStatus={getScoreStatus(result.mobile.performanceScore)}
               desktopStatus={getScoreStatus(result.desktop.performanceScore)}
             />
@@ -159,6 +160,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               label="Accessibility"
               mobileValue={String(result.mobile.accessibilityScore)}
               desktopValue={String(result.desktop.accessibilityScore)}
+              maxScore={100}
               mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
               desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
             />
@@ -166,6 +168,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               label="SEO"
               mobileValue={String(result.mobile.seoScore)}
               desktopValue={String(result.desktop.seoScore)}
+              maxScore={100}
               mobileStatus={getScoreStatus(result.mobile.seoScore)}
               desktopStatus={getScoreStatus(result.desktop.seoScore)}
             />
@@ -173,6 +176,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               label="Best Practices"
               mobileValue={String(result.mobile.bestPracticesScore)}
               desktopValue={String(result.desktop.bestPracticesScore)}
+              maxScore={100}
               mobileStatus={getScoreStatus(result.mobile.bestPracticesScore)}
               desktopStatus={getScoreStatus(result.desktop.bestPracticesScore)}
             />
