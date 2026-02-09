@@ -48,6 +48,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+    letter-spacing: 0.04em;
   }
 }
 
