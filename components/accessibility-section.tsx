@@ -78,7 +78,7 @@ export function AccessibilitySection({
 
   return (
     <div>
-      <h3 className="font-serif text-xl text-foreground mb-1">
+      <h3 className="font-sans text-xl text-foreground mb-1">
         Accessibility & EAA compliance
       </h3>
       <p className="text-xs text-muted-foreground/60 mb-2 italic">

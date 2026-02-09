@@ -68,7 +68,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
       <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12">
         <div className="pt-8 md:pt-12 pb-8 border-b border-border mb-8">
-          <p className="font-serif text-lg text-foreground mb-1">Ohana</p>
+          <p className="font-sans text-lg text-foreground mb-1">Ohana</p>
           <h1 className="font-serif text-3xl md:text-4xl text-foreground mb-4 text-balance">
             Website Health Check
           </h1>
@@ -87,7 +87,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
 
         <div className="mb-10 print:break-inside-avoid">
-          <h2 className="font-serif text-2xl text-foreground mb-6">Executive summary</h2>
+          <h2 className="font-sans text-2xl text-foreground mb-6">Executive summary</h2>
           <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
           <div className="flex flex-col gap-4 mt-8">
             <RiskCard card={result.riskCards.visibility} />
@@ -97,7 +97,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
 
         <div className="mb-10 print:break-inside-avoid">
-          <h2 className="font-serif text-2xl text-foreground mb-4">Performance overview</h2>
+          <h2 className="font-sans text-2xl text-foreground mb-4">Performance overview</h2>
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
             Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
           </p>
@@ -204,7 +204,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         )}
 
         <div className="mb-10 print:break-inside-avoid">
-          <h2 className="font-serif text-2xl text-foreground mb-4">Recommended next step</h2>
+          <h2 className="font-sans text-2xl text-foreground mb-4">Recommended next step</h2>
           <div className="rounded-lg border-2 border-border bg-card p-6 md:p-8">
             <div className="space-y-4">
               <div>
@@ -216,7 +216,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
                 <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whyItMatters}</p>
               </div>
               <div className="pt-2 border-t border-border">
-                <p className="font-serif text-lg text-card-foreground mb-2">Book a clarity review</p>
+                <p className="font-sans text-lg text-card-foreground mb-2">Book a clarity review</p>
                 <p className="text-sm text-muted-foreground leading-relaxed">{result.salesTalkTrack.suggestedNextStep}</p>
               </div>
             </div>

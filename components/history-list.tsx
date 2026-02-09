@@ -64,7 +64,7 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
               </div>
               <span
                 className={cn(
-                  "text-2xl font-serif tabular-nums shrink-0",
+                  "text-2xl font-sans tabular-nums shrink-0",
                   scoreColor(item.overallScore)
                 )}
               >
@@ -122,7 +122,7 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                   </td>
                   <td
                     className={cn(
-                      "px-4 py-3 text-right font-serif text-lg tabular-nums",
+                      "px-4 py-3 text-right font-sans text-lg tabular-nums",
                       scoreColor(item.overallScore)
                     )}
                   >

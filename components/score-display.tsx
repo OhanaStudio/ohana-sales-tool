@@ -17,7 +17,7 @@ export function ScoreDisplay({
     <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-8">
       <div
         className={cn(
-          "text-7xl md:text-8xl font-serif tabular-nums shrink-0",
+          "text-7xl md:text-8xl font-sans tabular-nums shrink-0",
           scoreColor(score)
         )}
       >

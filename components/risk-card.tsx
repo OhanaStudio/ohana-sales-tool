@@ -30,7 +30,7 @@ export function RiskCard({ card }: { card: RiskCardType }) {
       )}
     >
       <div className="flex items-center justify-between gap-3 mb-4">
-        <h3 className="font-serif text-lg text-card-foreground">{card.label}</h3>
+        <h3 className="font-sans text-lg text-card-foreground">{card.label}</h3>
         <span
           className={cn(
             "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",

@@ -72,7 +72,7 @@ export function DesignIndicatorsSection({
 
   return (
     <div>
-      <h3 className="font-serif text-xl text-foreground mb-1">
+      <h3 className="font-sans text-xl text-foreground mb-1">
         Design & image quality
       </h3>
       <p className="text-xs text-muted-foreground/60 mb-4 italic">

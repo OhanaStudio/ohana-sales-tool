@@ -64,7 +64,7 @@ export function MetricTile({
                 aria-label={`Mobile status: ${mobileStatus}`}
               />
             )}
-            <p className="text-lg font-serif text-card-foreground">
+            <p className="text-lg font-sans text-card-foreground">
               {mobileValue ?? "N/A"}
               {mobileValue && unit ? (
                 <span className="text-xs text-muted-foreground ml-0.5">
@@ -85,7 +85,7 @@ export function MetricTile({
                 aria-label={`Desktop status: ${desktopStatus}`}
               />
             )}
-            <p className="text-lg font-serif text-card-foreground">
+            <p className="text-lg font-sans text-card-foreground">
               {desktopValue ?? "N/A"}
               {desktopValue && unit ? (
                 <span className="text-xs text-muted-foreground ml-0.5">

@@ -126,7 +126,7 @@ export function UXIndicatorsSection({
 
   return (
     <div>
-      <h3 className="font-serif text-xl text-foreground mb-1">
+      <h3 className="font-sans text-xl text-foreground mb-1">
         UX indicators
       </h3>
       <p className="text-xs text-muted-foreground/60 mb-4 italic">

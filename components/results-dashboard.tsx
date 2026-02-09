@@ -42,7 +42,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
   return (
     <div className="space-y-10 md:space-y-12">
       <div>
-        <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-balance">
+        <h2 className="font-sans text-3xl md:text-4xl text-foreground mb-2 text-balance">
           Results.
         </h2>
         <p className="text-xs text-muted-foreground mb-6">{result.url}</p>
@@ -73,7 +73,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
       />
 
       <div>
-        <h3 className="font-serif text-xl text-foreground mb-4">Risk overview</h3>
+        <h3 className="font-sans text-xl text-foreground mb-4">Risk overview</h3>
         <div className="flex flex-col gap-4">
           <RiskCard card={result.riskCards.visibility} />
           <RiskCard card={result.riskCards.conversion} />
@@ -82,7 +82,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
       </div>
 
       <div>
-        <h3 className="font-serif text-xl text-foreground mb-4">Performance metrics</h3>
+        <h3 className="font-sans text-xl text-foreground mb-4">Performance metrics</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <MetricTile
             label="LCP"
@@ -153,7 +153,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
       )}
 
       <div>
-        <h3 className="font-serif text-xl text-foreground mb-4">Summary</h3>
+        <h3 className="font-sans text-xl text-foreground mb-4">Summary</h3>
         <div className="space-y-4 rounded-lg border border-border bg-card p-5 md:p-6">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">What we found</p>

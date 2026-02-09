@@ -26,7 +26,7 @@ export function SiteScreenshots({
 
   return (
     <div>
-      <h3 className="font-serif text-xl text-foreground mb-2">
+      <h3 className="font-sans text-xl text-foreground mb-2">
         Site preview
       </h3>
       <p className="text-xs text-muted-foreground mb-4">{hostname}</p>
