@@ -1,6 +1,8 @@
 import { generateText, Output } from "ai"
 import { z } from "zod"
-import type { UXIndicators } from "./types"
+import type { UXIndicators, AdvancedUXIndicators } from "./types"
+
+// --- Schemas ---
 
 const uxVisionSchema = z.object({
   ctaFound: z.boolean().describe("Whether any call-to-action buttons/links are visible on the page"),
@@ -15,61 +17,115 @@ const uxVisionSchema = z.object({
   emailFound: z.boolean().describe("Whether an email address is visible anywhere on the page"),
 })
 
-export async function analyseScreenshotsWithAI(
+const frictionCategorySchema = z.object({
+  status: z.string().describe("One of the allowed status values for this category"),
+  bullets: z.array(z.string()).describe("1-3 short bullet points describing specific issues found, or empty if no issues"),
+})
+
+const advancedUXSchema = z.object({
+  firstImpression: frictionCategorySchema.describe(
+    "First-impression clarity: Is the hero clear? Is there a visible H1? Is a CTA above the fold? Status: clear | mixed | unclear"
+  ),
+  navigationFriction: frictionCategorySchema.describe(
+    "Decision friction: Is there clear navigation? Too many or too few nav items? Generic labels? Status: low | medium | high"
+  ),
+  scanability: frictionCategorySchema.describe(
+    "Scanability: Are there clear headings, bullet lists, short paragraphs? Or walls of text? Status: scannable | mixed | dense"
+  ),
+  conversionPath: frictionCategorySchema.describe(
+    "Conversion path: Are there clear CTAs throughout the page? Consistent CTA labels? Dead-end sections? Status: clear_path | partial | broken"
+  ),
+  formFriction: frictionCategorySchema.describe(
+    "Form friction: If forms are visible, are they short? Clear labels? Obvious submit button? Status: low | medium | high"
+  ),
+  trustDepth: frictionCategorySchema.describe(
+    "Trust depth: Are there named testimonials with roles? Case studies? About page link? Physical address? Status: strong | moderate | weak"
+  ),
+  mobileFriction: frictionCategorySchema.describe(
+    "Mobile friction (from mobile screenshot): Tap target sizes, sticky elements, cookie banners covering content, horizontal scroll? Status: low | medium | high"
+  ),
+})
+
+const combinedSchema = z.object({
+  uxIndicators: uxVisionSchema,
+  advancedUX: advancedUXSchema,
+})
+
+export interface AIAnalysisResult {
+  uxIndicators: UXIndicators
+  advancedUX: AdvancedUXIndicators
+}
+
+function buildImageContent(
   desktopScreenshot?: { data: string },
   mobileScreenshot?: { data: string },
-): Promise<UXIndicators | null> {
-  // Need at least one screenshot
-  if (!desktopScreenshot?.data && !mobileScreenshot?.data) {
-    return null
-  }
-
-  const imageContent: Array<{ type: "image"; image: URL | string; mediaType?: string } | { type: "text"; text: string }> = [
+) {
+  const content: Array<{ type: "image"; image: URL } | { type: "text"; text: string }> = [
     {
       type: "text",
-      text: `Analyze these website screenshots and identify UX indicators. Look carefully at BOTH the desktop and mobile views.
+      text: `You are a UX auditor analysing website screenshots. You are given a DESKTOP screenshot and a MOBILE screenshot of the same page.
 
-Identify:
-1. **Call-to-action (CTA) buttons/links**: Look for ANY buttons or prominent links like "Get a Quote", "Contact Us", "Learn More", "Book Now", "Sign Up", "Buy Now", "Shop Now", etc. Include cookie consent buttons only if no real CTAs are found.
-2. **Trust signals**: Client logos, testimonials, reviews, awards, certifications, "trusted by" sections, case studies.
-3. **Social proof above the fold**: Any trust/social proof visible WITHOUT scrolling (the first screenful).
-4. **Third-party review sources**: Trustpilot, Google Reviews, G2, Capterra, Yelp, BBB, etc.
-5. **Phone number**: Any visible phone number on the page.
-6. **Email address**: Any visible email address on the page.
+Analyse BOTH screenshots carefully and return two things:
 
-Be thorough - check headers, footers, navigation bars, banners, hero sections, and body content.`,
+## 1. UX Indicators
+Identify what is visible on the page:
+- **CTAs**: ALL buttons/links like "Get a Quote", "Contact Us", "Learn More", "Book Now", "Sign Up", etc. Ignore cookie-consent buttons unless no real CTAs exist.
+- **Trust signals**: Client logos, testimonials, reviews, awards, certifications, "trusted by" sections.
+- **Social proof above the fold**: Trust/social proof visible in the FIRST screenful (before scrolling).
+- **Third-party reviews**: Trustpilot, Google Reviews, G2, Capterra, Yelp, BBB widgets/badges.
+- **Phone number**: Any visible phone number.
+- **Email address**: Any visible email address.
+
+## 2. Advanced UX Friction Analysis
+For each of the 7 categories, provide a status and 0-3 bullet points describing specific issues. If no issues, return an empty bullets array.
+- Be specific: reference actual text, buttons, or sections you can see.
+- Only flag real issues you observe, not hypothetical ones.
+- Each bullet should be 1 short sentence.
+- Use the EXACT status values specified in each category description.`,
     },
   ]
 
   if (desktopScreenshot?.data) {
-    // PSI screenshots are base64 data URIs starting with "data:image/..."
     const base64Data = desktopScreenshot.data.startsWith("data:")
       ? desktopScreenshot.data
       : `data:image/jpeg;base64,${desktopScreenshot.data}`
-    imageContent.push({
-      type: "image",
-      image: new URL(base64Data),
-    })
+    content.push({ type: "image", image: new URL(base64Data) })
   }
 
   if (mobileScreenshot?.data) {
     const base64Data = mobileScreenshot.data.startsWith("data:")
       ? mobileScreenshot.data
       : `data:image/jpeg;base64,${mobileScreenshot.data}`
-    imageContent.push({
-      type: "image",
-      image: new URL(base64Data),
-    })
+    content.push({ type: "image", image: new URL(base64Data) })
+  }
+
+  return content
+}
+
+function mapFrictionCategory(raw: { status: string; bullets: string[] }, defaults: { status: string }) {
+  return {
+    ...raw,
+    status: raw.status || defaults.status,
+    bullets: raw.bullets || [],
+  }
+}
+
+export async function analyseScreenshotsWithAI(
+  desktopScreenshot?: { data: string },
+  mobileScreenshot?: { data: string },
+): Promise<AIAnalysisResult | null> {
+  if (!desktopScreenshot?.data && !mobileScreenshot?.data) {
+    return null
   }
 
   try {
     const { output } = await generateText({
       model: "openai/gpt-4o-mini",
-      output: Output.object({ schema: uxVisionSchema }),
+      output: Output.object({ schema: combinedSchema }),
       messages: [
         {
           role: "user",
-          content: imageContent,
+          content: buildImageContent(desktopScreenshot, mobileScreenshot),
         },
       ],
     })
@@ -77,8 +133,48 @@ Be thorough - check headers, footers, navigation bars, banners, hero sections, a
     if (!output) return null
 
     return {
-      ...output,
-      fetchBlocked: false, // AI vision always "sees" the page
+      uxIndicators: {
+        ...output.uxIndicators,
+        fetchBlocked: false,
+      },
+      advancedUX: {
+        firstImpression: {
+          h1Count: 0, h1Text: null, h1AboveFold: false, h1Vague: false,
+          primaryCtaAboveFold: false, competingCtasAboveFold: 0, autoplayAboveFold: false,
+          ...mapFrictionCategory(output.advancedUX.firstImpression, { status: "clear" }),
+        },
+        navigationFriction: {
+          navItemCount: 0, contactInNav: false, genericNavLabels: [],
+          nestedMenuDepth: 0, tapTargetIssues: 0,
+          ...mapFrictionCategory(output.advancedUX.navigationFriction, { status: "low" }),
+        },
+        scanability: {
+          avgParagraphLength: 0, longParagraphs: 0, bulletListsFound: 0,
+          subheadingFrequency: 0, headingSkips: 0, longLineEstimate: false,
+          ...mapFrictionCategory(output.advancedUX.scanability, { status: "scannable" }),
+        },
+        conversionPath: {
+          ctaLabels: output.uxIndicators.ctaKeywords || [], ctaConsistency: true,
+          deadEndSections: 0, inlineCtasFound: 0, externalLinkCount: 0,
+          ...mapFrictionCategory(output.advancedUX.conversionPath, { status: "clear_path" }),
+        },
+        formFriction: {
+          formsFound: 0, avgFieldCount: 0, highFieldCountForms: 0,
+          placeholderOnlyLabels: 0, submitButtonLabels: [], genericSubmitButtons: 0,
+          ...mapFrictionCategory(output.advancedUX.formFriction, { status: "low" }),
+        },
+        trustDepth: {
+          namedTestimonials: 0, anonymousTestimonials: 0, testimonialsWithRoles: 0,
+          caseStudiesFound: false, stockImagerySignals: 0, aboutPageLinked: false,
+          physicalAddressFound: false,
+          ...mapFrictionCategory(output.advancedUX.trustDepth, { status: "moderate" }),
+        },
+        mobileFriction: {
+          tapTargetIssues: 0, stickyElementsFound: 0, cookieBannerOverCta: false,
+          horizontalScrollRisk: false, viewportConfigured: true, stickyCtaFound: false,
+          ...mapFrictionCategory(output.advancedUX.mobileFriction, { status: "low" }),
+        },
+      },
     }
   } catch (error) {
     console.error("AI vision analysis failed:", error)

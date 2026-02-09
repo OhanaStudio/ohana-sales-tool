@@ -184,8 +184,8 @@ export function AdvancedUXSection({
         UX friction analysis
       </h3>
       <p className="text-xs text-muted-foreground/60 mb-2 italic leading-relaxed">
-        These checks highlight common friction patterns. They indicate potential
-        risk, not certainty.
+        AI-powered analysis of visual friction patterns based on page
+        screenshots.
       </p>
       <div className={`text-xs font-medium mb-4 ${summaryColor}`}>
         {summaryText}

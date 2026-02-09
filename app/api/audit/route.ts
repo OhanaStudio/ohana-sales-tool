@@ -20,7 +20,7 @@ import {
   generateSalesTalkTrack,
 } from "@/lib/scoring"
 import { extractAdvancedUXIndicators } from "@/lib/ux-analysis"
-import { analyseScreenshotsWithAI } from "@/lib/ai-ux-analysis"
+import { analyseScreenshotsWithAI, type AIAnalysisResult } from "@/lib/ai-ux-analysis"
 
 function isValidUrl(str: string): boolean {
   try {
@@ -550,14 +550,14 @@ export async function POST(request: Request) {
     const fetchedHtml = siteHtml.html
 
     // Try AI vision analysis first (uses screenshots), fall back to HTML/Lighthouse parsing
-    const aiUxResult = await analyseScreenshotsWithAI(
-      mobileData.result.screenshot,
+    const aiResult = await analyseScreenshotsWithAI(
       desktopData.result.screenshot,
+      mobileData.result.screenshot,
     )
-    const uxIndicators = aiUxResult ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
+    const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
     const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml)
-    const advancedUX = extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
+    const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)
