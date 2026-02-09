@@ -256,18 +256,20 @@ export function AccessibilitySection({
 
       {/* EAA summary issues */}
       {a.eaaIssues.length > 0 && (
-        <div className="mt-4 rounded-lg border border-border bg-card p-5">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">
+        <div className="mt-4">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
             EAA / WCAG issue summary
           </p>
-          <ul className="space-y-1.5">
+          <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
             {a.eaaIssues.map((issue, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-foreground leading-relaxed">
-                <X className="h-3 w-3 text-red-500 shrink-0 mt-0.5" />
-                {issue}
-              </li>
+              <div key={i} className="flex items-start gap-3 py-3">
+                <X className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-foreground">{issue}</p>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>
