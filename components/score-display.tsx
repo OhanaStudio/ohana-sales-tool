@@ -84,10 +84,7 @@ export function ScoreDisplay({
         {/* Centered text overlay (not rotated) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
-            className={cn(
-              "font-serif leading-none",
-              scoreTextColor(score)
-            )}
+            className="font-serif leading-none text-foreground"
             style={{ fontSize: "4rem", fontWeight: 700, letterSpacing: "-0.02em" }}
           >
             {score}
