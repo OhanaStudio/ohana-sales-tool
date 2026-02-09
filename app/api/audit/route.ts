@@ -54,7 +54,14 @@ async function fetchPSI(
     url
   )}&strategy=${strategy}&key=${apiKey}&category=performance&category=accessibility&category=seo&category=best-practices`
 
-  const res = await fetch(endpoint, { cache: "no-store" })
+  let res = await fetch(endpoint, { cache: "no-store" })
+
+  // Retry once on 500 errors (transient Lighthouse failures)
+  if (res.status === 500) {
+    console.warn(`PSI ${strategy} returned 500, retrying once...`)
+    await new Promise((r) => setTimeout(r, 2000))
+    res = await fetch(endpoint, { cache: "no-store" })
+  }
 
   if (!res.ok) {
     const body = await res.text()
@@ -672,12 +679,43 @@ export async function POST(request: Request) {
       return NextResponse.json(cached.result)
     }
 
-    // Run PSI (both strategies) + HTML fetch in parallel
-    const [mobileData, desktopData, siteHtml] = await Promise.all([
-      fetchPSI(url, "mobile"),
-      fetchPSI(url, "desktop"),
+    // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
+    const emptyResult: StrategyResult = {
+      strategy: "mobile",
+      performanceScore: 0,
+      accessibilityScore: 0,
+      seoScore: 0,
+      bestPracticesScore: 0,
+      metrics: { lcp: null, cls: null, tbt: null, fcp: null, speedIndex: null },
+      fieldDataAvailable: false,
+      notes: ["Lighthouse analysis failed for this strategy. Results may be incomplete."],
+      screenshot: undefined,
+    }
+
+    const [mobileResult, desktopResult, siteHtml] = await Promise.all([
+      fetchPSI(url, "mobile").catch((err) => {
+        console.error("Mobile PSI failed:", err.message)
+        return { result: { ...emptyResult, strategy: "mobile" as const }, rawAudits: {} }
+      }),
+      fetchPSI(url, "desktop").catch((err) => {
+        console.error("Desktop PSI failed:", err.message)
+        return { result: { ...emptyResult, strategy: "desktop" as const }, rawAudits: {} }
+      }),
       fetchSiteHtml(url),
     ])
+
+    const mobileData = mobileResult
+    const desktopData = desktopResult
+
+    // If BOTH strategies failed, we can't produce a useful report
+    const mobileFailed = mobileData.result.notes?.some((n: string) => n.includes("Lighthouse analysis failed"))
+    const desktopFailed = desktopData.result.notes?.some((n: string) => n.includes("Lighthouse analysis failed"))
+    if (mobileFailed && desktopFailed) {
+      return NextResponse.json(
+        { error: "Lighthouse could not analyse this site. The site may be blocking automated testing, require authentication, or be temporarily unavailable. Please try again in a moment." },
+        { status: 502 }
+      )
+    }
 
     const mobile = mobileData.result
     const desktop = desktopData.result
