@@ -8,6 +8,7 @@ import type {
   ImageIssues,
   AccessibilityIndicators,
   AuditResult,
+  ScreenshotData,
 } from "@/lib/types"
 import { saveReport, getCachedReportForUrl } from "@/lib/store"
 import {
@@ -76,6 +77,17 @@ async function fetchPSI(
     notes.push("Field data is not available for this URL. Results are based on lab data only.")
   }
 
+  // Extract screenshot from final-screenshot audit
+  let screenshot: ScreenshotData | undefined
+  const screenshotAudit = audits["final-screenshot"]
+  if (screenshotAudit?.details?.data) {
+    screenshot = {
+      data: screenshotAudit.details.data,
+      width: screenshotAudit.details.width ?? 0,
+      height: screenshotAudit.details.height ?? 0,
+    }
+  }
+
   return {
     result: {
       strategy,
@@ -86,6 +98,7 @@ async function fetchPSI(
       metrics,
       fieldDataAvailable: !!(fieldData && Object.keys(fieldData).length > 0),
       notes,
+      screenshot,
     },
     rawAudits: audits,
   }

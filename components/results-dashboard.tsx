@@ -9,6 +9,7 @@ import { UXIndicatorsSection } from "./ux-indicators-section"
 import { DesignIndicatorsSection } from "./design-indicators-section"
 import { AccessibilitySection } from "./accessibility-section"
 import { AdvancedUXSection } from "./advanced-ux-section"
+import { SiteScreenshots } from "./site-screenshots"
 import { FileText, Link2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -64,6 +65,12 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           </button>
         </div>
       </div>
+
+      <SiteScreenshots
+        url={result.url}
+        desktopScreenshot={result.desktop.screenshot}
+        mobileScreenshot={result.mobile.screenshot}
+      />
 
       <div>
         <h3 className="font-serif text-xl text-foreground mb-4">Risk overview</h3>

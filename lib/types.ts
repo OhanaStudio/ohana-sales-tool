@@ -6,6 +6,12 @@ export interface LighthouseMetrics {
   speedIndex: number | null
 }
 
+export interface ScreenshotData {
+  data: string // base64 data URI
+  width: number
+  height: number
+}
+
 export interface StrategyResult {
   strategy: "mobile" | "desktop"
   performanceScore: number
@@ -15,6 +21,7 @@ export interface StrategyResult {
   metrics: LighthouseMetrics
   fieldDataAvailable: boolean
   notes: string[]
+  screenshot?: ScreenshotData
 }
 
 export interface UXIndicators {

@@ -8,6 +8,7 @@ import { UXIndicatorsSection } from "./ux-indicators-section"
 import { DesignIndicatorsSection } from "./design-indicators-section"
 import { AccessibilitySection } from "./accessibility-section"
 import { AdvancedUXSection } from "./advanced-ux-section"
+import { SiteScreenshots } from "./site-screenshots"
 import { ScoreDisplay } from "./score-display"
 import { Download, ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -75,6 +76,14 @@ export function ReportContent({ result }: { result: AuditResult }) {
             <span>{result.url}</span>
             <span>{formatDate(result.timestamp)}, {formatTime(result.timestamp)}</span>
           </div>
+        </div>
+
+        <div className="mb-10 print:break-inside-avoid">
+          <SiteScreenshots
+            url={result.url}
+            desktopScreenshot={result.desktop.screenshot}
+            mobileScreenshot={result.mobile.screenshot}
+          />
         </div>
 
         <div className="mb-10 print:break-inside-avoid">
