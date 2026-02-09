@@ -10,6 +10,7 @@ import { AccessibilitySection } from "./accessibility-section"
 import { AdvancedUXSection } from "./advanced-ux-section"
 import { SiteScreenshots } from "./site-screenshots"
 import { ScoreDisplay } from "./score-display"
+import { PlatformInfoSection } from "./platform-info-section"
 import { Download, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -78,8 +79,14 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </div>
         </div>
 
-        <div className="mb-10 print:break-inside-avoid">
-          <SiteScreenshots
+          {result.platformInfo && (
+            <div className="mb-10 print:break-inside-avoid">
+              <PlatformInfoSection info={result.platformInfo} />
+            </div>
+          )}
+
+          <div className="mb-10 print:break-inside-avoid">
+            <SiteScreenshots
             url={result.url}
             desktopScreenshot={result.desktop.screenshot}
             mobileScreenshot={result.mobile.screenshot}

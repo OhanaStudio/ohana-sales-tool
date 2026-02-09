@@ -173,6 +173,12 @@ export interface AdvancedUXIndicators {
   mobileFriction: MobileFrictionIndicators
 }
 
+export interface PlatformInfo {
+  platform: string | null
+  confidence: "high" | "medium" | "low"
+  details: string[]
+}
+
 export type RiskLevel = "red" | "amber" | "green"
 
 export interface RiskCard {
@@ -200,6 +206,7 @@ export interface AuditResult {
   designIndicators: DesignIndicators
   accessibilityIndicators: AccessibilityIndicators
   advancedUX: AdvancedUXIndicators
+  platformInfo: PlatformInfo
   riskCards: {
     visibility: RiskCard
     conversion: RiskCard

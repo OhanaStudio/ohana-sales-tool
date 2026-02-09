@@ -10,6 +10,7 @@ import { DesignIndicatorsSection } from "./design-indicators-section"
 import { AccessibilitySection } from "./accessibility-section"
 import { AdvancedUXSection } from "./advanced-ux-section"
 import { SiteScreenshots } from "./site-screenshots"
+import { PlatformInfoSection } from "./platform-info-section"
 import { FileText, Link2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -65,6 +66,10 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           </button>
         </div>
       </div>
+
+      {result.platformInfo && (
+        <PlatformInfoSection info={result.platformInfo} />
+      )}
 
       <SiteScreenshots
         url={result.url}

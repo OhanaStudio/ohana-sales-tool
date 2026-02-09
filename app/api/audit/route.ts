@@ -9,6 +9,7 @@ import type {
   AccessibilityIndicators,
   AuditResult,
   ScreenshotData,
+  PlatformInfo,
 } from "@/lib/types"
 import { saveReport, getCachedReportForUrl } from "@/lib/store"
 import {
@@ -511,6 +512,139 @@ function analyseUXIndicators(html: string, blocked: boolean, mobileAudits?: any)
   return result
 }
 
+function detectPlatform(html: string, url: string): PlatformInfo {
+  const lower = html.toLowerCase()
+  const details: string[] = []
+
+  // --- CMS / Platform signatures (ordered by specificity) ---
+
+  // WordPress
+  if (lower.includes("wp-content") || lower.includes("wp-includes") || lower.includes("wordpress")) {
+    details.push("WordPress signatures detected (wp-content, wp-includes)")
+    // Check for common page builders
+    if (lower.includes("elementor")) details.push("Elementor page builder detected")
+    if (lower.includes("divi")) details.push("Divi theme/builder detected")
+    if (lower.includes("wpbakery") || lower.includes("js_composer")) details.push("WPBakery page builder detected")
+    if (lower.includes("woocommerce")) details.push("WooCommerce e-commerce plugin detected")
+    if (lower.includes("yoast") || lower.includes("rank-math")) details.push("SEO plugin detected")
+    return { platform: "WordPress", confidence: "high", details }
+  }
+
+  // Shopify
+  if (lower.includes("shopify") || lower.includes("cdn.shopify.com") || lower.includes("myshopify.com")) {
+    details.push("Shopify platform signatures detected")
+    if (lower.includes("shopify-section")) details.push("Shopify Sections/Liquid templates in use")
+    return { platform: "Shopify", confidence: "high", details }
+  }
+
+  // Wix
+  if (lower.includes("wix.com") || lower.includes("_wix") || lower.includes("x-wix")) {
+    details.push("Wix platform signatures detected")
+    return { platform: "Wix", confidence: "high", details }
+  }
+
+  // Squarespace
+  if (lower.includes("squarespace") || lower.includes("static.squarespace.com") || lower.includes("sqsp")) {
+    details.push("Squarespace platform signatures detected")
+    return { platform: "Squarespace", confidence: "high", details }
+  }
+
+  // Webflow
+  if (lower.includes("webflow") || lower.includes("assets-global.website-files.com") || lower.includes("w-webflow")) {
+    details.push("Webflow platform signatures detected")
+    return { platform: "Webflow", confidence: "high", details }
+  }
+
+  // HubSpot CMS
+  if (lower.includes("hubspot") || lower.includes("hs-scripts.com") || lower.includes("hbspt")) {
+    details.push("HubSpot CMS/Marketing Hub detected")
+    return { platform: "HubSpot", confidence: "high", details }
+  }
+
+  // Drupal
+  if (lower.includes("drupal") || lower.includes("/sites/default/files") || lower.includes("drupal.js")) {
+    details.push("Drupal CMS signatures detected")
+    return { platform: "Drupal", confidence: "high", details }
+  }
+
+  // Joomla
+  if (lower.includes("/media/jui/") || lower.includes("joomla") || lower.includes("/components/com_")) {
+    details.push("Joomla CMS signatures detected")
+    return { platform: "Joomla", confidence: "medium", details }
+  }
+
+  // Magento / Adobe Commerce
+  if (lower.includes("magento") || lower.includes("mage/") || lower.includes("/static/version")) {
+    details.push("Magento/Adobe Commerce signatures detected")
+    return { platform: "Magento", confidence: "medium", details }
+  }
+
+  // Ghost
+  if (lower.includes("ghost.org") || lower.includes("ghost-api") || lower.includes('content="ghost"')) {
+    details.push("Ghost CMS signatures detected")
+    return { platform: "Ghost", confidence: "high", details }
+  }
+
+  // Framer
+  if (lower.includes("framer") || lower.includes("framerusercontent.com")) {
+    details.push("Framer platform signatures detected")
+    return { platform: "Framer", confidence: "high", details }
+  }
+
+  // GoDaddy Website Builder
+  if (lower.includes("godaddy") || lower.includes("secureserver.net")) {
+    details.push("GoDaddy platform signatures detected")
+    return { platform: "GoDaddy", confidence: "medium", details }
+  }
+
+  // Weebly
+  if (lower.includes("weebly") || lower.includes("editmysite.com")) {
+    details.push("Weebly platform signatures detected")
+    return { platform: "Weebly", confidence: "high", details }
+  }
+
+  // --- JavaScript frameworks (lower confidence, usually custom-built) ---
+
+  // Next.js
+  if (lower.includes("__next") || lower.includes("_next/static") || lower.includes("/_next/")) {
+    details.push("Next.js framework signatures detected")
+    return { platform: "Next.js", confidence: "medium", details }
+  }
+
+  // Nuxt.js
+  if (lower.includes("__nuxt") || lower.includes("/_nuxt/")) {
+    details.push("Nuxt.js framework signatures detected")
+    return { platform: "Nuxt.js", confidence: "medium", details }
+  }
+
+  // Gatsby
+  if (lower.includes("gatsby") || lower.includes("___gatsby")) {
+    details.push("Gatsby framework signatures detected")
+    return { platform: "Gatsby", confidence: "medium", details }
+  }
+
+  // Angular
+  if (lower.includes("ng-version") || lower.includes("angular")) {
+    details.push("Angular framework signatures detected")
+    return { platform: "Angular", confidence: "medium", details }
+  }
+
+  // React (generic, lower confidence)
+  if (lower.includes("react") && lower.includes("__reactfiber") || lower.includes("data-reactroot")) {
+    details.push("React application signatures detected")
+    return { platform: "React", confidence: "low", details }
+  }
+
+  // Laravel
+  if (lower.includes("laravel") || lower.includes("csrf-token")) {
+    details.push("Possible Laravel framework detected")
+    return { platform: "Laravel", confidence: "low", details }
+  }
+
+  details.push("No recognisable CMS or framework signatures were detected in the page source.")
+  return { platform: null, confidence: "low", details }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -561,6 +695,7 @@ export async function POST(request: Request) {
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)
+    const platformInfo = detectPlatform(fetchedHtml, url)
 
     const result: AuditResult = {
       id: v4(),
@@ -574,6 +709,7 @@ export async function POST(request: Request) {
       designIndicators,
       accessibilityIndicators,
       advancedUX,
+      platformInfo,
       riskCards: {
         visibility: generateVisibilityRisk(mobile, advancedUX),
         conversion: generateConversionRisk(mobile, uxIndicators, designIndicators, advancedUX),
