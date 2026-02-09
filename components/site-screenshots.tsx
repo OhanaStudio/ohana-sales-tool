@@ -29,14 +29,14 @@ export function SiteScreenshots({
       <h3 className="font-sans text-xl text-foreground mb-2">
         Site preview
       </h3>
-      <p className="text-xs text-muted-foreground mb-4">{hostname}</p>
+
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Desktop screenshot */}
         {desktopScreenshot && (
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <Monitor className="h-4 w-4 text-muted-foreground" />
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Desktop
               </span>
             </div>
@@ -45,9 +45,6 @@ export function SiteScreenshots({
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
-                <span className="ml-2 text-xs text-muted-foreground truncate flex-1">
-                  {hostname}
-                </span>
               </div>
               <img
                 src={desktopScreenshot.data || "/placeholder.svg"}
@@ -65,7 +62,7 @@ export function SiteScreenshots({
           <div className="flex-shrink-0 w-full md:w-[200px]">
             <div className="flex items-center gap-2 mb-2">
               <Smartphone className="h-4 w-4 text-muted-foreground" />
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Mobile
               </span>
             </div>
