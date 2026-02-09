@@ -125,6 +125,11 @@ function CategorySection({
   )
 }
 
+function isApplicable(status: string): boolean {
+  const na = status.toLowerCase().replace(/[\s_-]/g, "")
+  return na !== "na" && na !== "n/a" && na !== "notapplicable"
+}
+
 export function AdvancedUXSection({
   indicators,
 }: {
@@ -132,37 +137,24 @@ export function AdvancedUXSection({
 }) {
   const d = indicators
 
-  // Count total issues across all categories
-  const totalIssues = [
-    d.firstImpression.bullets,
-    d.navigationFriction.bullets,
-    d.scanability.bullets,
-    d.conversionPath.bullets,
-    d.formFriction.bullets,
-    d.trustDepth.bullets,
-    d.mobileFriction.bullets,
-  ].reduce((sum, b) => sum + b.length, 0)
+  const allCategories = [
+    { key: "firstImpression", icon: <Eye className="h-4 w-4" />, title: "First-impression clarity", ...d.firstImpression },
+    { key: "navigationFriction", icon: <Navigation className="h-4 w-4" />, title: "Decision friction", ...d.navigationFriction },
+    { key: "scanability", icon: <AlignLeft className="h-4 w-4" />, title: "Scanability", ...d.scanability },
+    { key: "conversionPath", icon: <MousePointerClick className="h-4 w-4" />, title: "Conversion path", ...d.conversionPath },
+    { key: "formFriction", icon: <FormInput className="h-4 w-4" />, title: "Form friction", ...d.formFriction },
+    { key: "trustDepth", icon: <ShieldCheck className="h-4 w-4" />, title: "Trust depth", ...d.trustDepth },
+    { key: "mobileFriction", icon: <Smartphone className="h-4 w-4" />, title: "Mobile friction", ...d.mobileFriction },
+  ]
 
-  // Count red/amber categories
-  const redCategories = [
-    d.firstImpression.status,
-    d.navigationFriction.status,
-    d.scanability.status,
-    d.conversionPath.status,
-    d.formFriction.status,
-    d.trustDepth.status,
-    d.mobileFriction.status,
-  ].filter((s) => statusColor(s) === "red").length
+  // Filter out n/a categories
+  const visibleCategories = allCategories.filter((c) => isApplicable(c.status))
 
-  const amberCategories = [
-    d.firstImpression.status,
-    d.navigationFriction.status,
-    d.scanability.status,
-    d.conversionPath.status,
-    d.formFriction.status,
-    d.trustDepth.status,
-    d.mobileFriction.status,
-  ].filter((s) => statusColor(s) === "amber").length
+  if (visibleCategories.length === 0) return null
+
+  const totalIssues = visibleCategories.reduce((sum, c) => sum + c.bullets.length, 0)
+  const redCategories = visibleCategories.filter((c) => statusColor(c.status) === "red").length
+  const amberCategories = visibleCategories.filter((c) => statusColor(c.status) === "amber").length
 
   const summaryColor =
     redCategories > 0
@@ -191,55 +183,16 @@ export function AdvancedUXSection({
         {summaryText}
       </div>
       <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
-        <CategorySection
-          icon={<Eye className="h-4 w-4" />}
-          title="First-impression clarity"
-          status={d.firstImpression.status}
-          bullets={d.firstImpression.bullets}
-          defaultOpen={statusColor(d.firstImpression.status) === "red"}
-        />
-        <CategorySection
-          icon={<Navigation className="h-4 w-4" />}
-          title="Decision friction"
-          status={d.navigationFriction.status}
-          bullets={d.navigationFriction.bullets}
-          defaultOpen={statusColor(d.navigationFriction.status) === "red"}
-        />
-        <CategorySection
-          icon={<AlignLeft className="h-4 w-4" />}
-          title="Scanability"
-          status={d.scanability.status}
-          bullets={d.scanability.bullets}
-          defaultOpen={statusColor(d.scanability.status) === "red"}
-        />
-        <CategorySection
-          icon={<MousePointerClick className="h-4 w-4" />}
-          title="Conversion path"
-          status={d.conversionPath.status}
-          bullets={d.conversionPath.bullets}
-          defaultOpen={statusColor(d.conversionPath.status) === "red"}
-        />
-        <CategorySection
-          icon={<FormInput className="h-4 w-4" />}
-          title="Form friction"
-          status={d.formFriction.status}
-          bullets={d.formFriction.bullets}
-          defaultOpen={statusColor(d.formFriction.status) === "red"}
-        />
-        <CategorySection
-          icon={<ShieldCheck className="h-4 w-4" />}
-          title="Trust depth"
-          status={d.trustDepth.status}
-          bullets={d.trustDepth.bullets}
-          defaultOpen={statusColor(d.trustDepth.status) === "red"}
-        />
-        <CategorySection
-          icon={<Smartphone className="h-4 w-4" />}
-          title="Mobile friction"
-          status={d.mobileFriction.status}
-          bullets={d.mobileFriction.bullets}
-          defaultOpen={statusColor(d.mobileFriction.status) === "red"}
-        />
+        {visibleCategories.map((cat) => (
+          <CategorySection
+            key={cat.key}
+            icon={cat.icon}
+            title={cat.title}
+            status={cat.status}
+            bullets={cat.bullets}
+            defaultOpen={statusColor(cat.status) === "red"}
+          />
+        ))}
       </div>
     </div>
   )
