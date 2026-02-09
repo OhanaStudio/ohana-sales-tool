@@ -90,9 +90,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <h2 className="font-sans text-2xl text-foreground mb-6">Executive summary</h2>
           <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
           <div className="flex flex-col gap-4 mt-8">
-            <RiskCard card={result.riskCards.visibility} />
-            <RiskCard card={result.riskCards.conversion} />
-            <RiskCard card={result.riskCards.trust} />
+            <RiskCard card={result.riskCards.visibility} variant="featured" />
+            <RiskCard card={result.riskCards.conversion} variant="featured" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <RiskCard card={result.riskCards.trust} />
+            </div>
           </div>
         </div>
 
