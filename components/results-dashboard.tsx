@@ -112,8 +112,6 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
             mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
             desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
           />
-        </div>
-        <div className="grid grid-cols-2 gap-3 mt-3">
           <MetricTile
             label="TBT"
             mobileValue={formatMs(result.mobile.metrics.tbt)}
@@ -130,8 +128,6 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
             mobileStatus={getMetricStatus("speedIndex", result.mobile.metrics.speedIndex)}
             desktopStatus={getMetricStatus("speedIndex", result.desktop.metrics.speedIndex)}
           />
-        </div>
-        <div className="grid grid-cols-1 mt-3">
           <MetricTile
             label="Performance"
             mobileValue={String(result.mobile.performanceScore)}
