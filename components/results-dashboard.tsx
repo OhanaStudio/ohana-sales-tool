@@ -11,7 +11,16 @@ import { AccessibilitySection } from "./accessibility-section"
 import { AdvancedUXSection } from "./advanced-ux-section"
 import { SiteScreenshots } from "./site-screenshots"
 import { PlatformInfoSection } from "./platform-info-section"
-import { FileText, Link2 } from "lucide-react"
+import {
+  FileText,
+  Link2,
+  ImageIcon,
+  Paintbrush,
+  Move,
+  Clock,
+  Gauge,
+  Zap,
+} from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -91,6 +100,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <MetricTile
             label="LCP"
+            icon={<ImageIcon className="h-4 w-4" />}
             mobileValue={formatMs(result.mobile.metrics.lcp)}
             desktopValue={formatMs(result.desktop.metrics.lcp)}
             unit={result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000 ? "s" : "ms"}
@@ -99,6 +109,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           />
           <MetricTile
             label="FCP"
+            icon={<Paintbrush className="h-4 w-4" />}
             mobileValue={formatMs(result.mobile.metrics.fcp)}
             desktopValue={formatMs(result.desktop.metrics.fcp)}
             unit={result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000 ? "s" : "ms"}
@@ -107,6 +118,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           />
           <MetricTile
             label="CLS"
+            icon={<Move className="h-4 w-4" />}
             mobileValue={formatCls(result.mobile.metrics.cls)}
             desktopValue={formatCls(result.desktop.metrics.cls)}
             mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
@@ -114,6 +126,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           />
           <MetricTile
             label="TBT"
+            icon={<Clock className="h-4 w-4" />}
             mobileValue={formatMs(result.mobile.metrics.tbt)}
             desktopValue={formatMs(result.desktop.metrics.tbt)}
             unit="ms"
@@ -122,6 +135,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           />
           <MetricTile
             label="Speed Index"
+            icon={<Gauge className="h-4 w-4" />}
             mobileValue={formatMs(result.mobile.metrics.speedIndex)}
             desktopValue={formatMs(result.desktop.metrics.speedIndex)}
             unit={result.mobile.metrics.speedIndex && result.mobile.metrics.speedIndex >= 1000 ? "s" : "ms"}
@@ -130,6 +144,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
           />
           <MetricTile
             label="Performance"
+            icon={<Zap className="h-4 w-4" />}
             mobileValue={String(result.mobile.performanceScore)}
             desktopValue={String(result.desktop.performanceScore)}
             maxScore={100}

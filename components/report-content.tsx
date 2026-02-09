@@ -11,7 +11,19 @@ import { AdvancedUXSection } from "./advanced-ux-section"
 import { SiteScreenshots } from "./site-screenshots"
 import { ScoreDisplay } from "./score-display"
 import { PlatformInfoSection } from "./platform-info-section"
-import { Download, ArrowLeft } from "lucide-react"
+import {
+  Download,
+  ArrowLeft,
+  ImageIcon,
+  Paintbrush,
+  Move,
+  Clock,
+  Gauge,
+  Zap,
+  Eye,
+  Search,
+  ShieldCheck,
+} from "lucide-react"
 import Link from "next/link"
 
 function formatMs(val: number | null): string | null {
@@ -112,6 +124,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <div className="grid grid-cols-2 gap-3">
             <MetricTile
               label="Largest Contentful Paint"
+              icon={<ImageIcon className="h-4 w-4" />}
               mobileValue={formatMs(result.mobile.metrics.lcp)}
               desktopValue={formatMs(result.desktop.metrics.lcp)}
               unit={result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000 ? "s" : "ms"}
@@ -120,6 +133,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
             <MetricTile
               label="First Contentful Paint"
+              icon={<Paintbrush className="h-4 w-4" />}
               mobileValue={formatMs(result.mobile.metrics.fcp)}
               desktopValue={formatMs(result.desktop.metrics.fcp)}
               unit={result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000 ? "s" : "ms"}
@@ -132,6 +146,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <div className="grid grid-cols-3 gap-3 mt-3">
             <MetricTile
               label="Cumulative Layout Shift"
+              icon={<Move className="h-4 w-4" />}
               mobileValue={formatCls(result.mobile.metrics.cls)}
               desktopValue={formatCls(result.desktop.metrics.cls)}
               mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
@@ -139,6 +154,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
             <MetricTile
               label="Total Blocking Time"
+              icon={<Clock className="h-4 w-4" />}
               mobileValue={formatMs(result.mobile.metrics.tbt)}
               desktopValue={formatMs(result.desktop.metrics.tbt)}
               unit="ms"
@@ -147,6 +163,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
             <MetricTile
               label="Speed Index"
+              icon={<Gauge className="h-4 w-4" />}
               mobileValue={formatMs(result.mobile.metrics.speedIndex)}
               desktopValue={formatMs(result.desktop.metrics.speedIndex)}
               unit={result.mobile.metrics.speedIndex && result.mobile.metrics.speedIndex >= 1000 ? "s" : "ms"}
@@ -159,6 +176,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <div className="grid grid-cols-2 gap-3 mt-3">
             <MetricTile
               label="Performance"
+              icon={<Zap className="h-4 w-4" />}
               mobileValue={String(result.mobile.performanceScore)}
               desktopValue={String(result.desktop.performanceScore)}
               maxScore={100}
@@ -167,6 +185,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
             <MetricTile
               label="Accessibility"
+              icon={<Eye className="h-4 w-4" />}
               mobileValue={String(result.mobile.accessibilityScore)}
               desktopValue={String(result.desktop.accessibilityScore)}
               maxScore={100}
@@ -179,6 +198,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <div className="grid grid-cols-2 gap-3 mt-3">
             <MetricTile
               label="SEO"
+              icon={<Search className="h-4 w-4" />}
               mobileValue={String(result.mobile.seoScore)}
               desktopValue={String(result.desktop.seoScore)}
               maxScore={100}
@@ -187,6 +207,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
             <MetricTile
               label="Best Practices"
+              icon={<ShieldCheck className="h-4 w-4" />}
               mobileValue={String(result.mobile.bestPracticesScore)}
               desktopValue={String(result.desktop.bestPracticesScore)}
               maxScore={100}

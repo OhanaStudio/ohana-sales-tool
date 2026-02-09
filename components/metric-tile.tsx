@@ -1,4 +1,5 @@
 import type { RiskLevel } from "@/lib/types"
+import type { ReactNode } from "react"
 
 interface MetricTileProps {
   label: string
@@ -8,6 +9,7 @@ interface MetricTileProps {
   maxScore?: number
   mobileStatus?: RiskLevel
   desktopStatus?: RiskLevel
+  icon?: ReactNode
 }
 
 const statusDotColor: Record<RiskLevel, string> = {
@@ -42,6 +44,7 @@ export function MetricTile({
   maxScore,
   mobileStatus,
   desktopStatus,
+  icon,
 }: MetricTileProps) {
   const tileBorder = worstStatus(mobileStatus, desktopStatus)
 
@@ -51,9 +54,14 @@ export function MetricTile({
         tileBorder ? statusBorderColor[tileBorder] : "border-border"
       }`}
     >
-      <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-3">
-        {label}
-      </p>
+      <div className="flex items-center gap-2 mb-3">
+        {icon && (
+          <span className="text-muted-foreground/70">{icon}</span>
+        )}
+        <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold">
+          {label}
+        </p>
+      </div>
       <div className="flex items-end gap-4">
         <div>
           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-0.5">
