@@ -108,7 +108,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
             Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {/* Row 1: 2 cards */}
+          <div className="grid grid-cols-2 gap-3">
             <MetricTile
               label="Largest Contentful Paint"
               mobileValue={formatMs(result.mobile.metrics.lcp)}
@@ -125,6 +126,10 @@ export function ReportContent({ result }: { result: AuditResult }) {
               mobileStatus={getMetricStatus("fcp", result.mobile.metrics.fcp)}
               desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
             />
+          </div>
+
+          {/* Row 2: 3 cards */}
+          <div className="grid grid-cols-3 gap-3 mt-3">
             <MetricTile
               label="Cumulative Layout Shift"
               mobileValue={formatCls(result.mobile.metrics.cls)}
@@ -150,7 +155,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          {/* Row 3: 2 cards */}
+          <div className="grid grid-cols-2 gap-3 mt-3">
             <MetricTile
               label="Performance"
               mobileValue={String(result.mobile.performanceScore)}
@@ -167,6 +173,10 @@ export function ReportContent({ result }: { result: AuditResult }) {
               mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
               desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
             />
+          </div>
+
+          {/* Row 4: 2 cards */}
+          <div className="grid grid-cols-2 gap-3 mt-3">
             <MetricTile
               label="SEO"
               mobileValue={String(result.mobile.seoScore)}
