@@ -20,6 +20,7 @@ import {
   generateSalesTalkTrack,
 } from "@/lib/scoring"
 import { extractAdvancedUXIndicators } from "@/lib/ux-analysis"
+import { analyseScreenshotsWithAI } from "@/lib/ai-ux-analysis"
 
 function isValidUrl(str: string): boolean {
   try {
@@ -548,8 +549,12 @@ export async function POST(request: Request) {
     const desktop = desktopData.result
     const fetchedHtml = siteHtml.html
 
-    // All analysis uses the single HTML fetch + Lighthouse audits (rendered DOM)
-    const uxIndicators = analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
+    // Try AI vision analysis first (uses screenshots), fall back to HTML/Lighthouse parsing
+    const aiUxResult = await analyseScreenshotsWithAI(
+      mobileData.result.screenshot,
+      desktopData.result.screenshot,
+    )
+    const uxIndicators = aiUxResult ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
     const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml)
     const advancedUX = extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)

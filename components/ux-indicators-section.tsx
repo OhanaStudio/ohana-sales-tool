@@ -130,7 +130,7 @@ export function UXIndicatorsSection({
         UX indicators
       </h3>
       <p className="text-xs text-muted-foreground/60 mb-4 italic">
-        These are indicators based on a lightweight scan, not proof.
+        These indicators are based on an AI analysis of the page screenshots.
       </p>
       <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
         {items.map((item) => (
