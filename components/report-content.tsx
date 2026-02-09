@@ -69,7 +69,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
       <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12">
         <div className="pt-8 md:pt-12 pb-8 border-b border-border mb-8">
           <p className="font-sans text-lg text-foreground mb-1">Ohana</p>
-          <h1 className="font-serif text-3xl md:text-4xl text-foreground mb-4 text-balance">
+          <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground mb-4 text-balance">
             Website Health Check
           </h1>
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">

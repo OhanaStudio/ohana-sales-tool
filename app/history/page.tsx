@@ -38,7 +38,7 @@ export default function HistoryPage() {
       <TopBar />
       <main className="px-5 md:px-8 max-w-4xl mx-auto pb-12">
         <div className="pt-8 md:pt-12 pb-6">
-          <h1 className="font-serif text-3xl md:text-4xl text-foreground text-balance">
+          <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground text-balance">
             History.
           </h1>
           <p className="text-sm text-muted-foreground mt-2">

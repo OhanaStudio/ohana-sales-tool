@@ -55,7 +55,7 @@ export default function ReportPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-5">
         <div className="text-center">
-          <h1 className="font-serif text-2xl text-foreground mb-2">Report not found</h1>
+          <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground mb-2">Report not found</h1>
           <p className="text-sm text-muted-foreground mb-4">
             {error || "This report may have expired or the URL is incorrect."}
           </p>

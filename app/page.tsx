@@ -60,7 +60,7 @@ export default function Page() {
         {/* Hero */}
         {!result && !loading && (
           <div className="pt-12 md:pt-20 pb-8 md:pb-12">
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance mb-4">
+            <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground leading-tight text-balance mb-4">
               Website health check.
             </h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed">
