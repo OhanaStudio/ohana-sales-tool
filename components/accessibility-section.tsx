@@ -44,7 +44,7 @@ function A11yRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           {icon}
-          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="text-sm font-bold text-foreground">{label}</p>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">{detail}</p>
         {wcagRef && (

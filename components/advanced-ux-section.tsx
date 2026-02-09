@@ -89,7 +89,7 @@ function CategorySection({
       >
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-muted-foreground shrink-0">{icon}</span>
-          <span className="text-sm font-medium text-foreground truncate">
+          <span className="text-sm font-bold text-foreground truncate">
             {title}
           </span>
         </div>
