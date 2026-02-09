@@ -120,7 +120,10 @@ export async function analyseScreenshotsWithAI(
   }
 
   try {
-    const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    const openai = createOpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      baseURL: "https://api.openai.com/v1",
+    })
 
     const { output } = await generateText({
       model: openai("gpt-4o-mini"),
