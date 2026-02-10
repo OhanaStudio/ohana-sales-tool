@@ -49,6 +49,24 @@ function truncateUrl(url: string): string {
 export function HistoryList({ items }: { items: HistoryItem[] }) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [rerunningId, setRerunningId] = useState<string | null>(null)
+
+  const handleRerun = async (id: string, url: string) => {
+    setRerunningId(id)
+    try {
+      const res = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      })
+      const data = await res.json()
+      if (data.id) {
+        router.push(`/report/${data.id}`)
+      }
+    } catch {
+      setRerunningId(null)
+    }
+  }
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this report?")) return
@@ -96,13 +114,15 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                 <ExternalLink className="h-3.5 w-3.5" />
                 View report
               </Link>
-              <Link
-                href={`/?rerun=${encodeURIComponent(item.url)}`}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card text-card-foreground px-3 py-2 text-xs font-medium hover:bg-accent transition-colors min-h-[44px] flex-1 justify-center"
+              <button
+                type="button"
+                onClick={() => handleRerun(item.id, item.url)}
+                disabled={rerunningId === item.id}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-transparent text-card-foreground px-3 py-2 text-xs font-medium hover:bg-accent transition-colors min-h-[44px] flex-1 justify-center disabled:opacity-50"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
-                Rerun
-              </Link>
+                <RotateCcw className={`h-3.5 w-3.5 ${rerunningId === item.id ? "animate-spin" : ""}`} />
+                {rerunningId === item.id ? "Running..." : "Rerun"}
+              </button>
               <button
                 type="button"
                 onClick={() => handleDelete(item.id)}
@@ -168,13 +188,15 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                         <ExternalLink className="h-3.5 w-3.5" />
                         Report
                       </Link>
-                      <Link
-                        href={`/?rerun=${encodeURIComponent(item.url)}`}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px]"
+                      <button
+                        type="button"
+                        onClick={() => handleRerun(item.id, item.url)}
+                        disabled={rerunningId === item.id}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] disabled:opacity-50 bg-transparent"
                       >
-                        <RotateCcw className="h-3.5 w-3.5" />
-                        Rerun
-                      </Link>
+                        <RotateCcw className={`h-3.5 w-3.5 ${rerunningId === item.id ? "animate-spin" : ""}`} />
+                        {rerunningId === item.id ? "Running..." : "Rerun"}
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(item.id)}
