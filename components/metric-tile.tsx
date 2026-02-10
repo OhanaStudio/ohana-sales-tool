@@ -19,9 +19,9 @@ const dotColor: Record<RiskLevel, string> = {
 }
 
 const borderColor: Record<RiskLevel, string> = {
-  green: "border-emerald-400/60",
-  amber: "border-amber-400/60",
-  red: "border-red-400/60",
+  green: "border-emerald-400",
+  amber: "border-amber-400",
+  red: "border-red-400",
 }
 
 function worstStatus(a?: RiskLevel, b?: RiskLevel): RiskLevel | undefined {
