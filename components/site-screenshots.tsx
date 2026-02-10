@@ -52,9 +52,9 @@ export function SiteScreenshots({
         {/* Mobile screenshot */}
         {mobileScreenshot && (
           <div className="flex-1 max-w-[220px] flex flex-col">
-            <div className="rounded-2xl border-2 border-border bg-card overflow-hidden shadow-sm flex flex-col flex-1">
+            <div className="border-2 border-border bg-card overflow-hidden shadow-sm flex flex-col flex-1">
               <div className="flex justify-center py-1.5 shrink-0">
-                <span className="w-16 h-1 rounded-full bg-muted-foreground/15" />
+                <span className="w-16 h-1 bg-muted-foreground/30" />
               </div>
               <div className="flex-1 overflow-hidden">
                 <img
@@ -66,7 +66,7 @@ export function SiteScreenshots({
                 />
               </div>
               <div className="flex justify-center py-2 shrink-0">
-                <span className="w-8 h-8 rounded-full border border-muted-foreground/15" />
+                <span className="w-8 h-8 border border-muted-foreground/30" />
               </div>
             </div>
           </div>
