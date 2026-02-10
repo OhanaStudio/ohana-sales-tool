@@ -86,39 +86,43 @@ export function MetricTile({
         tileBorder ? borderColor[tileBorder] : "border-border"
       }`}
     >
-      {/* Icon */}
-      {icon && (
-        <div className="mb-2 text-muted-foreground/60">{icon}</div>
-      )}
-
-      {/* Title */}
-      <h4 className="font-sans text-base font-bold text-card-foreground mb-4 leading-snug">
-        {label}
-      </h4>
+      {/* Icon + Title */}
+      <div className="flex items-center gap-3 mb-4">
+        {icon && (
+          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-muted/60 text-muted-foreground shrink-0 [&>svg]:h-5 [&>svg]:w-5">
+            {icon}
+          </div>
+        )}
+        <h4 className="font-sans text-base font-bold text-card-foreground leading-snug">
+          {label}
+        </h4>
+      </div>
 
       {/* Mobile | Desktop split */}
-      <div className="grid grid-cols-2 gap-0">
-        <div className="pr-3 border-r border-border/60">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-1">
-            Mobile
-          </p>
-          <ValueDisplay
-            value={mobileValue}
-            unit={unit}
-            maxScore={maxScore}
-            status={mobileStatus}
-          />
-        </div>
-        <div className="pl-3">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-1">
-            Desktop
-          </p>
-          <ValueDisplay
-            value={desktopValue}
-            unit={unit}
-            maxScore={maxScore}
-            status={desktopStatus}
-          />
+      <div className="rounded-lg bg-muted/40 p-3">
+        <div className="grid grid-cols-2 gap-0">
+          <div className="pr-3 border-r border-border/60">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-1">
+              Mobile
+            </p>
+            <ValueDisplay
+              value={mobileValue}
+              unit={unit}
+              maxScore={maxScore}
+              status={mobileStatus}
+            />
+          </div>
+          <div className="pl-3">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-1">
+              Desktop
+            </p>
+            <ValueDisplay
+              value={desktopValue}
+              unit={unit}
+              maxScore={maxScore}
+              status={desktopStatus}
+            />
+          </div>
         </div>
       </div>
     </div>
