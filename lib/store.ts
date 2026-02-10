@@ -1,14 +1,32 @@
 import { neon } from "@neondatabase/serverless"
 import type { StoredReport } from "./types"
 
-function getDb() {
-  return neon(process.env.DATABASE_URL!)
+function getConnectionString() {
+  const url =
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.DATABASE_AUTHENTICATED_URL ||
+    process.env.NEON_DATABASE_URL ||
+    ""
+  return url
 }
+
+function getDb() {
+  const connStr = getConnectionString()
+  if (!connStr) return null
+  return neon(connStr)
+}
+
+// In-memory fallback when no DB is configured
+const memoryStore = new Map<string, StoredReport>()
 
 export async function saveReport(report: StoredReport): Promise<void> {
   const sql = getDb()
+  if (!sql) {
+    memoryStore.set(report.id, report)
+    return
+  }
 
-  // Calculate the next version for this URL
   const versionRows = await sql`
     SELECT COALESCE(MAX(version), 0) AS max_version
     FROM reports
@@ -32,6 +50,10 @@ export async function saveReport(report: StoredReport): Promise<void> {
 
 export async function getReport(id: string): Promise<StoredReport | undefined> {
   const sql = getDb()
+  if (!sql) {
+    return memoryStore.get(id)
+  }
+
   const rows = await sql`
     SELECT id, url, timestamp, result_json
     FROM reports
@@ -48,7 +70,13 @@ export async function getReport(id: string): Promise<StoredReport | undefined> {
 
 export async function getCachedReportForUrl(url: string): Promise<StoredReport | undefined> {
   const sql = getDb()
-  // Return most recent report for this URL within last 24h
+  if (!sql) {
+    for (const r of memoryStore.values()) {
+      if (r.url === url) return r
+    }
+    return undefined
+  }
+
   const rows = await sql`
     SELECT id, url, timestamp, result_json
     FROM reports
@@ -74,6 +102,16 @@ export async function getAllReports(): Promise<{
   overallScore: number
 }[]> {
   const sql = getDb()
+  if (!sql) {
+    return Array.from(memoryStore.values()).map((r) => ({
+      id: r.id,
+      url: r.url,
+      timestamp: r.timestamp,
+      version: 1,
+      overallScore: r.result.overallScore,
+    }))
+  }
+
   const rows = await sql`
     SELECT id, url, timestamp, version, overall_score
     FROM reports
@@ -97,6 +135,18 @@ export async function getReportsForUrl(url: string): Promise<{
   overallScore: number
 }[]> {
   const sql = getDb()
+  if (!sql) {
+    return Array.from(memoryStore.values())
+      .filter((r) => r.url === url)
+      .map((r) => ({
+        id: r.id,
+        url: r.url,
+        timestamp: r.timestamp,
+        version: 1,
+        overallScore: r.result.overallScore,
+      }))
+  }
+
   const rows = await sql`
     SELECT id, url, timestamp, version, overall_score
     FROM reports
@@ -114,5 +164,9 @@ export async function getReportsForUrl(url: string): Promise<{
 
 export async function deleteReport(id: string): Promise<void> {
   const sql = getDb()
+  if (!sql) {
+    memoryStore.delete(id)
+    return
+  }
   await sql`DELETE FROM reports WHERE id = ${id}`
 }
