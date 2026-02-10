@@ -46,45 +46,43 @@ const groupConfig: Record<RiskLevel, GroupConfig> = {
   },
 }
 
-function GroupedCard({ card, config }: { card: RiskCardType; config: GroupConfig }) {
+function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: GroupConfig; isLast: boolean }) {
   const icon = cardIcons[card.label] ?? <Eye className="h-5 w-5" />
 
   return (
-    <div className={cn("rounded-xl border bg-card overflow-hidden print-break-avoid", config.borderClass)}>
-      <div className="p-6 md:p-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground">
-              {icon}
-            </div>
-            <h3 className="font-sans text-xl font-bold text-card-foreground">
-              {card.label} ({card.bullets.length} {card.bullets.length === 1 ? "Risk" : "Risks"})
-            </h3>
+    <div className={cn("p-6 md:px-8", !isLast && "border-b border-border")}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground">
+            {icon}
           </div>
-          <span
-            className={cn(
-              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium shrink-0",
-              config.badgeClass
-            )}
-          >
-            {config.badgeLabel}
-          </span>
+          <h3 className="font-sans text-lg font-bold text-card-foreground">
+            {card.label} ({card.bullets.length} {card.bullets.length === 1 ? "Risk" : "Risks"})
+          </h3>
         </div>
-        <ul className="space-y-2.5 mb-4">
-          {card.bullets.map((bullet, i) => (
-            <li
-              key={`bullet-${card.label}-${i}`}
-              className="text-sm text-muted-foreground leading-relaxed flex gap-2"
-            >
-              <span className="text-muted-foreground shrink-0">{"--"}</span>
-              <span>{bullet}</span>
-            </li>
-          ))}
-        </ul>
-        <p className="text-xs text-muted-foreground italic leading-relaxed">
-          {card.whyItMatters}
-        </p>
+        <span
+          className={cn(
+            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium shrink-0",
+            config.badgeClass
+          )}
+        >
+          {config.badgeLabel}
+        </span>
       </div>
+      <ul className="space-y-2.5 mb-4">
+        {card.bullets.map((bullet, i) => (
+          <li
+            key={`bullet-${card.label}-${i}`}
+            className="text-sm text-muted-foreground leading-relaxed flex gap-2"
+          >
+            <span className="text-muted-foreground shrink-0">{"--"}</span>
+            <span>{bullet}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="text-xs text-muted-foreground italic leading-relaxed">
+        {card.whyItMatters}
+      </p>
     </div>
   )
 }
@@ -119,15 +117,20 @@ export function RiskGroups({ result }: { result: AuditResult }) {
         const config = groupConfig[group.level]
         return (
           <div key={group.level}>
-            <h2 className="font-sans text-2xl text-foreground mb-2 print:text-xl">
+            <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
               {config.heading}
             </h2>
             <p className="text-sm text-muted-foreground italic mb-5 leading-relaxed">
               {config.subtitle}
             </p>
-            <div className="flex flex-col gap-4">
-              {group.cards.map((card) => (
-                <GroupedCard key={card.label} card={card} config={config} />
+            <div className={cn("rounded-xl border bg-card overflow-hidden print-break-avoid", config.borderClass)}>
+              {group.cards.map((card, i) => (
+                <GroupedCard
+                  key={card.label}
+                  card={card}
+                  config={config}
+                  isLast={i === group.cards.length - 1}
+                />
               ))}
             </div>
           </div>

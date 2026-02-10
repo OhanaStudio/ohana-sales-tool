@@ -186,7 +186,7 @@ export function AdvancedUXSection({
 
   return (
     <div>
-      <h3 className="font-sans text-xl text-foreground mb-1">
+      <h3 className="font-sans text-xl font-bold text-foreground mb-1">
         UX friction analysis
       </h3>
       <p className="text-xs text-muted-foreground mb-2 italic leading-relaxed">

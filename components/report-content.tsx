@@ -275,7 +275,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             </div>
           }
         >
-          <h2 className="font-sans text-2xl text-foreground mb-2 print:text-xl">
+          <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
             Performance overview
           </h2>
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
@@ -402,7 +402,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             UX INDICATORS
-        ────────────────────────────────────────────── */}
+        ───────────���────────────────────────────────── */}
         <PrintSection
           enabled={sections.ux}
           className="mb-10 print-break-before print-compact"
@@ -500,7 +500,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             </div>
           }
         >
-          <h2 className="font-sans text-2xl text-foreground mb-2 print:text-xl">
+          <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
             Recommended next steps
           </h2>
           <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed max-w-lg">
