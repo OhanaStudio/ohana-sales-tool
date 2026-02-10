@@ -27,7 +27,6 @@ import {
   Gauge,
   Zap,
   Eye,
-  Search,
   ShieldCheck,
 } from "lucide-react"
 import Link from "next/link"
@@ -361,10 +360,10 @@ export function ReportContent({ result }: { result: AuditResult }) {
               )}
             />
           </div>
-          {/* Row 3: 2 cards */}
-          <div className="grid grid-cols-2 gap-3 mt-3">
+          {/* Row 3: 3 cards */}
+          <div className="grid grid-cols-3 gap-3 mt-3">
             <MetricTile
-              label="Performance"
+              label="Performance Score"
               icon={<Zap className="h-4 w-4" />}
               mobileValue={String(result.mobile.performanceScore)}
               desktopValue={String(result.desktop.performanceScore)}
@@ -380,18 +379,6 @@ export function ReportContent({ result }: { result: AuditResult }) {
               maxScore={100}
               mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
               desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
-            />
-          </div>
-          {/* Row 4: 2 cards */}
-          <div className="grid grid-cols-2 gap-3 mt-3">
-            <MetricTile
-              label="SEO"
-              icon={<Search className="h-4 w-4" />}
-              mobileValue={String(result.mobile.seoScore)}
-              desktopValue={String(result.desktop.seoScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.seoScore)}
-              desktopStatus={getScoreStatus(result.desktop.seoScore)}
             />
             <MetricTile
               label="Best Practices"
