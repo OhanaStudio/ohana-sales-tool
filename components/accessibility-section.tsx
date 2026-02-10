@@ -1,6 +1,7 @@
 import React from "react"
 import type { AccessibilityIndicators } from "@/lib/types"
 import { Check, X, AlertTriangle } from "lucide-react"
+import { parseEaaIssue } from "@/lib/utils" // Assuming parseEaaIssue is declared in utils.js
 
 function StatusIcon({ status }: { status: "pass" | "warn" | "fail" }) {
   if (status === "pass")
@@ -40,6 +41,19 @@ function A11yRow({
       </div>
     </div>
   )
+}
+
+const EAA_ISSUE_NOTES: Record<string, string> = {
+  "3.1.1": "Without a language declaration, screen readers may mispronounce content, making the site difficult for visually impaired visitors.",
+  "2.4.2": "The page title appears in browser tabs, search results, and bookmarks. Missing titles look unprofessional and hurt search rankings.",
+  "1.3.1": "Proper document structure helps screen readers and search engines understand your content. This is a foundational accessibility and SEO requirement.",
+  "1.1.1": "Images without alt text are invisible to screen reader users and search engines. This is both an accessibility violation and a missed SEO opportunity.",
+  "4.1.2": "Unlabelled form fields are confusing for screen reader users and can reduce form completion rates on mobile devices.",
+  "2.4.4": "Links without descriptive text are meaningless for screen reader users who navigate by link list. This reduces clarity for all visitors.",
+  "1.4.2": "Videos without user controls frustrate visitors and violate accessibility standards. Autoplay can disorient users with cognitive disabilities.",
+  "1.2.2": "Captions are essential for deaf and hard-of-hearing users, and also help visitors in sound-sensitive environments like offices.",
+  "2.4.1": "Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple fix with major impact.",
+  "gdpr": "EU regulations require consent before setting non-essential cookies. Non-compliance can result in significant fines under GDPR.",
 }
 
 export function AccessibilitySection({
@@ -247,12 +261,19 @@ export function AccessibilitySection({
             EAA / WCAG issue summary
           </p>
           <div className="rounded-xl border border-border bg-card px-6 divide-y divide-border">
-            {a.eaaIssues.map((issue, i) => (
-              <div key={i} className="flex items-start gap-3 py-4">
-                <X className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-                <p className="text-sm font-bold text-foreground">{issue}</p>
-              </div>
-            ))}
+            {a.eaaIssues.map((issue, i) => {
+              const parsed = parseEaaIssue(issue)
+              return (
+                <A11yRow
+                  key={i}
+                  label={parsed.label}
+                  status="fail"
+                  detail={parsed.detail}
+                  wcagRef={parsed.wcagRef}
+                  note={parsed.note}
+                />
+              )
+            })}
           </div>
         </div>
       )}
