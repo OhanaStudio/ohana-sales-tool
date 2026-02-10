@@ -525,6 +525,83 @@ function detectPlatform(html: string, url: string): PlatformInfo {
 
   // --- CMS / Platform signatures (ordered by specificity) ---
 
+  // Sitecore (check early -- enterprise CMS, often hard to detect)
+  if (
+    lower.includes("/-/media/") ||
+    lower.includes("/~/media/") ||
+    lower.includes("sc_analytics_global_cookie") ||
+    lower.includes("sitecore") ||
+    lower.includes("sc_site=") ||
+    lower.includes("sc_lang=") ||
+    lower.includes("sc_itemid=") ||
+    lower.includes("telerik.web.ui") ||
+    lower.includes(".ashx") && (lower.includes("/-/media") || lower.includes("/~/media"))
+  ) {
+    details.push("Sitecore CMS signatures detected")
+    if (lower.includes("/-/media/") || lower.includes("/~/media/")) details.push("Sitecore media library URLs found")
+    if (lower.includes("sc_analytics")) details.push("Sitecore Analytics tracking detected")
+    if (lower.includes(".ashx")) details.push("ASP.NET handlers (.ashx) in use")
+    return { platform: "Sitecore", confidence: "high", details }
+  }
+
+  // Adobe Experience Manager (AEM)
+  if (
+    lower.includes("/content/dam/") ||
+    lower.includes("/etc.clientlibs/") ||
+    lower.includes("cq-") ||
+    lower.includes("/libs/granite/") ||
+    lower.includes("data-cmp-") ||
+    lower.includes("adobe experience manager")
+  ) {
+    details.push("Adobe Experience Manager (AEM) signatures detected")
+    if (lower.includes("/content/dam/")) details.push("AEM DAM asset paths found")
+    if (lower.includes("/etc.clientlibs/")) details.push("AEM client libraries detected")
+    return { platform: "Adobe AEM", confidence: "high", details }
+  }
+
+  // Kentico
+  if (
+    lower.includes("kentico") ||
+    lower.includes("cmspages/") ||
+    lower.includes("cmsmodules/") ||
+    lower.includes("getmedia/")
+  ) {
+    details.push("Kentico CMS signatures detected")
+    return { platform: "Kentico", confidence: "high", details }
+  }
+
+  // Optimizely (Episerver)
+  if (
+    lower.includes("episerver") ||
+    lower.includes("optimizely") && lower.includes("cms") ||
+    lower.includes("epi-contentarea") ||
+    lower.includes("/episerver/") ||
+    lower.includes("episerverapi")
+  ) {
+    details.push("Optimizely (Episerver) CMS signatures detected")
+    return { platform: "Optimizely", confidence: "high", details }
+  }
+
+  // Contentful
+  if (
+    lower.includes("contentful") ||
+    lower.includes("ctfassets.net") ||
+    lower.includes("images.ctfassets.net")
+  ) {
+    details.push("Contentful headless CMS signatures detected")
+    return { platform: "Contentful", confidence: "high", details }
+  }
+
+  // Umbraco
+  if (
+    lower.includes("umbraco") ||
+    lower.includes("/umbraco/") ||
+    lower.includes("umb-") 
+  ) {
+    details.push("Umbraco CMS signatures detected")
+    return { platform: "Umbraco", confidence: "high", details }
+  }
+
   // WordPress
   if (lower.includes("wp-content") || lower.includes("wp-includes") || lower.includes("wordpress")) {
     details.push("WordPress signatures detected (wp-content, wp-includes)")
