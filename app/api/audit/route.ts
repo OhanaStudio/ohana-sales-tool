@@ -95,14 +95,21 @@ async function fetchPSI(
     notes.push("Field data is not available for this URL. Results are based on lab data only.")
   }
 
-  // Extract screenshot from final-screenshot audit
+  // Extract screenshot — prefer full-page-screenshot (higher res), fall back to final-screenshot
   let screenshot: ScreenshotData | undefined
-  const screenshotAudit = audits["final-screenshot"]
-  if (screenshotAudit?.details?.data) {
+  const fullPageAudit = audits["full-page-screenshot"]
+  const finalAudit = audits["final-screenshot"]
+  if (fullPageAudit?.details?.screenshot?.data) {
     screenshot = {
-      data: screenshotAudit.details.data,
-      width: screenshotAudit.details.width ?? 0,
-      height: screenshotAudit.details.height ?? 0,
+      data: fullPageAudit.details.screenshot.data,
+      width: fullPageAudit.details.screenshot.width ?? 0,
+      height: fullPageAudit.details.screenshot.height ?? 0,
+    }
+  } else if (finalAudit?.details?.data) {
+    screenshot = {
+      data: finalAudit.details.data,
+      width: finalAudit.details.width ?? 0,
+      height: finalAudit.details.height ?? 0,
     }
   }
 

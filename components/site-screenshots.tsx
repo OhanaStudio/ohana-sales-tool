@@ -30,17 +30,17 @@ export function SiteScreenshots({
         {/* Desktop screenshot */}
         {desktopScreenshot && (
           <div className="flex-[3] min-w-0 flex flex-col">
-            <div className="border border-border bg-card overflow-hidden shadow-sm flex flex-col flex-1">
-              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-muted/30 shrink-0">
-                <span className="w-2.5 h-2.5 bg-muted-foreground/20" />
-                <span className="w-2.5 h-2.5 bg-muted-foreground/20" />
-                <span className="w-2.5 h-2.5 bg-muted-foreground/20" />
+            <div className="border border-neutral-700 bg-neutral-900 overflow-hidden shadow-sm flex flex-col flex-1">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-neutral-700 bg-neutral-800 shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-neutral-600" />
+                <span className="w-2.5 h-2.5 rounded-full bg-neutral-600" />
+                <span className="w-2.5 h-2.5 rounded-full bg-neutral-600" />
               </div>
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 overflow-hidden max-h-[480px]">
                 <img
                   src={desktopScreenshot.data || "/placeholder.svg"}
                   alt={`Desktop screenshot of ${hostname}`}
-                  className="w-full h-full object-cover object-top"
+                  className="w-full object-cover object-top"
                   width={desktopScreenshot.width}
                   height={desktopScreenshot.height}
                 />
@@ -52,21 +52,21 @@ export function SiteScreenshots({
         {/* Mobile screenshot */}
         {mobileScreenshot && (
           <div className="flex-1 max-w-[220px] flex flex-col">
-            <div className="border-2 border-border bg-card overflow-hidden shadow-sm flex flex-col flex-1">
+            <div className="border-2 border-neutral-700 bg-neutral-900 overflow-hidden shadow-sm flex flex-col flex-1">
               <div className="flex justify-center py-1.5 shrink-0">
-                <span className="w-16 h-1 bg-muted-foreground/30" />
+                <span className="w-16 h-1 rounded-full bg-neutral-600" />
               </div>
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 overflow-hidden max-h-[520px]">
                 <img
                   src={mobileScreenshot.data || "/placeholder.svg"}
                   alt={`Mobile screenshot of ${hostname}`}
-                  className="w-full h-full object-cover object-top"
+                  className="w-full object-cover object-top"
                   width={mobileScreenshot.width}
                   height={mobileScreenshot.height}
                 />
               </div>
               <div className="flex justify-center py-2 shrink-0">
-                <span className="w-8 h-8 border border-muted-foreground/30" />
+                <span className="w-8 h-8 rounded-full border border-neutral-600" />
               </div>
             </div>
           </div>
