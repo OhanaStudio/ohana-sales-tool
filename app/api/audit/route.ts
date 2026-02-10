@@ -359,7 +359,7 @@ function extractAccessibilityIndicators(
 const BROWSER_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
-async function fetchSiteHtml(url: string): Promise<{ html: string; blocked: boolean }> {
+async function fetchSiteHtml(url: string): Promise<{ html: string; blocked: boolean; responseHeaders: Record<string, string> }> {
   try {
     const res = await fetch(url, {
       headers: {
@@ -370,11 +370,16 @@ async function fetchSiteHtml(url: string): Promise<{ html: string; blocked: bool
       signal: AbortSignal.timeout(12000),
       redirect: "follow",
     })
-    if (!res.ok) return { html: "", blocked: true }
+    // Capture response headers for platform detection
+    const responseHeaders: Record<string, string> = {}
+    res.headers.forEach((value, key) => {
+      responseHeaders[key.toLowerCase()] = value.toLowerCase()
+    })
+    if (!res.ok) return { html: "", blocked: true, responseHeaders }
     const html = await res.text()
-    return { html, blocked: false }
+    return { html, blocked: false, responseHeaders }
   } catch {
-    return { html: "", blocked: true }
+    return { html: "", blocked: true, responseHeaders: {} }
   }
 }
 
@@ -530,29 +535,62 @@ function analyseUXIndicators(html: string, blocked: boolean, mobileAudits?: any)
   return result
 }
 
-function detectPlatform(html: string, url: string): PlatformInfo {
+function detectPlatform(html: string, url: string, responseHeaders: Record<string, string> = {}): PlatformInfo {
   const lower = html.toLowerCase()
   const details: string[] = []
+
+  // Flatten all header values into a single string for matching
+  const headerValues = Object.entries(responseHeaders).map(([k, v]) => `${k}: ${v}`).join(" | ")
 
   // --- CMS / Platform signatures (ordered by specificity) ---
 
   // Sitecore (check early -- enterprise CMS, often hard to detect)
-  if (
-    lower.includes("/-/media/") ||
-    lower.includes("/~/media/") ||
-    lower.includes("sc_analytics_global_cookie") ||
-    lower.includes("sitecore") ||
-    lower.includes("sc_site=") ||
-    lower.includes("sc_lang=") ||
-    lower.includes("sc_itemid=") ||
-    lower.includes("telerik.web.ui") ||
-    lower.includes(".ashx") && (lower.includes("/-/media") || lower.includes("/~/media"))
-  ) {
+  // Sitecore has many variants: traditional, headless (JSS/XM Cloud), SXA
+  const sitecoreHtmlSignals = [
+    "/-/media/",           // Sitecore media library (traditional)
+    "/~/media/",           // Sitecore media library (older)
+    "sc_analytics_global_cookie",
+    "sitecore",
+    "sc_site=",
+    "sc_lang=",
+    "sc_itemid=",
+    "telerik.web.ui",      // Telerik (used by Sitecore)
+    "scwebeditrenderingid", // Sitecore Experience Editor
+    "data-sc-",            // Sitecore component attributes
+    "sc_debug",
+    "sxa-",                // Sitecore SXA module
+    "sitecore-jss",        // Sitecore JSS headless
+    "scitemid",
+    "sc-part-of",
+    "data-rendering-id",   // Sitecore rendering markers
+    "jss-main",            // Sitecore JSS root
+    "/sitecore/shell/",
+    "/-/jssmedia/",        // Sitecore JSS media
+    "coveo",               // Coveo search (often used with Sitecore)
+  ]
+  const sitecoreHeaderSignals = [
+    "sitecore",
+    "sc_analytics",
+    "asp.net",
+    "x-aspnet-version",
+    "x-powered-by: asp.net",
+    "set-cookie: sc_analytics",
+    "set-cookie: sitecore",
+  ]
+  const sitecoreHtmlMatch = sitecoreHtmlSignals.some(sig => lower.includes(sig))
+  const sitecoreHeaderMatch = sitecoreHeaderSignals.some(sig => headerValues.includes(sig))
+  // Also check for .ashx with media paths
+  const ashxWithMedia = lower.includes(".ashx") && (lower.includes("/-/media") || lower.includes("/~/media"))
+
+  if (sitecoreHtmlMatch || sitecoreHeaderMatch || ashxWithMedia) {
     details.push("Sitecore CMS signatures detected")
-    if (lower.includes("/-/media/") || lower.includes("/~/media/")) details.push("Sitecore media library URLs found")
-    if (lower.includes("sc_analytics")) details.push("Sitecore Analytics tracking detected")
-    if (lower.includes(".ashx")) details.push("ASP.NET handlers (.ashx) in use")
-    return { platform: "Sitecore", confidence: "high", details }
+    if (lower.includes("/-/media/") || lower.includes("/~/media/") || lower.includes("/-/jssmedia/")) details.push("Sitecore media library URLs found")
+    if (lower.includes("sc_analytics") || headerValues.includes("sc_analytics")) details.push("Sitecore Analytics tracking detected")
+    if (lower.includes(".ashx") || headerValues.includes("asp.net")) details.push("ASP.NET infrastructure detected")
+    if (lower.includes("sitecore-jss") || lower.includes("jss-main")) details.push("Sitecore JSS (headless) detected")
+    if (lower.includes("sxa-")) details.push("Sitecore SXA extensions detected")
+    if (sitecoreHeaderMatch && !sitecoreHtmlMatch) details.push("Detected via server response headers")
+    return { platform: "Sitecore", confidence: sitecoreHtmlMatch ? "high" : "medium", details }
   }
 
   // Adobe Experience Manager (AEM)
@@ -736,7 +774,20 @@ function detectPlatform(html: string, url: string): PlatformInfo {
     return { platform: "Laravel", confidence: "low", details }
   }
 
-  details.push("No recognisable CMS or framework signatures were detected in the page source.")
+  // --- Header-based fallback detection ---
+  // ASP.NET without a specific CMS match could still indicate Sitecore or similar enterprise CMS
+  if (headerValues.includes("asp.net") || headerValues.includes("x-aspnet-version") || headerValues.includes("x-powered-by: asp.net")) {
+    details.push("ASP.NET server infrastructure detected via response headers. This commonly indicates an enterprise .NET CMS such as Sitecore, Umbraco or Kentico.")
+    return { platform: "ASP.NET (likely enterprise CMS)", confidence: "low", details }
+  }
+
+  // PHP headers
+  if (headerValues.includes("x-powered-by: php")) {
+    details.push("PHP server detected via response headers. May indicate WordPress, Drupal, Joomla or a custom PHP application.")
+    return { platform: "PHP Application", confidence: "low", details }
+  }
+
+  details.push("No recognisable CMS or framework signatures were detected in the page source or response headers.")
   return { platform: null, confidence: "low", details }
 }
 
@@ -821,7 +872,7 @@ export async function POST(request: Request) {
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)
-    const platformInfo = detectPlatform(fetchedHtml, url)
+    const platformInfo = detectPlatform(fetchedHtml, url, siteHtml.responseHeaders)
 
     const result: AuditResult = {
       id: v4(),
