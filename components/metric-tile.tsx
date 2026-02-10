@@ -10,6 +10,7 @@ interface MetricTileProps {
   mobileStatus?: RiskLevel
   desktopStatus?: RiskLevel
   icon?: ReactNode
+  compact?: boolean
 }
 
 const dotColor: Record<RiskLevel, string> = {
@@ -77,6 +78,7 @@ export function MetricTile({
   mobileStatus,
   desktopStatus,
   icon,
+  compact = false,
 }: MetricTileProps) {
   const tileBorder = worstStatus(mobileStatus, desktopStatus)
 
@@ -87,13 +89,19 @@ export function MetricTile({
       }`}
     >
       {/* Icon + Title */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className={`flex items-center ${compact ? "gap-2 mb-3" : "gap-3 mb-4"}`}>
         {icon && (
-          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-muted/60 text-muted-foreground shrink-0 [&>svg]:h-5 [&>svg]:w-5">
+          <div
+            className={`flex items-center justify-center rounded-lg bg-muted/60 text-muted-foreground shrink-0 ${
+              compact
+                ? "h-7 w-7 [&>svg]:h-3.5 [&>svg]:w-3.5"
+                : "h-9 w-9 [&>svg]:h-5 [&>svg]:w-5"
+            }`}
+          >
             {icon}
           </div>
         )}
-        <h4 className="font-sans text-base font-bold text-card-foreground leading-snug">
+        <h4 className={`font-sans font-bold text-card-foreground leading-snug ${compact ? "text-sm" : "text-base"}`}>
           {label}
         </h4>
       </div>

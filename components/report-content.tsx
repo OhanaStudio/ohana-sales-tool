@@ -216,7 +216,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             SCREENSHOTS
-        ───────────���────────────────────────────────── */}
+        ───────────�����────────────────────────────────── */}
         <div className="mb-10 print-break-avoid print-compact">
           <SiteScreenshots
             url={result.url}
@@ -354,6 +354,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           {/* Row 2: 3 cards */}
           <div className="grid grid-cols-3 gap-3 mt-3">
             <MetricTile
+              compact
               label="Cumulative Layout Shift"
               icon={<Move className="h-4 w-4" />}
               mobileValue={formatCls(result.mobile.metrics.cls)}
@@ -362,6 +363,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
             />
             <MetricTile
+              compact
               label="Total Blocking Time"
               icon={<Clock className="h-4 w-4" />}
               mobileValue={formatMs(result.mobile.metrics.tbt)}
@@ -371,6 +373,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               desktopStatus={getMetricStatus("tbt", result.desktop.metrics.tbt)}
             />
             <MetricTile
+              compact
               label="Speed Index"
               icon={<Gauge className="h-4 w-4" />}
               mobileValue={formatMs(result.mobile.metrics.speedIndex)}
@@ -394,6 +397,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           {/* Row 3: 3 cards */}
           <div className="grid grid-cols-3 gap-3 mt-3">
             <MetricTile
+              compact
               label="Performance Score"
               icon={<Zap className="h-4 w-4" />}
               mobileValue={String(result.mobile.performanceScore)}
@@ -403,6 +407,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               desktopStatus={getScoreStatus(result.desktop.performanceScore)}
             />
             <MetricTile
+              compact
               label="Accessibility"
               icon={<Eye className="h-4 w-4" />}
               mobileValue={String(result.mobile.accessibilityScore)}
@@ -412,6 +417,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
             />
             <MetricTile
+              compact
               label="Best Practices"
               icon={<ShieldCheck className="h-4 w-4" />}
               mobileValue={String(result.mobile.bestPracticesScore)}
