@@ -14,27 +14,27 @@ function Indicator({
 }) {
   if (blocked) {
     return (
-      <div className="flex items-start gap-3 py-2">
-        <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+      <div className="flex items-start gap-3 py-4">
+        <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-bold text-foreground">{label}</p>
-          <p className="text-xs font-normal text-muted-foreground">Not available</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Not available</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex items-start gap-3 py-2">
+    <div className="flex items-start gap-3 py-4">
       {found ? (
-        <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+        <Check className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
       ) : (
-        <X className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+        <X className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
       )}
       <div>
         <p className="text-sm font-bold text-foreground">{label}</p>
         {detail && (
-          <p className="text-xs font-normal text-muted-foreground">{detail}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
         )}
       </div>
     </div>
@@ -46,11 +46,8 @@ export function UXIndicatorsSection({
 }: {
   indicators: UXIndicators
 }) {
-  // Build the list of indicators that have reliable data.
-  // If fetch was blocked AND the indicator wasn't detected, skip it entirely.
   const items: { found: boolean; label: string; detail?: string }[] = []
 
-  // CTA
   if (indicators.ctaFound || !indicators.fetchBlocked) {
     items.push({
       found: indicators.ctaFound,
@@ -68,7 +65,6 @@ export function UXIndicatorsSection({
     })
   }
 
-  // Trust signals
   if (indicators.trustSignalsFound || !indicators.fetchBlocked) {
     items.push({
       found: indicators.trustSignalsFound,
@@ -79,7 +75,6 @@ export function UXIndicatorsSection({
     })
   }
 
-  // Social proof above the fold
   if (indicators.socialProofAboveFold || !indicators.fetchBlocked) {
     items.push({
       found: indicators.socialProofAboveFold,
@@ -92,7 +87,6 @@ export function UXIndicatorsSection({
     })
   }
 
-  // Verified third-party reviews
   if (indicators.testimonialsVerified || !indicators.fetchBlocked) {
     items.push({
       found: indicators.testimonialsVerified,
@@ -105,7 +99,6 @@ export function UXIndicatorsSection({
     })
   }
 
-  // Phone
   if (indicators.phoneFound || !indicators.fetchBlocked) {
     items.push({
       found: indicators.phoneFound,
@@ -113,7 +106,6 @@ export function UXIndicatorsSection({
     })
   }
 
-  // Email
   if (indicators.emailFound || !indicators.fetchBlocked) {
     items.push({
       found: indicators.emailFound,
@@ -121,18 +113,36 @@ export function UXIndicatorsSection({
     })
   }
 
-  // If nothing could be reliably detected, hide the entire section
   if (items.length === 0) return null
+
+  const failCount = items.filter((i) => !i.found).length
+  const badgeClass =
+    failCount === 0
+      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+      : failCount <= 3
+        ? "bg-amber-50 text-amber-700 border-amber-200"
+        : "bg-red-50 text-red-700 border-red-200"
+  const badgeLabel =
+    failCount === 0
+      ? "All clear"
+      : `${failCount} Moderate Risk${failCount !== 1 ? "s" : ""}`
 
   return (
     <div>
-      <h3 className="font-sans text-xl font-bold text-foreground mb-1">
-        UX indicators
-      </h3>
-      <p className="text-xs text-muted-foreground mb-4 italic">
+      <div className="flex items-start justify-between gap-4 mb-1">
+        <h3 className="font-sans text-xl font-bold text-foreground">
+          UX indicators
+        </h3>
+        <span
+          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium shrink-0 ${badgeClass}`}
+        >
+          {badgeLabel}
+        </span>
+      </div>
+      <p className="text-sm text-muted-foreground mb-5 italic">
         These indicators are based on an AI analysis of the page screenshots.
       </p>
-      <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
+      <div className="rounded-xl border border-border bg-card px-6 divide-y divide-border">
         {items.map((item) => (
           <Indicator
             key={item.label}

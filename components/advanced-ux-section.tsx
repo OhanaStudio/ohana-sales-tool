@@ -1,14 +1,6 @@
 import React from "react"
 import type { AdvancedUXIndicators } from "@/lib/types"
-import {
-  Eye,
-  Navigation,
-  AlignLeft,
-  MousePointerClick,
-  FormInput,
-  ShieldCheck,
-  Smartphone,
-} from "lucide-react"
+import { Check, X, AlertTriangle } from "lucide-react"
 
 type StatusColor = "emerald" | "amber" | "red"
 
@@ -40,60 +32,36 @@ function statusLabel(status: string): string {
   return labels[status] || status
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const color = statusColor(status)
-  const colorClasses: Record<StatusColor, string> = {
-    emerald: "bg-emerald-50 text-emerald-700 border-[#a7f3d0]",
-    amber: "bg-amber-50 text-amber-700 border-[#fde68a]",
-    red: "bg-red-50 text-red-700 border-[#fecaca]",
-  }
-
-  return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded border ${colorClasses[color]}`}
-    >
-      {statusLabel(status)}
-    </span>
-  )
+function StatusIcon({ color }: { color: StatusColor }) {
+  if (color === "emerald")
+    return <Check className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+  if (color === "amber")
+    return <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+  return <X className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
 }
 
 function CategoryRow({
-  icon,
   title,
   status,
   bullets,
 }: {
-  icon: React.ReactNode
   title: string
   status: string
   bullets: string[]
 }) {
-  return (
-    <div className="py-3 first:pt-0 last:pb-0">
-      <div className="flex items-center justify-between w-full gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-muted-foreground shrink-0">{icon}</span>
-          <span className="text-sm font-bold text-foreground truncate">
-            {title}
-          </span>
-        </div>
-        <div className="shrink-0">
-          <StatusBadge status={status} />
-        </div>
-      </div>
+  const color = statusColor(status)
+  const label = statusLabel(status)
+  const detail = bullets.length > 0 ? bullets.join(" ") : label
 
-      {bullets.length > 0 && (
-        <ul className="mt-2 ml-7 space-y-1.5">
-          {bullets.map((bullet, i) => (
-            <li
-              key={i}
-              className="text-xs text-muted-foreground leading-relaxed pl-3 border-l-2 border-border"
-            >
-              {bullet}
-            </li>
-          ))}
-        </ul>
-      )}
+  return (
+    <div className="flex items-start gap-3 py-4">
+      <StatusIcon color={color} />
+      <div>
+        <p className="text-sm font-bold text-foreground">{title}</p>
+        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+          {detail}
+        </p>
+      </div>
     </div>
   )
 }
@@ -111,96 +79,54 @@ export function AdvancedUXSection({
   const d = indicators
 
   const allCategories = [
-    {
-      key: "firstImpression",
-      icon: <Eye className="h-4 w-4" />,
-      title: "First-impression clarity",
-      ...d.firstImpression,
-    },
-    {
-      key: "navigationFriction",
-      icon: <Navigation className="h-4 w-4" />,
-      title: "Decision friction",
-      ...d.navigationFriction,
-    },
-    {
-      key: "scanability",
-      icon: <AlignLeft className="h-4 w-4" />,
-      title: "Scanability",
-      ...d.scanability,
-    },
-    {
-      key: "conversionPath",
-      icon: <MousePointerClick className="h-4 w-4" />,
-      title: "Conversion path",
-      ...d.conversionPath,
-    },
-    {
-      key: "formFriction",
-      icon: <FormInput className="h-4 w-4" />,
-      title: "Form friction",
-      ...d.formFriction,
-    },
-    {
-      key: "trustDepth",
-      icon: <ShieldCheck className="h-4 w-4" />,
-      title: "Trust depth",
-      ...d.trustDepth,
-    },
-    {
-      key: "mobileFriction",
-      icon: <Smartphone className="h-4 w-4" />,
-      title: "Mobile friction",
-      ...d.mobileFriction,
-    },
+    { key: "firstImpression", title: "First-impression clarity", ...d.firstImpression },
+    { key: "navigationFriction", title: "Decision friction", ...d.navigationFriction },
+    { key: "scanability", title: "Scanability", ...d.scanability },
+    { key: "conversionPath", title: "Conversion path", ...d.conversionPath },
+    { key: "formFriction", title: "Form friction", ...d.formFriction },
+    { key: "trustDepth", title: "Trust depth", ...d.trustDepth },
+    { key: "mobileFriction", title: "Mobile friction", ...d.mobileFriction },
   ]
 
   const visibleCategories = allCategories.filter((c) => isApplicable(c.status))
-
   if (visibleCategories.length === 0) return null
 
-  const totalIssues = visibleCategories.reduce(
-    (sum, c) => sum + c.bullets.length,
-    0,
-  )
-  const redCategories = visibleCategories.filter(
-    (c) => statusColor(c.status) === "red",
-  ).length
-  const amberCategories = visibleCategories.filter(
-    (c) => statusColor(c.status) === "amber",
-  ).length
+  const redCount = visibleCategories.filter((c) => statusColor(c.status) === "red").length
+  const amberCount = visibleCategories.filter((c) => statusColor(c.status) === "amber").length
+  const issueCount = redCount + amberCount
 
-  const summaryColor =
-    redCategories > 0
-      ? "text-red-600"
-      : amberCategories > 0
-        ? "text-amber-600"
-        : "text-emerald-600"
-
-  const summaryText =
-    redCategories > 0
-      ? `${totalIssues} friction point(s) found across ${redCategories + amberCategories} area(s)`
-      : amberCategories > 0
-        ? `${totalIssues} minor issue(s) across ${amberCategories} area(s)`
-        : "No significant friction detected"
+  const badgeClass =
+    redCount > 0
+      ? "bg-red-50 text-red-700 border-red-200"
+      : amberCount > 0
+        ? "bg-amber-50 text-amber-700 border-amber-200"
+        : "bg-emerald-50 text-emerald-700 border-emerald-200"
+  const badgeLabel =
+    issueCount === 0
+      ? "All clear"
+      : redCount > 0
+        ? `${issueCount} High Risk${issueCount !== 1 ? "s" : ""}`
+        : `${issueCount} Moderate Risk${issueCount !== 1 ? "s" : ""}`
 
   return (
     <div>
-      <h3 className="font-sans text-xl font-bold text-foreground mb-1">
-        UX friction analysis
-      </h3>
-      <p className="text-xs text-muted-foreground mb-2 italic leading-relaxed">
-        AI-powered analysis of visual friction patterns based on page
-        screenshots.
-      </p>
-      <div className={`text-xs font-medium mb-4 ${summaryColor}`}>
-        {summaryText}
+      <div className="flex items-start justify-between gap-4 mb-1">
+        <h3 className="font-sans text-xl font-bold text-foreground">
+          UX friction analysis
+        </h3>
+        <span
+          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium shrink-0 ${badgeClass}`}
+        >
+          {badgeLabel}
+        </span>
       </div>
-      <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
+      <p className="text-sm text-muted-foreground mb-5 italic leading-relaxed">
+        AI-powered analysis of visual friction patterns based on page screenshots.
+      </p>
+      <div className="rounded-xl border border-border bg-card px-6 divide-y divide-border">
         {visibleCategories.map((cat) => (
           <CategoryRow
             key={cat.key}
-            icon={cat.icon}
             title={cat.title}
             status={cat.status}
             bullets={cat.bullets}
