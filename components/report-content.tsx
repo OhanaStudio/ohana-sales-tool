@@ -17,6 +17,7 @@ import type { RiskPill } from "./score-display"
 import { PlatformInfoSection } from "./platform-info-section"
 import { SectionToggle } from "./section-toggle"
 import { RiskGroups } from "./risk-groups"
+import { RecapSection } from "./recap-section"
 import {
   Download,
   ArrowLeft,
@@ -216,7 +217,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             SCREENSHOTS
-        ───────────�������────────────────────────────────── */}
+        ────────────────────────────────────────────── */}
         <div className="mb-10 print-break-avoid print-compact">
           <SiteScreenshots
             url={result.url}
@@ -233,44 +234,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
 
         {/* ──────────────────────────────────────────────
-            RECOMMENDED NEXT STEPS
-        ────────────────────��───────────────────────── */}
-        <div className="mb-10 print-break-before print-compact">
-          <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
-            Recommended next steps
-          </h2>
-          <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed max-w-lg">
-            {result.summaryText}
-          </p>
-          <div className="rounded-xl bg-foreground text-background p-6 md:p-8">
-            <div className="space-y-5">
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
-                  What we found
-                </p>
-                <p className="text-sm leading-relaxed text-background/90">
-                  {result.salesTalkTrack.whatWeFound}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
-                  Why it matters
-                </p>
-                <p className="text-sm leading-relaxed text-background/90">
-                  {result.salesTalkTrack.whyItMatters}
-                </p>
-              </div>
-              <div className="pt-4 border-t border-background/20">
-                <p className="font-sans text-lg font-bold text-background mb-2">
-                  Book a clarity review
-                </p>
-                <p className="text-sm leading-relaxed text-background/70">
-                  {result.salesTalkTrack.suggestedNextStep}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+            RECOMMENDED NEXT STEPS (AI-generated)
+        ────────────────────────────────────────────── */}
+        <RecapSection result={result} />
 
         {/* ──────────────────────────────────────────────
             FULL HEALTH CHECK DETAILS DIVIDER
@@ -289,13 +255,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <PrintSection
             enabled={sections.platform}
             className="mb-10 print-break-avoid print-compact"
-            toggle={
-            <SectionToggle
-              label="Platform"
-              enabled={sections.platform}
-              onToggle={() => toggle("platform")}
-            />
-            }
+            toggle={<SectionToggle label="Platform" enabled={sections.platform} onToggle={() => toggle("platform")} />}
           >
             <PlatformInfoSection info={result.platformInfo} />
           </PrintSection>
@@ -307,13 +267,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         <PrintSection
           enabled={sections.performance}
           className="mb-10 print-break-before print-compact"
-          toggle={
-            <SectionToggle
-              label="Performance"
-              enabled={sections.performance}
-              onToggle={() => toggle("performance")}
-            />
-          }
+          toggle={<SectionToggle label="Performance" enabled={sections.performance} onToggle={() => toggle("performance")} />}
         >
           <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
             Performance overview
@@ -440,13 +394,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         <PrintSection
           enabled={sections.ux}
           className="mb-10 print-break-before print-compact"
-          toggle={
-            <SectionToggle
-              label="UX Indicators"
-              enabled={sections.ux}
-              onToggle={() => toggle("ux")}
-            />
-          }
+          toggle={<SectionToggle label="UX Indicators" enabled={sections.ux} onToggle={() => toggle("ux")} />}
         >
           <UXIndicatorsSection indicators={result.uxIndicators} />
         </PrintSection>
@@ -458,13 +406,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <PrintSection
             enabled={sections.design}
             className="mb-10 print-break-before print-compact"
-            toggle={
-            <SectionToggle
-              label="Design"
-              enabled={sections.design}
-              onToggle={() => toggle("design")}
-            />
-            }
+            toggle={<SectionToggle label="Design" enabled={sections.design} onToggle={() => toggle("design")} />}
           >
             <DesignIndicatorsSection indicators={result.designIndicators} />
           </PrintSection>
@@ -477,13 +419,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <PrintSection
             enabled={sections.advancedUx}
             className="mb-10 print-break-before print-compact"
-            toggle={
-            <SectionToggle
-              label="UX Friction"
-              enabled={sections.advancedUx}
-              onToggle={() => toggle("advancedUx")}
-            />
-            }
+            toggle={<SectionToggle label="UX Friction" enabled={sections.advancedUx} onToggle={() => toggle("advancedUx")} />}
           >
             <AdvancedUXSection indicators={result.advancedUX} />
           </PrintSection>
@@ -496,17 +432,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <PrintSection
             enabled={sections.accessibility}
             className="mb-10 print-break-before print-compact"
-            toggle={
-            <SectionToggle
-              label="Accessibility"
-              enabled={sections.accessibility}
-              onToggle={() => toggle("accessibility")}
-            />
-            }
+            toggle={<SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />}
           >
-            <AccessibilitySection
-              indicators={result.accessibilityIndicators}
-            />
+            <AccessibilitySection indicators={result.accessibilityIndicators} />
           </PrintSection>
         )}
 
