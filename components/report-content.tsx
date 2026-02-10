@@ -1,5 +1,7 @@
 "use client"
 
+import { cn } from "@/lib/utils"
+
 import React from "react"
 import { useState } from "react"
 import type { AuditResult } from "@/lib/types"
@@ -91,8 +93,10 @@ function PrintSection({
   toggle?: React.ReactNode
 }) {
   return (
-    <div className={className}>
-      {toggle && <div className="no-print">{toggle}</div>}
+    <div className={cn("relative", className)}>
+      {toggle && (
+        <div className="no-print absolute right-0 top-0 z-10">{toggle}</div>
+      )}
       <div
         className={`transition-opacity duration-200 ${!enabled ? "no-print" : ""}`}
         style={{ opacity: enabled ? 1 : 0.15 }}
@@ -256,13 +260,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
             enabled={sections.platform}
             className="mb-10 print-break-avoid print-compact"
             toggle={
-              <div className="flex items-center justify-end mb-3">
-                <SectionToggle
-                  label="Platform"
-                  enabled={sections.platform}
-                  onToggle={() => toggle("platform")}
-                />
-              </div>
+            <SectionToggle
+              label="Platform"
+              enabled={sections.platform}
+              onToggle={() => toggle("platform")}
+            />
             }
           >
             <PlatformInfoSection info={result.platformInfo} />
@@ -276,13 +278,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
           enabled={sections.performance}
           className="mb-10 print-break-before print-compact"
           toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="Performance"
-                enabled={sections.performance}
-                onToggle={() => toggle("performance")}
-              />
-            </div>
+            <SectionToggle
+              label="Performance"
+              enabled={sections.performance}
+              onToggle={() => toggle("performance")}
+            />
           }
         >
           <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
@@ -417,13 +417,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
           enabled={sections.ux}
           className="mb-10 print-break-before print-compact"
           toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="UX Indicators"
-                enabled={sections.ux}
-                onToggle={() => toggle("ux")}
-              />
-            </div>
+            <SectionToggle
+              label="UX Indicators"
+              enabled={sections.ux}
+              onToggle={() => toggle("ux")}
+            />
           }
         >
           <UXIndicatorsSection indicators={result.uxIndicators} />
@@ -437,13 +435,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
             enabled={sections.design}
             className="mb-10 print-break-before print-compact"
             toggle={
-              <div className="flex items-center justify-end mb-3">
-                <SectionToggle
-                  label="Design"
-                  enabled={sections.design}
-                  onToggle={() => toggle("design")}
-                />
-              </div>
+            <SectionToggle
+              label="Design"
+              enabled={sections.design}
+              onToggle={() => toggle("design")}
+            />
             }
           >
             <DesignIndicatorsSection indicators={result.designIndicators} />
@@ -458,13 +454,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
             enabled={sections.advancedUx}
             className="mb-10 print-break-before print-compact"
             toggle={
-              <div className="flex items-center justify-end mb-3">
-                <SectionToggle
-                  label="UX Friction"
-                  enabled={sections.advancedUx}
-                  onToggle={() => toggle("advancedUx")}
-                />
-              </div>
+            <SectionToggle
+              label="UX Friction"
+              enabled={sections.advancedUx}
+              onToggle={() => toggle("advancedUx")}
+            />
             }
           >
             <AdvancedUXSection indicators={result.advancedUX} />
@@ -479,13 +473,11 @@ export function ReportContent({ result }: { result: AuditResult }) {
             enabled={sections.accessibility}
             className="mb-10 print-break-before print-compact"
             toggle={
-              <div className="flex items-center justify-end mb-3">
-                <SectionToggle
-                  label="Accessibility"
-                  enabled={sections.accessibility}
-                  onToggle={() => toggle("accessibility")}
-                />
-              </div>
+            <SectionToggle
+              label="Accessibility"
+              enabled={sections.accessibility}
+              onToggle={() => toggle("accessibility")}
+            />
             }
           >
             <AccessibilitySection
