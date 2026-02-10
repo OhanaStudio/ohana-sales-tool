@@ -105,16 +105,12 @@ function PrintSection({
 
 export function ReportContent({ result }: { result: AuditResult }) {
   const [sections, setSections] = useState({
-    score: true,
-    screenshots: true,
-    riskCards: true,
     platform: true,
     performance: true,
     ux: true,
     design: true,
     advancedUx: true,
     accessibility: true,
-    nextStep: true,
   })
 
   const toggle = (key: keyof typeof sections) =>
@@ -176,84 +172,36 @@ export function ReportContent({ result }: { result: AuditResult }) {
         {/* ──────────────────────────────────────────────
             SCORE + SUMMARY + RISK PILLS
         ────────────────────────────────────────────── */}
-        <PrintSection
-          enabled={sections.score}
-          className="mb-10 print-break-avoid print-compact"
-          toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="Score"
-                enabled={sections.score}
-                onToggle={() => toggle("score")}
-              />
-            </div>
-          }
-        >
+        <div className="mb-10 print-break-avoid print-compact">
           <ScoreDisplay
             score={result.overallScore}
             summary={result.summaryText}
             pills={pills}
           />
-        </PrintSection>
+        </div>
 
         {/* ──────────────────────────────────────────────
             SCREENSHOTS
         ────────────────────────────────────────────── */}
-        <PrintSection
-          enabled={sections.screenshots}
-          className="mb-10 print-break-avoid print-compact"
-          toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="Screenshots"
-                enabled={sections.screenshots}
-                onToggle={() => toggle("screenshots")}
-              />
-            </div>
-          }
-        >
+        <div className="mb-10 print-break-avoid print-compact">
           <SiteScreenshots
             url={result.url}
             desktopScreenshot={result.desktop.screenshot}
             mobileScreenshot={result.mobile.screenshot}
           />
-        </PrintSection>
+        </div>
 
         {/* ──────────────────────────────────────────────
             RISK CARDS -- grouped by severity
         ────────────────────────────────────────────── */}
-        <PrintSection
-          enabled={sections.riskCards}
-          className="mb-10 print-break-before print-compact"
-          toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="Risk cards"
-                enabled={sections.riskCards}
-                onToggle={() => toggle("riskCards")}
-              />
-            </div>
-          }
-        >
+        <div className="mb-10 print-break-before print-compact">
           <RiskGroups result={result} />
-        </PrintSection>
+        </div>
 
         {/* ──────────────────────────────────────────────
             RECOMMENDED NEXT STEPS
         ────────────────────────────────────────────── */}
-        <PrintSection
-          enabled={sections.nextStep}
-          className="mb-10 print-break-before print-compact"
-          toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="Next step"
-                enabled={sections.nextStep}
-                onToggle={() => toggle("nextStep")}
-              />
-            </div>
-          }
-        >
+        <div className="mb-10 print-break-before print-compact">
           <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
             Recommended next steps
           </h2>
@@ -288,7 +236,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               </div>
             </div>
           </div>
-        </PrintSection>
+        </div>
 
         {/* ──────────────────────────────────────────────
             FULL HEALTH CHECK DETAILS DIVIDER
@@ -464,7 +412,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             UX INDICATORS
-        ───────────���────────────────────────────────── */}
+        ────────────────────────────────────────────── */}
         <PrintSection
           enabled={sections.ux}
           className="mb-10 print-break-before print-compact"
