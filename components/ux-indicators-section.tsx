@@ -5,11 +5,13 @@ function Indicator({
   found,
   label,
   detail,
+  note,
   blocked,
 }: {
   found: boolean
   label: string
   detail?: string
+  note?: string
   blocked?: boolean
 }) {
   if (blocked) {
@@ -36,6 +38,9 @@ function Indicator({
         {detail && (
           <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
         )}
+        {note && (
+          <p className="text-xs text-muted-foreground/70 italic mt-1 leading-relaxed">Note: {note}</p>
+        )}
       </div>
     </div>
   )
@@ -46,7 +51,7 @@ export function UXIndicatorsSection({
 }: {
   indicators: UXIndicators
 }) {
-  const items: { found: boolean; label: string; detail?: string }[] = []
+  const items: { found: boolean; label: string; detail?: string; note?: string }[] = []
 
   if (indicators.ctaFound || !indicators.fetchBlocked) {
     items.push({
@@ -62,6 +67,9 @@ export function UXIndicatorsSection({
               : "Interactive elements detected (links and buttons with proper accessible names)"
           })()
         : "No clear CTA keywords detected in buttons or links",
+      note: indicators.ctaFound
+        ? "Clear CTAs guide visitors toward taking action. Ensuring they are prominent and well-worded can further increase enquiry rates."
+        : "Without a clear call-to-action, visitors don't know what step to take next. This is one of the most common reasons websites fail to convert traffic into leads.",
     })
   }
 
@@ -72,6 +80,9 @@ export function UXIndicatorsSection({
       detail: indicators.trustSignalsFound
         ? `Found: ${indicators.trustKeywords.join(", ")}`
         : "No obvious trust indicators detected",
+      note: indicators.trustSignalsFound
+        ? "Trust signals reassure visitors the business is credible. Strengthening these can improve conversion rates further."
+        : "88% of consumers trust online reviews as much as personal recommendations. Without visible trust indicators, visitors have no reason to choose this business over a competitor.",
     })
   }
 
@@ -84,6 +95,9 @@ export function UXIndicatorsSection({
         : indicators.trustSignalsFound
           ? "Social proof was found, but appears to be below the fold"
           : "No social proof detected",
+      note: indicators.socialProofAboveFold
+        ? "Having social proof visible immediately helps build trust within the first few seconds of a visit."
+        : "Most visitors never scroll past the fold. If reviews and testimonials are hidden below, the majority of potential customers never see them.",
     })
   }
 
@@ -96,6 +110,9 @@ export function UXIndicatorsSection({
         : indicators.trustSignalsFound
           ? "Testimonials appear self-hosted, not from a verified third-party source"
           : "No review sources detected",
+      note: indicators.testimonialsVerified
+        ? "Verified reviews from recognised platforms like Google or Trustpilot carry significantly more weight with consumers than self-hosted testimonials."
+        : "Self-hosted testimonials can be fabricated and savvy consumers know this. Integrating verified third-party reviews dramatically increases credibility.",
     })
   }
 
@@ -103,6 +120,9 @@ export function UXIndicatorsSection({
     items.push({
       found: indicators.phoneFound,
       label: "Phone number visible",
+      note: indicators.phoneFound
+        ? "A visible phone number signals the business is real and reachable, building immediate trust."
+        : "Many visitors want to verify a business is legitimate before engaging. A visible phone number is one of the simplest and most effective trust builders.",
     })
   }
 
@@ -110,6 +130,9 @@ export function UXIndicatorsSection({
     items.push({
       found: indicators.emailFound,
       label: "Email address visible",
+      note: indicators.emailFound
+        ? "Showing an email address gives visitors an alternative way to get in touch, improving accessibility."
+        : "Not all visitors want to fill out a form. A visible email address provides an alternative contact method and signals openness.",
     })
   }
 
@@ -149,6 +172,7 @@ export function UXIndicatorsSection({
             found={item.found}
             label={item.label}
             detail={item.detail}
+            note={item.note}
           />
         ))}
       </div>

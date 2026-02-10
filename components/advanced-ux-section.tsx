@@ -40,18 +40,53 @@ function StatusIcon({ color }: { color: StatusColor }) {
   return <X className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
 }
 
+const categoryNotes: Record<string, { good: string; bad: string }> = {
+  firstImpression: {
+    good: "A clear first impression keeps visitors engaged and reduces bounce rates.",
+    bad: "Visitors decide in 3-5 seconds whether to stay. If the value proposition isn't immediately clear, they leave for a competitor.",
+  },
+  navigationFriction: {
+    good: "Low decision friction means visitors can easily find what they need and take action.",
+    bad: "Confusing navigation overwhelms visitors with choices. Every extra click or unclear path is a chance for them to give up and leave.",
+  },
+  scanability: {
+    good: "Scannable content structure helps visitors quickly find the information they need.",
+    bad: "Dense text walls cause visitors to bounce. Breaking content into clear, scannable sections can significantly increase time on page.",
+  },
+  conversionPath: {
+    good: "A clear conversion path guides visitors smoothly from interest to action.",
+    bad: "A broken conversion path with dead ends or inconsistent CTAs means potential customers get lost before completing an enquiry.",
+  },
+  formFriction: {
+    good: "Low form friction means more visitors will complete enquiry forms.",
+    bad: "Complex or lengthy forms are the number one conversion killer. Reducing fields to essentials can double form completion rates.",
+  },
+  trustDepth: {
+    good: "Strong trust depth with verified credentials helps convert hesitant visitors.",
+    bad: "Weak trust signals mean visitors have no evidence to support choosing this business. Named testimonials and case studies are far more convincing than anonymous quotes.",
+  },
+  mobileFriction: {
+    good: "Low mobile friction ensures the growing majority of mobile visitors have a smooth experience.",
+    bad: "Over 60% of web traffic is mobile. High mobile friction means the majority of potential customers are having a frustrating experience.",
+  },
+}
+
 function CategoryRow({
   title,
   status,
   bullets,
+  catKey,
 }: {
   title: string
   status: string
   bullets: string[]
+  catKey: string
 }) {
   const color = statusColor(status)
   const label = statusLabel(status)
   const detail = bullets.length > 0 ? bullets.join(" ") : label
+  const isGood = color === "emerald"
+  const note = categoryNotes[catKey]?.[isGood ? "good" : "bad"]
 
   return (
     <div className="flex items-start gap-3 py-4">
@@ -61,6 +96,9 @@ function CategoryRow({
         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
           {detail}
         </p>
+        {note && (
+          <p className="text-xs text-muted-foreground/70 italic mt-1 leading-relaxed">Note: {note}</p>
+        )}
       </div>
     </div>
   )
@@ -127,6 +165,7 @@ export function AdvancedUXSection({
         {visibleCategories.map((cat) => (
           <CategoryRow
             key={cat.key}
+            catKey={cat.key}
             title={cat.title}
             status={cat.status}
             bullets={cat.bullets}

@@ -15,11 +15,13 @@ function A11yRow({
   status,
   detail,
   wcagRef,
+  note,
 }: {
   label: string
   status: "pass" | "warn" | "fail"
   detail: string
   wcagRef?: string
+  note?: string
 }) {
   return (
     <div className="flex items-start gap-3 py-4">
@@ -32,6 +34,9 @@ function A11yRow({
           )}
         </div>
         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{detail}</p>
+        {note && (
+          <p className="text-xs text-muted-foreground/70 italic mt-1 leading-relaxed">Note: {note}</p>
+        )}
       </div>
     </div>
   )
@@ -44,7 +49,7 @@ export function AccessibilitySection({
 }) {
   const a = indicators
 
-  const rows: { label: string; status: "pass" | "warn" | "fail"; detail: string; wcagRef?: string }[] = []
+  const rows: { label: string; status: "pass" | "warn" | "fail"; detail: string; wcagRef?: string; note?: string }[] = []
 
   // Video controls
   if (a.videosFound > 0) {
@@ -63,6 +68,7 @@ export function AccessibilitySection({
             ? `${a.videosAutoplay} of ${a.videosFound} video(s) set to autoplay.`
             : `${a.videosFound - a.videosWithControls} of ${a.videosFound} video(s) missing controls.`,
       wcagRef: "WCAG 1.4.2",
+      note: "Videos without user controls frustrate visitors and violate accessibility standards. This is a quick fix that improves both UX and compliance.",
     })
     if (a.videoCaptionIssues > 0) {
       rows.push({
@@ -70,6 +76,7 @@ export function AccessibilitySection({
         status: "fail",
         detail: `${a.videoCaptionIssues} video(s) missing captions.`,
         wcagRef: "WCAG 1.2.2",
+        note: "Captions are essential for deaf and hard-of-hearing users, but also help all visitors in sound-sensitive environments like offices.",
       })
     }
   } else {
@@ -87,6 +94,9 @@ export function AccessibilitySection({
       ? "The page declares a language for screen readers."
       : "Missing lang attribute on <html>.",
     wcagRef: "WCAG 3.1.1",
+    note: a.htmlLangPresent
+      ? "Properly declared language helps screen readers pronounce content correctly for visually impaired users."
+      : "Without a language declaration, screen readers may mispronounce content, making the site unusable for visually impaired visitors.",
   })
 
   rows.push({
@@ -96,6 +106,9 @@ export function AccessibilitySection({
       ? "The page has a descriptive title."
       : "Missing or empty page title.",
     wcagRef: "WCAG 2.4.2",
+    note: a.documentTitlePresent
+      ? "A descriptive title helps users and search engines understand the page at a glance."
+      : "The page title appears in browser tabs, search results, and bookmarks. Without one, the site looks unprofessional and ranks poorly.",
   })
 
   rows.push({
@@ -105,6 +118,9 @@ export function AccessibilitySection({
       ? "Headings follow a logical order."
       : "Heading levels skip or are out of order.",
     wcagRef: "WCAG 1.3.1",
+    note: a.headingOrderValid
+      ? "A logical heading structure helps both screen readers and search engines understand the page content."
+      : "Skipped headings confuse screen reader users who navigate by heading level. It also weakens SEO as search engines use headings to understand page structure.",
   })
 
   rows.push({
@@ -114,6 +130,9 @@ export function AccessibilitySection({
       ? "All images have alt text."
       : `${a.missingAltText} image(s) missing alt text.`,
     wcagRef: "WCAG 1.1.1",
+    note: a.missingAltText === 0
+      ? "Alt text ensures images are accessible and improves image search rankings."
+      : "Images without alt text are invisible to screen reader users and search engines. This is both an accessibility violation and a missed SEO opportunity.",
   })
 
   rows.push({
@@ -123,6 +142,9 @@ export function AccessibilitySection({
       ? "All form inputs have associated labels."
       : `${a.missingFormLabels} form input(s) missing labels.`,
     wcagRef: "WCAG 4.1.2",
+    note: a.missingFormLabels === 0
+      ? "Labelled form fields ensure all users can complete enquiry forms successfully."
+      : "Unlabelled form fields are confusing for screen reader users and can also frustrate sighted users on mobile. This directly reduces form completion rates.",
   })
 
   rows.push({
@@ -132,6 +154,9 @@ export function AccessibilitySection({
       ? "All links have discernible text."
       : `${a.missingLinkNames} link(s) have no accessible name.`,
     wcagRef: "WCAG 2.4.4",
+    note: a.missingLinkNames === 0
+      ? "Descriptive link text helps all users understand where links lead before clicking."
+      : "Links without descriptive text (like bare 'click here') are meaningless for screen reader users who navigate by link list. It also reduces clarity for all visitors.",
   })
 
   rows.push({
@@ -141,6 +166,9 @@ export function AccessibilitySection({
       ? "A skip navigation mechanism was detected."
       : "No skip navigation link found.",
     wcagRef: "WCAG 2.4.1",
+    note: a.skipNavFound
+      ? "Skip navigation helps keyboard and screen reader users quickly reach the main content."
+      : "Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple addition that significantly improves the experience for disabled users.",
   })
 
   rows.push({
@@ -153,6 +181,9 @@ export function AccessibilitySection({
           ? `Only ${a.landmarksFound.join(", ")} detected.`
           : "No semantic landmarks detected.",
     wcagRef: "WCAG 1.3.1",
+    note: a.landmarksFound.length >= 3
+      ? "Proper landmark regions let assistive technology users jump between page sections efficiently."
+      : "Without proper landmarks, screen reader users cannot efficiently navigate the page. This is a code-level fix that makes a big difference for accessibility.",
   })
 
   rows.push({
@@ -162,6 +193,9 @@ export function AccessibilitySection({
       ? "A cookie consent mechanism was detected."
       : "No cookie consent banner detected.",
     wcagRef: "ePrivacy / GDPR",
+    note: a.cookieConsentFound
+      ? "Having a cookie consent mechanism helps ensure compliance with EU privacy regulations."
+      : "EU regulations require websites to obtain consent before setting non-essential cookies. Non-compliance can result in significant fines.",
   })
 
   const failCount = rows.filter((r) => r.status === "fail").length
@@ -202,6 +236,7 @@ export function AccessibilitySection({
             status={row.status}
             detail={row.detail}
             wcagRef={row.wcagRef}
+            note={row.note}
           />
         ))}
       </div>
