@@ -92,9 +92,9 @@ function PrintSection({
   toggle?: React.ReactNode
 }) {
   return (
-    <div className={cn("relative", className)}>
+    <div className={className}>
       {toggle && (
-        <div className="no-print absolute right-0 top-0 z-10">{toggle}</div>
+        <div className="no-print float-right ml-3 relative z-10">{toggle}</div>
       )}
       <div
         className={`transition-opacity duration-200 ${!enabled ? "no-print" : ""}`}
