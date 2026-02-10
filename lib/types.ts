@@ -185,6 +185,7 @@ export interface RiskCard {
   label: string
   level: RiskLevel
   bullets: string[]
+  bulletNotes: string[]
   whyItMatters: string
 }
 

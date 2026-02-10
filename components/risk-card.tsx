@@ -68,14 +68,18 @@ export function RiskCard({
             <h3 className="font-sans text-xl font-bold text-card-foreground mb-3">
               {card.label}
             </h3>
-            <ul className="space-y-2 mb-4">
+            <ul className="space-y-4 mb-4">
               {card.bullets.map((bullet, i) => (
-                <li
-                  key={`bullet-${card.label}-${i}`}
-                  className="text-sm text-muted-foreground leading-relaxed flex gap-2"
-                >
-                  <span className="text-muted-foreground shrink-0">{"--"}</span>
-                  <span>{bullet}</span>
+                <li key={`bullet-${card.label}-${i}`}>
+                  <div className="text-sm text-muted-foreground leading-relaxed flex gap-2">
+                    <span className="text-muted-foreground shrink-0">{"--"}</span>
+                    <span>{bullet}</span>
+                  </div>
+                  {card.bulletNotes?.[i] && (
+                    <p className="text-xs text-muted-foreground/70 italic ml-5 mt-1 leading-relaxed">
+                      Note: {card.bulletNotes[i]}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>
@@ -116,14 +120,18 @@ export function RiskCard({
       <h3 className="font-sans text-lg font-bold text-card-foreground mb-3">
         {card.label}
       </h3>
-      <ul className="space-y-2 mb-4 flex-1">
+      <ul className="space-y-4 mb-4 flex-1">
         {card.bullets.map((bullet, i) => (
-          <li
-            key={`bullet-${card.label}-${i}`}
-            className="text-sm text-muted-foreground leading-relaxed flex gap-2"
-          >
-            <span className="text-muted-foreground shrink-0">{"--"}</span>
-            <span>{bullet}</span>
+          <li key={`bullet-${card.label}-${i}`}>
+            <div className="text-sm text-muted-foreground leading-relaxed flex gap-2">
+              <span className="text-muted-foreground shrink-0">{"--"}</span>
+              <span>{bullet}</span>
+            </div>
+            {card.bulletNotes?.[i] && (
+              <p className="text-xs text-muted-foreground/70 italic ml-5 mt-1 leading-relaxed">
+                Note: {card.bulletNotes[i]}
+              </p>
+            )}
           </li>
         ))}
       </ul>

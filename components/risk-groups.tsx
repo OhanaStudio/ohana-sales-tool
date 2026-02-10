@@ -69,14 +69,18 @@ function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: Gro
           {config.badgeLabel}
         </span>
       </div>
-      <ul className="space-y-2.5 mb-4">
+      <ul className="space-y-4 mb-4">
         {card.bullets.map((bullet, i) => (
-          <li
-            key={`bullet-${card.label}-${i}`}
-            className="text-sm text-muted-foreground leading-relaxed flex gap-2"
-          >
-            <span className="text-muted-foreground shrink-0">{"--"}</span>
-            <span>{bullet}</span>
+          <li key={`bullet-${card.label}-${i}`}>
+            <div className="text-sm text-muted-foreground leading-relaxed flex gap-2">
+              <span className="text-muted-foreground shrink-0">{"--"}</span>
+              <span>{bullet}</span>
+            </div>
+            {card.bulletNotes?.[i] && (
+              <p className="text-xs text-muted-foreground/70 italic ml-5 mt-1 leading-relaxed">
+                Note: {card.bulletNotes[i]}
+              </p>
+            )}
           </li>
         ))}
       </ul>
