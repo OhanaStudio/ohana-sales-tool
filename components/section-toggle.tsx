@@ -13,21 +13,18 @@ export function SectionToggle({ label, enabled, onToggle }: SectionToggleProps) 
     <button
       type="button"
       onClick={onToggle}
-      className="no-print inline-flex items-center gap-1.5 text-xs font-medium rounded-full px-3 py-1.5 transition-colors border"
+      className="no-print inline-flex items-center justify-center h-8 w-8 rounded-full transition-colors bg-transparent"
       style={{
-        background: enabled ? "var(--card)" : "var(--muted)",
         color: enabled ? "var(--muted-foreground)" : "var(--muted-foreground)",
-        borderColor: enabled ? "var(--border)" : "var(--border)",
-        opacity: enabled ? 1 : 0.6,
+        opacity: enabled ? 1 : 0.4,
       }}
       aria-label={enabled ? `Hide ${label} section` : `Show ${label} section`}
     >
       {enabled ? (
-        <Eye className="h-3 w-3" />
+        <Eye className="h-4 w-4" />
       ) : (
-        <EyeOff className="h-3 w-3" />
+        <EyeOff className="h-4 w-4" />
       )}
-      {enabled ? "Included" : "Hidden"}
     </button>
   )
 }
