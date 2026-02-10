@@ -7,26 +7,17 @@ import type { AuditResult } from "@/lib/types"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
 import { ResultsDashboard } from "@/components/results-dashboard"
-import { Search, RotateCw } from "lucide-react"
+import { Search } from "lucide-react"
 
 export default function Page() {
   const [url, setUrl] = useState("")
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<AuditResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const abortRef = React.useRef<AbortController | null>(null)
 
-  const handleStop = () => {
-    abortRef.current?.abort()
-    abortRef.current = null
-    setLoading(false)
-  }
-
-  const runAudit = async (targetUrl: string) => {
-    if (!targetUrl.trim()) return
-
-    const controller = new AbortController()
-    abortRef.current = controller
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!url.trim()) return
 
     setLoading(true)
     setError(null)
@@ -36,8 +27,7 @@ export default function Page() {
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: targetUrl.trim() }),
-        signal: controller.signal,
+        body: JSON.stringify({ url: url.trim() }),
       })
 
       const data = await res.json()
@@ -49,31 +39,17 @@ export default function Page() {
 
       const auditResult = data as AuditResult
       setResult(auditResult)
+      // Cache in sessionStorage so the report page can access it after server restarts
       try {
         sessionStorage.setItem(`ohana-report-${auditResult.id}`, JSON.stringify(auditResult))
       } catch {
         // sessionStorage full or unavailable
       }
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return
-      }
+    } catch {
       setError("Unable to connect. Please check your internet and try again.")
     } finally {
-      abortRef.current = null
       setLoading(false)
     }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    runAudit(url)
-  }
-
-  const handleRerun = () => {
-    const targetUrl = result?.url || url
-    setUrl(targetUrl)
-    runAudit(targetUrl)
   }
 
   return (
@@ -129,42 +105,21 @@ export default function Page() {
         )}
 
         {/* Loading */}
-        {loading && (
-          <>
-            <LoadingSteps />
-            <button
-              type="button"
-              onClick={handleStop}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-            >
-              Stop test
-            </button>
-          </>
-        )}
+        {loading && <LoadingSteps />}
 
         {/* Results */}
         {result && (
           <div className="pt-8 md:pt-12">
-            <div className="flex items-center justify-between mb-6">
-              <button
-                type="button"
-                onClick={() => {
-                  setResult(null)
-                  setUrl("")
-                }}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {"<-"} Run another check
-              </button>
-              <button
-                type="button"
-                onClick={handleRerun}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-              >
-                <RotateCw className="h-3.5 w-3.5" />
-                Re-run check
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setResult(null)
+                setUrl("")
+              }}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+            >
+              {"<-"} Run another check
+            </button>
             <ResultsDashboard result={result} />
           </div>
         )}

@@ -756,23 +756,6 @@ export async function POST(request: Request) {
   return NextResponse.json(cached.result)
   }
 
-    // Quick reachability check -- catch typos / dead domains early
-    try {
-      const probe = await fetch(url, {
-        method: "HEAD",
-        headers: { "User-Agent": BROWSER_UA },
-        signal: AbortSignal.timeout(8000),
-        redirect: "follow",
-      })
-      // Accept any response (even 403/503) -- just proves the domain resolves
-      void probe
-    } catch {
-      return NextResponse.json(
-        { error: `Could not reach ${new URL(url).hostname}. Please check the URL is correct and the site is online.` },
-        { status: 422 }
-      )
-    }
-
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     const emptyResult: StrategyResult = {
       strategy: "mobile",

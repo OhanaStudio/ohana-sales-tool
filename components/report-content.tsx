@@ -73,7 +73,11 @@ function PrintSection({
 }) {
   return (
     <div className={className}>
-      {toggle && <div className="no-print">{toggle}</div>}
+      {/* Toggle row: always full opacity, hidden in print */}
+      {toggle && (
+        <div className="no-print">{toggle}</div>
+      )}
+      {/* Content: faded when disabled, hidden in print when disabled */}
       <div
         className={`transition-opacity duration-200 ${!enabled ? "no-print" : ""}`}
         style={{ opacity: enabled ? 1 : 0.15 }}
@@ -82,21 +86,6 @@ function PrintSection({
       </div>
     </div>
   )
-}
-
-/** Count risks by severity for the summary pills */
-function countRisks(result: AuditResult) {
-  const cards = [result.riskCards.visibility, result.riskCards.conversion, result.riskCards.trust]
-  let high = 0
-  let moderate = 0
-  for (const c of cards) {
-    if (c.severity === "high") high++
-    if (c.severity === "medium") moderate++
-  }
-  const accIssues = result.accessibilityIndicators
-    ? result.accessibilityIndicators.filter((i) => i.status !== "pass").length
-    : 0
-  return { high, moderate, accIssues }
 }
 
 export function ReportContent({ result }: { result: AuditResult }) {
@@ -119,11 +108,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
     window.print()
   }
 
-  const risks = countRisks(result)
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Top bar */}
       <div className="no-print flex items-center justify-between px-5 md:px-8 py-4">
         <Link
           href="/"
@@ -143,7 +129,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
       </div>
 
       <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12 print:px-0 print:max-w-none">
-        {/* 1. Cover / Title */}
+        {/* Cover / Title Section */}
         <div className="pt-8 md:pt-12 pb-8 border-b border-border mb-8 print:pt-4 print:pb-6 print:mb-6 print-break-avoid">
           <img src="/ohaha-logo.svg" alt="Ohana" className="h-7 w-auto mb-1 print:h-6" />
           <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground mb-4 text-balance print:text-4xl print:leading-tight print:mb-3">
@@ -155,39 +141,23 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </div>
         </div>
 
-        {/* 2. Score + Risk Summary Pills */}
-        <PrintSection
-          enabled={sections.executive}
-          className="mb-10 print-compact"
-          toggle={
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-sans text-2xl text-foreground print:text-xl">Executive summary</h2>
-              <SectionToggle label="Executive summary" enabled={sections.executive} onToggle={() => toggle("executive")} />
-            </div>
-          }
-        >
-          <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
-          {/* Risk summary pills */}
-          <div className="flex flex-wrap gap-3 mt-6 justify-center">
-            {risks.high > 0 && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-4 py-1.5 text-sm font-medium text-red-800">
-                {risks.high} High risk
-              </span>
-            )}
-            {risks.moderate > 0 && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-4 py-1.5 text-sm font-medium text-amber-800">
-                {risks.moderate} Moderate
-              </span>
-            )}
-            {risks.accIssues > 0 && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500 px-4 py-1.5 text-sm font-medium text-white">
-                {risks.accIssues} Accessibility
-              </span>
-            )}
-          </div>
-        </PrintSection>
+        {/* Platform */}
+        {result.platformInfo && (
+          <PrintSection
+            enabled={sections.platform}
+            className="mb-10 print-break-avoid print-compact"
+            toggle={
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Platform</span>
+                <SectionToggle label="Platform" enabled={sections.platform} onToggle={() => toggle("platform")} />
+              </div>
+            }
+          >
+            <PlatformInfoSection info={result.platformInfo} />
+          </PrintSection>
+        )}
 
-        {/* 3. Screenshots */}
+        {/* Screenshots */}
         <PrintSection
           enabled={sections.screenshots}
           className="mb-10 print-break-avoid print-compact"
@@ -205,35 +175,26 @@ export function ReportContent({ result }: { result: AuditResult }) {
           />
         </PrintSection>
 
-        {/* 4. Risk Cards -- each as a separate full-width card */}
+        {/* Executive Summary */}
         <PrintSection
           enabled={sections.executive}
           className="mb-10 print-compact"
+          toggle={
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-sans text-2xl text-foreground print:text-xl">Executive summary</h2>
+              <SectionToggle label="Executive summary" enabled={sections.executive} onToggle={() => toggle("executive")} />
+            </div>
+          }
         >
-          <div className="space-y-4">
-            <RiskCard card={result.riskCards.conversion} variant="featured" />
+          <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
+          <div className="flex flex-col gap-4 mt-8">
             <RiskCard card={result.riskCards.visibility} variant="featured" />
+            <RiskCard card={result.riskCards.conversion} variant="featured" />
             <RiskCard card={result.riskCards.trust} variant="featured" />
           </div>
         </PrintSection>
 
-        {/* 5. Platform */}
-        {result.platformInfo && (
-          <PrintSection
-            enabled={sections.platform}
-            className="mb-10 print-break-avoid print-compact"
-            toggle={
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Platform</span>
-                <SectionToggle label="Platform" enabled={sections.platform} onToggle={() => toggle("platform")} />
-              </div>
-            }
-          >
-            <PlatformInfoSection info={result.platformInfo} />
-          </PrintSection>
-        )}
-
-        {/* 6. Performance Overview */}
+        {/* Performance */}
         <PrintSection
           enabled={sections.performance}
           className="mb-10 print-break-before print-compact"
@@ -346,7 +307,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           )}
         </PrintSection>
 
-        {/* 7. UX Indicators */}
+        {/* UX Indicators */}
         <PrintSection
           enabled={sections.ux}
           className="mb-10 print-break-before print-compact"
@@ -360,39 +321,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <UXIndicatorsSection indicators={result.uxIndicators} />
         </PrintSection>
 
-        {/* 8. Advanced UX / Friction */}
-        {result.advancedUX && (
-          <PrintSection
-            enabled={sections.advancedUx}
-            className="mb-10 print-break-before print-compact"
-            toggle={
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">UX Friction</span>
-                <SectionToggle label="UX Friction" enabled={sections.advancedUx} onToggle={() => toggle("advancedUx")} />
-              </div>
-            }
-          >
-            <AdvancedUXSection indicators={result.advancedUX} />
-          </PrintSection>
-        )}
-
-        {/* 9. Accessibility */}
-        {result.accessibilityIndicators && (
-          <PrintSection
-            enabled={sections.accessibility}
-            className="mb-10 print-break-before print-compact"
-            toggle={
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Accessibility</span>
-                <SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />
-              </div>
-            }
-          >
-            <AccessibilitySection indicators={result.accessibilityIndicators} />
-          </PrintSection>
-        )}
-
-        {/* 10. Design Indicators */}
+        {/* Design Indicators */}
         {result.designIndicators && (
           <PrintSection
             enabled={sections.design}
@@ -408,7 +337,39 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </PrintSection>
         )}
 
-        {/* 11. Recommended Next Step */}
+        {/* Advanced UX / Friction */}
+        {result.advancedUX && (
+          <PrintSection
+            enabled={sections.advancedUx}
+            className="mb-10 print-break-before print-compact"
+            toggle={
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">UX Friction</span>
+                <SectionToggle label="UX Friction" enabled={sections.advancedUx} onToggle={() => toggle("advancedUx")} />
+              </div>
+            }
+          >
+            <AdvancedUXSection indicators={result.advancedUX} />
+          </PrintSection>
+        )}
+
+        {/* Accessibility */}
+        {result.accessibilityIndicators && (
+          <PrintSection
+            enabled={sections.accessibility}
+            className="mb-10 print-break-before print-compact"
+            toggle={
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Accessibility</span>
+                <SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />
+              </div>
+            }
+          >
+            <AccessibilitySection indicators={result.accessibilityIndicators} />
+          </PrintSection>
+        )}
+
+        {/* Recommended Next Step */}
         <PrintSection
           enabled={sections.nextStep}
           className="mb-10 print-break-before print-compact"
@@ -437,7 +398,6 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </div>
         </PrintSection>
 
-        {/* Footer */}
         <div className="border-t border-border pt-6 pb-8 print:pt-4 print:pb-4 print:mt-8">
           <div className="flex items-center justify-between">
             <img src="/ohaha-logo.svg" alt="Ohana" className="h-5 w-auto hidden print:block opacity-50" />
