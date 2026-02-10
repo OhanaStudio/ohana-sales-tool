@@ -674,10 +674,10 @@ export async function POST(request: Request) {
     }
 
     // Check cache
-    const cached = getCachedReportForUrl(url)
-    if (cached) {
-      return NextResponse.json(cached.result)
-    }
+  const cached = await getCachedReportForUrl(url)
+  if (cached) {
+  return NextResponse.json(cached.result)
+  }
 
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     const emptyResult: StrategyResult = {
@@ -756,7 +756,7 @@ export async function POST(request: Request) {
       salesTalkTrack: generateSalesTalkTrack(overallScore, mobile, uxIndicators, designIndicators, accessibilityIndicators, advancedUX),
     }
 
-    saveReport({
+    await saveReport({
       id: result.id,
       url: result.url,
       timestamp: result.timestamp,

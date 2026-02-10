@@ -8,6 +8,7 @@ interface HistoryItem {
   id: string
   url: string
   timestamp: string
+  version: number
   overallScore: number
 }
 
@@ -59,7 +60,7 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                   {truncateUrl(item.url)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
+                  v{item.version} -- {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
                 </p>
               </div>
               <span
@@ -100,6 +101,9 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   URL
                 </th>
+                <th className="text-center px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
+                  Version
+                </th>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   Date
                 </th>
@@ -116,6 +120,9 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                 <tr key={item.id} className="hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 text-sm text-foreground">
                     {truncateUrl(item.url)}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground text-center tabular-nums">
+                    v{item.version}
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
                     {formatDate(item.timestamp)}, {formatTime(item.timestamp)}

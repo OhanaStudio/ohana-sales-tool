@@ -9,6 +9,7 @@ interface HistoryItem {
   id: string
   url: string
   timestamp: string
+  version: number
   overallScore: number
 }
 
@@ -42,7 +43,7 @@ export default function HistoryPage() {
             History.
           </h1>
           <p className="text-sm text-muted-foreground mt-2">
-            Previous health checks run in this session.
+            All health checks with version tracking per URL.
           </p>
         </div>
 

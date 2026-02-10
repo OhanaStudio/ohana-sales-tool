@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server"
-import { getAllReports } from "@/lib/store"
+import { getAllReports, getReportsForUrl } from "@/lib/store"
 
-export async function GET() {
-  const reports = getAllReports()
-  return NextResponse.json(
-    reports.map((r) => ({
-      id: r.id,
-      url: r.url,
-      timestamp: r.timestamp,
-      overallScore: r.result.overallScore,
-    }))
-  )
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const url = searchParams.get("url")
+
+  if (url) {
+    // Get version history for a specific URL
+    const reports = await getReportsForUrl(url)
+    return NextResponse.json(reports)
+  }
+
+  // Get all reports
+  const reports = await getAllReports()
+  return NextResponse.json(reports)
 }
