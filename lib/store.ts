@@ -5,14 +5,27 @@ function getDb() {
   return neon(process.env.DATABASE_URL!)
 }
 
+/** Strip www., trailing slashes, lowercase hostname so variants match */
+function normalizeUrl(input: string): string {
+  try {
+    const parsed = new URL(input)
+    parsed.hostname = parsed.hostname.replace(/^www\./, "").toLowerCase()
+    if (parsed.pathname === "/") parsed.pathname = ""
+    return parsed.toString().replace(/\/$/, "")
+  } catch {
+    return input.replace(/^www\./, "").toLowerCase().replace(/\/$/, "")
+  }
+}
+
 export async function saveReport(report: StoredReport): Promise<void> {
   const sql = getDb()
+  const normalizedUrl = normalizeUrl(report.url)
 
   // Calculate the next version for this URL
   const versionRows = await sql`
     SELECT COALESCE(MAX(version), 0) AS max_version
     FROM reports
-    WHERE url = ${report.url}
+    WHERE url = ${normalizedUrl}
   `
   const nextVersion = (versionRows[0]?.max_version ?? 0) + 1
 
@@ -20,7 +33,7 @@ export async function saveReport(report: StoredReport): Promise<void> {
     INSERT INTO reports (id, url, timestamp, version, overall_score, summary_text, result_json)
     VALUES (
       ${report.id},
-      ${report.url},
+      ${normalizedUrl},
       ${report.timestamp},
       ${nextVersion},
       ${report.result.overallScore},
@@ -48,11 +61,12 @@ export async function getReport(id: string): Promise<StoredReport | undefined> {
 
 export async function getCachedReportForUrl(url: string): Promise<StoredReport | undefined> {
   const sql = getDb()
+  const normalizedUrl = normalizeUrl(url)
   // Return most recent report for this URL within last 24h
   const rows = await sql`
     SELECT id, url, timestamp, result_json
     FROM reports
-    WHERE url = ${url}
+    WHERE url = ${normalizedUrl}
       AND created_at > NOW() - INTERVAL '24 hours'
     ORDER BY version DESC
     LIMIT 1
@@ -97,10 +111,11 @@ export async function getReportsForUrl(url: string): Promise<{
   overallScore: number
 }[]> {
   const sql = getDb()
+  const normalizedUrl = normalizeUrl(url)
   const rows = await sql`
     SELECT id, url, timestamp, version, overall_score
     FROM reports
-    WHERE url = ${url}
+    WHERE url = ${normalizedUrl}
     ORDER BY version DESC
   `
   return rows.map((r) => ({

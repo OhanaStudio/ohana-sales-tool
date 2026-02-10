@@ -37,7 +37,16 @@ function normalizeUrl(input: string): string {
   if (!url.startsWith("http://") && !url.startsWith("https://")) {
     url = `https://${url}`
   }
-  return url
+  // Normalize: strip www., trailing slashes, lowercase hostname
+  try {
+    const parsed = new URL(url)
+    parsed.hostname = parsed.hostname.replace(/^www\./, "").toLowerCase()
+    // Remove trailing slash on path
+    if (parsed.pathname === "/") parsed.pathname = ""
+    return parsed.toString().replace(/\/$/, "")
+  } catch {
+    return url
+  }
 }
 
 async function fetchPSI(
