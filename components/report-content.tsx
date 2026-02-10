@@ -291,6 +291,16 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </PrintSection>
 
         {/* ──────────────────────────────────────────────
+            FULL HEALTH CHECK DETAILS DIVIDER
+        ────────────────────────────────────────────── */}
+        <div className="mt-4 mb-10 print-break-before">
+          <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-4 print:text-3xl">
+            Full Health Check Details
+          </h2>
+          <div className="border-t border-border" />
+        </div>
+
+        {/* ──────────────────────────────────────────────
             PLATFORM
         ────────────────────────────────────────────── */}
         {result.platformInfo && (
