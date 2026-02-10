@@ -30,11 +30,11 @@ export function SiteScreenshots({
         {/* Desktop screenshot */}
         {desktopScreenshot && (
           <div className="flex-[3] min-w-0 flex flex-col">
-            <div className="rounded-lg border border-border bg-card overflow-hidden shadow-sm flex flex-col flex-1">
+            <div className="border border-border bg-card overflow-hidden shadow-sm flex flex-col flex-1">
               <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-muted/30 shrink-0">
-                <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
-                <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
-                <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
+                <span className="w-2.5 h-2.5 bg-muted-foreground/20" />
+                <span className="w-2.5 h-2.5 bg-muted-foreground/20" />
+                <span className="w-2.5 h-2.5 bg-muted-foreground/20" />
               </div>
               <div className="flex-1 overflow-hidden">
                 <img

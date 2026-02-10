@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
       baseURL: "https://api.openai.com/v1",
+      compatibility: "strict",
     })
 
     // Build a concise context from the audit result
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
     ]
 
     const { output } = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: openai.chat("gpt-4o-mini"),
       output: Output.object({ schema: recapSchema }),
       messages: [
         {

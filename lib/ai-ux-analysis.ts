@@ -126,10 +126,11 @@ export async function analyseScreenshotsWithAI(
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
       baseURL: "https://api.openai.com/v1",
+      compatibility: "strict",
     })
 
     const { output } = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: openai.chat("gpt-4o-mini"),
       output: Output.object({ schema: combinedSchema }),
       messages: [
         {
