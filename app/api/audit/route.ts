@@ -590,28 +590,31 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "Webflow", confidence: "high", details }
   }
 
-  // Sitecore — uses /-/media/ paths, SC_ cookies, ASP.NET infrastructure
-  if (
-    struct.includes("/-/media/") ||
-    struct.includes("/~/media/") ||
-    struct.includes("sc_analytics_global_cookie") ||
-    struct.includes("sc_site=") ||
-    struct.includes("sc_lang=") ||
-    struct.includes("sc_itemid=") ||
-    struct.includes("telerik.web.ui") ||
-    struct.includes("data-sc-") ||
-    struct.includes("sitecore-jss") ||
-    struct.includes("/-/jssmedia/") ||
-    struct.includes("/sitecore/") ||
-    headerValues.includes("sitecore") ||
-    headerValues.includes("sc_analytics") ||
-    headerValues.includes("set-cookie: sc_analytics")
-  ) {
+  // Sitecore — /sitecore/ paths, /-/media/, SC_ cookies/globals, JSS headless
+  const sitecoreSignals = [
+    "/sitecore/",              // Admin/API path (dead giveaway)
+    "/sitecore/api/",          // Sitecore API
+    "/sitecore/shell/",        // Sitecore admin shell
+    "/-/media/",               // Sitecore media library
+    "/~/media/",               // Sitecore media library (older)
+    "/-/jssmedia/",            // Sitecore JSS media
+    "sc_analytics_global_cookie", // Sitecore analytics cookie
+    "sc_itemid",               // SC_ITEMID in comments/attrs
+    "sc_lang",                 // SC_LANG marker
+    "sc_mode",                 // SC_MODE marker
+    "scanalytics",             // JS global
+    "__sitecore_context__",    // Headless JSS context
+    "scjss",                   // Sitecore JSS SDK
+    "sitecore-jss",            // Sitecore JSS package
+    "/api/layout/render/jss",  // Headless layout service
+  ]
+  const sitecoreHeaders = headerValues.includes("sitecore") || headerValues.includes("sc_analytics") || headerValues.includes("x-sitecore")
+  if (sitecoreSignals.some(sig => struct.includes(sig)) || sitecoreHeaders) {
     details.push("Sitecore CMS signatures detected")
     if (struct.includes("/-/media/") || struct.includes("/~/media/")) details.push("Sitecore media library URLs found")
     if (struct.includes("sc_analytics") || headerValues.includes("sc_analytics")) details.push("Sitecore Analytics tracking detected")
     if (headerValues.includes("asp.net")) details.push("ASP.NET infrastructure detected")
-    if (struct.includes("sitecore-jss")) details.push("Sitecore JSS (headless) detected")
+    if (struct.includes("sitecore-jss") || struct.includes("__sitecore_context__")) details.push("Sitecore JSS (headless) detected")
     return { platform: "Sitecore", confidence: "high", details }
   }
 
@@ -679,37 +682,59 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "Squarespace", confidence: "high", details }
   }
 
-  // Adobe Experience Manager (AEM) — /content/dam/, /etc.clientlibs/, data-cmp-
-  if (
-    struct.includes("/content/dam/") ||
-    struct.includes("/etc.clientlibs/") ||
-    struct.includes("/libs/granite/") ||
-    struct.includes("data-cmp-")
-  ) {
+  // Adobe Experience Manager (AEM) — /content/dam/, /etc.clientlibs/, data-cmp-*, cq- classes, Granite
+  const aemSignals = [
+    "/content/dam/",           // AEM DAM asset paths (dead giveaway)
+    "/etc.clientlibs/",        // AEM client libraries
+    "/etc/designs/",           // AEM design paths
+    "/libs/granite/",          // Adobe Granite framework
+    "/apps/",                  // AEM apps path
+    "data-cmp-",               // AEM Core Components attributes
+    "cq-placeholder",          // AEM editor placeholder classes
+    "/graphql/execute.json/",  // AEM headless GraphQL
+    "/api/assets/",            // AEM headless assets API
+    "aem-react-editable",      // AEM React SDK
+    "modelmanager",            // AEM SPA Model Manager
+  ]
+  const aemHeaders = headerValues.includes("x-dispatcher")
+  if (aemSignals.some(sig => struct.includes(sig)) || aemHeaders) {
     details.push("Adobe Experience Manager (AEM) signatures detected")
     if (struct.includes("/content/dam/")) details.push("AEM DAM asset paths found")
     if (struct.includes("/etc.clientlibs/")) details.push("AEM client libraries detected")
+    if (struct.includes("data-cmp-")) details.push("AEM Core Components in use")
+    if (struct.includes("/graphql/execute.json/") || struct.includes("aem-react-editable")) details.push("AEM headless mode detected")
     return { platform: "Adobe AEM", confidence: "high", details }
   }
 
-  // Optimizely (Episerver) — episerver paths, epi-contentarea
-  if (
-    struct.includes("episerver") ||
-    struct.includes("epi-contentarea") ||
-    struct.includes("/episerver/") ||
-    struct.includes("episerverapi")
-  ) {
+  // Optimizely (Episerver) — /episerver/, /contentassets/, EPi cookies, headless /content/v2/
+  const optimizelySignals = [
+    "/episerver/",             // Episerver admin path (dead giveaway)
+    "/episerver",              // Episerver path variant
+    "/contentassets/",         // Episerver content assets
+    "/util/javascript/",       // Episerver utility scripts
+    "epi-contentarea",         // Episerver content area class
+    "epi:numberofvisits",      // Episerver visit tracking cookie
+    "episerverlogin",          // Episerver login cookie
+    "episerverapi",            // Episerver API
+    "/content/v2/",            // Optimizely headless content delivery
+    "/api/episerver/",         // Headless Optimizely API
+  ]
+  if (optimizelySignals.some(sig => struct.includes(sig))) {
     details.push("Optimizely (Episerver) CMS signatures detected")
+    if (struct.includes("/content/v2/") || struct.includes("/api/episerver/")) details.push("Optimizely headless mode detected")
     return { platform: "Optimizely", confidence: "high", details }
   }
 
-  // Kentico
-  if (
-    struct.includes("kentico") ||
-    struct.includes("cmspages/") ||
-    struct.includes("cmsmodules/") ||
-    struct.includes("getmedia/")
-  ) {
+  // Kentico — /CMSPages/, /CMSModules/, /cmsscripts/, CMSPreferredCulture cookie
+  const kenticoSignals = [
+    "/cmspages/",              // Kentico CMS pages path (dead giveaway)
+    "/cmsmodules/",            // Kentico modules path
+    "/cmsscripts/",            // Kentico scripts path
+    "/getmedia/",              // Kentico media handler
+    "cmspreferredculture",     // Kentico culture cookie
+    "cmscurrenttheme",         // Kentico theme cookie
+  ]
+  if (kenticoSignals.some(sig => struct.includes(sig))) {
     details.push("Kentico CMS signatures detected")
     return { platform: "Kentico", confidence: "high", details }
   }
@@ -730,6 +755,35 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
   if (struct.includes("prismic.io") || struct.includes("cdn.prismic.io")) {
     details.push("Prismic headless CMS signatures detected")
     return { platform: "Prismic", confidence: "high", details }
+  }
+
+  // Hygraph (formerly GraphCMS)
+  if (struct.includes("graphql.hygraph.com") || struct.includes("media.graphassets.com") || struct.includes("media.graphcms.com")) {
+    details.push("Hygraph headless CMS signatures detected")
+    return { platform: "Hygraph", confidence: "high", details }
+  }
+
+  // Bloomreach (formerly Hippo CMS)
+  const bloomreachSignals = [
+    "/binaries/",              // Bloomreach binary assets
+    "/content/documents/",     // Bloomreach document paths
+    "/hippo/",                 // Hippo CMS admin
+  ]
+  if (bloomreachSignals.some(sig => struct.includes(sig))) {
+    details.push("Bloomreach CMS signatures detected")
+    return { platform: "Bloomreach", confidence: "medium", details }
+  }
+
+  // Storyblok
+  if (struct.includes("storyblok.com") || struct.includes("a.storyblok.com")) {
+    details.push("Storyblok headless CMS signatures detected")
+    return { platform: "Storyblok", confidence: "high", details }
+  }
+
+  // Strapi
+  if (struct.includes("/uploads/") && struct.includes("/api/") && headerValues.includes("strapi")) {
+    details.push("Strapi headless CMS signatures detected")
+    return { platform: "Strapi", confidence: "medium", details }
   }
 
   // Umbraco
