@@ -25,11 +25,13 @@ function A11yRow({
     <div className="flex items-start gap-3 py-4">
       <StatusIcon status={status} />
       <div>
-        <p className="text-sm font-bold text-foreground">{label}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-bold text-foreground">{label}</p>
+          {wcagRef && (
+            <span className="text-[10px] text-muted-foreground/60 font-medium">{wcagRef}</span>
+          )}
+        </div>
         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{detail}</p>
-        {wcagRef && (
-          <p className="text-xs text-muted-foreground/60 mt-0.5">{wcagRef}</p>
-        )}
       </div>
     </div>
   )
