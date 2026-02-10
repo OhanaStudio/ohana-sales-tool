@@ -239,6 +239,58 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </PrintSection>
 
         {/* ──────────────────────────────────────────────
+            RECOMMENDED NEXT STEPS
+        ────────────────────────────────────────────── */}
+        <PrintSection
+          enabled={sections.nextStep}
+          className="mb-10 print-break-before print-compact"
+          toggle={
+            <div className="flex items-center justify-end mb-3">
+              <SectionToggle
+                label="Next step"
+                enabled={sections.nextStep}
+                onToggle={() => toggle("nextStep")}
+              />
+            </div>
+          }
+        >
+          <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
+            Recommended next steps
+          </h2>
+          <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed max-w-lg">
+            {result.summaryText}
+          </p>
+          <div className="rounded-xl bg-foreground text-background p-6 md:p-8">
+            <div className="space-y-5">
+              <div>
+                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
+                  What we found
+                </p>
+                <p className="text-sm leading-relaxed text-background/90">
+                  {result.salesTalkTrack.whatWeFound}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
+                  Why it matters
+                </p>
+                <p className="text-sm leading-relaxed text-background/90">
+                  {result.salesTalkTrack.whyItMatters}
+                </p>
+              </div>
+              <div className="pt-4 border-t border-background/20">
+                <p className="font-sans text-lg font-bold text-background mb-2">
+                  Book a clarity review
+                </p>
+                <p className="text-sm leading-relaxed text-background/70">
+                  {result.salesTalkTrack.suggestedNextStep}
+                </p>
+              </div>
+            </div>
+          </div>
+        </PrintSection>
+
+        {/* ──────────────────────────────────────────────
             PLATFORM
         ────────────────────────────────────────────── */}
         {result.platformInfo && (
@@ -483,58 +535,6 @@ export function ReportContent({ result }: { result: AuditResult }) {
             />
           </PrintSection>
         )}
-
-        {/* ──────────────────────────────────────────────
-            RECOMMENDED NEXT STEP
-        ────────────────────────────────────────────── */}
-        <PrintSection
-          enabled={sections.nextStep}
-          className="mb-10 print-break-before print-compact"
-          toggle={
-            <div className="flex items-center justify-end mb-3">
-              <SectionToggle
-                label="Next step"
-                enabled={sections.nextStep}
-                onToggle={() => toggle("nextStep")}
-              />
-            </div>
-          }
-        >
-          <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
-            Recommended next steps
-          </h2>
-          <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed max-w-lg">
-            {result.summaryText}
-          </p>
-          <div className="rounded-xl bg-foreground text-background p-6 md:p-8">
-            <div className="space-y-5">
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
-                  What we found
-                </p>
-                <p className="text-sm leading-relaxed text-background/90">
-                  {result.salesTalkTrack.whatWeFound}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
-                  Why it matters
-                </p>
-                <p className="text-sm leading-relaxed text-background/90">
-                  {result.salesTalkTrack.whyItMatters}
-                </p>
-              </div>
-              <div className="pt-4 border-t border-background/20">
-                <p className="font-sans text-lg font-bold text-background mb-2">
-                  Book a clarity review
-                </p>
-                <p className="text-sm leading-relaxed text-background/70">
-                  {result.salesTalkTrack.suggestedNextStep}
-                </p>
-              </div>
-            </div>
-          </div>
-        </PrintSection>
 
         {/* ──────────────────────────────────────────────
             FOOTER
