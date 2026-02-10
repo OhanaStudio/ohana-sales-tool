@@ -542,218 +542,212 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
   // Flatten all header values into a single string for matching
   const headerValues = Object.entries(responseHeaders).map(([k, v]) => `${k}: ${v}`).join(" | ")
 
+  // --- Extract STRUCTURAL parts of HTML to avoid false positives from body text ---
+  // Body text like "We work with Sitecore, WordPress, and Optimizely" should NOT trigger detection.
+  // We extract: <html> tag attributes, <head> content, all src/href/class/data- attributes, and inline styles.
+  const htmlTagMatch = lower.match(/<html[^>]*>/)
+  const htmlTag = htmlTagMatch ? htmlTagMatch[0] : ""
+  const headMatch = lower.match(/<head[\s\S]*?<\/head>/)
+  const head = headMatch ? headMatch[0] : ""
+  // Extract all attribute values: src="...", href="...", class="...", data-*="...", style="..."
+  const attrValues = (lower.match(/(?:src|href|class|id|data-[\w-]+|style|name|content|property)\s*=\s*"[^"]*"/g) || []).join(" ")
+  // Combine structural signals only (NOT body text)
+  const struct = htmlTag + " " + head + " " + attrValues
+
   // --- CMS / Platform signatures (ordered by specificity) ---
 
-  // Sitecore (check early -- enterprise CMS, often hard to detect)
-  // Sitecore has many variants: traditional, headless (JSS/XM Cloud), SXA
-  const sitecoreHtmlSignals = [
-    "/-/media/",           // Sitecore media library (traditional)
-    "/~/media/",           // Sitecore media library (older)
-    "sc_analytics_global_cookie",
-    "sitecore",
-    "sc_site=",
-    "sc_lang=",
-    "sc_itemid=",
-    "telerik.web.ui",      // Telerik (used by Sitecore)
-    "scwebeditrenderingid", // Sitecore Experience Editor
-    "data-sc-",            // Sitecore component attributes
-    "sc_debug",
-    "sxa-",                // Sitecore SXA module
-    "sitecore-jss",        // Sitecore JSS headless
-    "scitemid",
-    "sc-part-of",
-    "data-rendering-id",   // Sitecore rendering markers
-    "jss-main",            // Sitecore JSS root
-    "/sitecore/shell/",
-    "/-/jssmedia/",        // Sitecore JSS media
-    "coveo",               // Coveo search (often used with Sitecore)
-  ]
-  const sitecoreHeaderSignals = [
-    "sitecore",
-    "sc_analytics",
-    "asp.net",
-    "x-aspnet-version",
-    "x-powered-by: asp.net",
-    "set-cookie: sc_analytics",
-    "set-cookie: sitecore",
-  ]
-  const sitecoreHtmlMatch = sitecoreHtmlSignals.some(sig => lower.includes(sig))
-  const sitecoreHeaderMatch = sitecoreHeaderSignals.some(sig => headerValues.includes(sig))
-  // Also check for .ashx with media paths
-  const ashxWithMedia = lower.includes(".ashx") && (lower.includes("/-/media") || lower.includes("/~/media"))
-
-  if (sitecoreHtmlMatch || sitecoreHeaderMatch || ashxWithMedia) {
-    details.push("Sitecore CMS signatures detected")
-    if (lower.includes("/-/media/") || lower.includes("/~/media/") || lower.includes("/-/jssmedia/")) details.push("Sitecore media library URLs found")
-    if (lower.includes("sc_analytics") || headerValues.includes("sc_analytics")) details.push("Sitecore Analytics tracking detected")
-    if (lower.includes(".ashx") || headerValues.includes("asp.net")) details.push("ASP.NET infrastructure detected")
-    if (lower.includes("sitecore-jss") || lower.includes("jss-main")) details.push("Sitecore JSS (headless) detected")
-    if (lower.includes("sxa-")) details.push("Sitecore SXA extensions detected")
-    if (sitecoreHeaderMatch && !sitecoreHtmlMatch) details.push("Detected via server response headers")
-    return { platform: "Sitecore", confidence: sitecoreHtmlMatch ? "high" : "medium", details }
-  }
-
-  // Adobe Experience Manager (AEM)
+  // Webflow — check FIRST, very reliable via data-wf-* attributes and CDN
   if (
-    lower.includes("/content/dam/") ||
-    lower.includes("/etc.clientlibs/") ||
-    lower.includes("cq-") ||
-    lower.includes("/libs/granite/") ||
-    lower.includes("data-cmp-") ||
-    lower.includes("adobe experience manager")
-  ) {
-    details.push("Adobe Experience Manager (AEM) signatures detected")
-    if (lower.includes("/content/dam/")) details.push("AEM DAM asset paths found")
-    if (lower.includes("/etc.clientlibs/")) details.push("AEM client libraries detected")
-    return { platform: "Adobe AEM", confidence: "high", details }
-  }
-
-  // Kentico
-  if (
-    lower.includes("kentico") ||
-    lower.includes("cmspages/") ||
-    lower.includes("cmsmodules/") ||
-    lower.includes("getmedia/")
-  ) {
-    details.push("Kentico CMS signatures detected")
-    return { platform: "Kentico", confidence: "high", details }
-  }
-
-  // Webflow (check BEFORE Optimizely — many Webflow sites use Optimizely for A/B testing)
-  if (
-    lower.includes("webflow") ||
-    lower.includes("assets-global.website-files.com") ||
-    lower.includes("w-webflow") ||
-    lower.includes("website-files.com") ||
-    lower.includes("webflow.io") ||
-    lower.includes("wf-page") ||
-    lower.includes("w-layout") ||
-    lower.includes("w-nav") ||
-    lower.includes("w-slider") ||
-    lower.includes("w-form") ||
-    lower.includes("w-container") ||
-    lower.includes("w-embed") ||
-    lower.includes("w-richtext") ||
-    lower.includes("w-dyn") ||
-    lower.includes("w-background-video") ||
-    lower.includes("data-wf-") ||
-    lower.includes("wf-section")
+    struct.includes("data-wf-site") ||
+    struct.includes("data-wf-page") ||
+    struct.includes("data-wf-domain") ||
+    struct.includes(".webflow.") ||
+    struct.includes("website-files.com") ||
+    struct.includes("w-mod-js") ||
+    struct.includes("wf-force-outline") ||
+    struct.includes('class="w-nav') ||
+    struct.includes('class="w-slider') ||
+    struct.includes('class="w-form') ||
+    struct.includes('class="w-richtext') ||
+    struct.includes('class="w-embed') ||
+    struct.includes('class="w-dyn') ||
+    struct.includes('class="w-container')
   ) {
     details.push("Webflow platform signatures detected")
-    if (lower.includes("w-dyn")) details.push("Webflow CMS dynamic content in use")
-    if (lower.includes("w-commerce")) details.push("Webflow E-commerce detected")
+    if (struct.includes("data-wf-site")) details.push("Webflow site ID attribute found")
+    if (struct.includes("website-files.com")) details.push("Webflow CDN assets detected")
+    if (struct.includes("w-dyn")) details.push("Webflow CMS dynamic content in use")
+    if (struct.includes("w-commerce")) details.push("Webflow E-commerce detected")
     return { platform: "Webflow", confidence: "high", details }
   }
 
-  // Optimizely (Episerver) — must be the CMS platform, not the A/B experimentation snippet
-  // Note: "optimizely" alone is NOT sufficient — their experimentation product is widely embedded on non-Optimizely sites
+  // Sitecore — uses /-/media/ paths, SC_ cookies, ASP.NET infrastructure
   if (
-    lower.includes("episerver") ||
-    lower.includes("epi-contentarea") ||
-    lower.includes("/episerver/") ||
-    lower.includes("episerverapi") ||
-    lower.includes("optimizely.com/cms") ||
-    lower.includes("optimizely cms")
+    struct.includes("/-/media/") ||
+    struct.includes("/~/media/") ||
+    struct.includes("sc_analytics_global_cookie") ||
+    struct.includes("sc_site=") ||
+    struct.includes("sc_lang=") ||
+    struct.includes("sc_itemid=") ||
+    struct.includes("telerik.web.ui") ||
+    struct.includes("data-sc-") ||
+    struct.includes("sitecore-jss") ||
+    struct.includes("/-/jssmedia/") ||
+    struct.includes("/sitecore/") ||
+    headerValues.includes("sitecore") ||
+    headerValues.includes("sc_analytics") ||
+    headerValues.includes("set-cookie: sc_analytics")
+  ) {
+    details.push("Sitecore CMS signatures detected")
+    if (struct.includes("/-/media/") || struct.includes("/~/media/")) details.push("Sitecore media library URLs found")
+    if (struct.includes("sc_analytics") || headerValues.includes("sc_analytics")) details.push("Sitecore Analytics tracking detected")
+    if (headerValues.includes("asp.net")) details.push("ASP.NET infrastructure detected")
+    if (struct.includes("sitecore-jss")) details.push("Sitecore JSS (headless) detected")
+    return { platform: "Sitecore", confidence: "high", details }
+  }
+
+  // WordPress — wp-content/themes/ and wp-includes/ are definitive
+  if (
+    struct.includes("wp-content/") ||
+    struct.includes("wp-includes/") ||
+    struct.includes("wp-json/") ||
+    head.includes('name="generator" content="wordpress') ||
+    head.includes("content=\"wordpress")
+  ) {
+    details.push("WordPress signatures detected")
+    if (struct.includes("elementor")) details.push("Elementor page builder detected")
+    if (struct.includes("divi")) details.push("Divi theme/builder detected")
+    if (struct.includes("woocommerce")) details.push("WooCommerce e-commerce plugin detected")
+    if (struct.includes("yoast") || struct.includes("rank-math")) details.push("SEO plugin detected")
+    return { platform: "WordPress", confidence: "high", details }
+  }
+
+  // Shopify — cdn.shopify.com, myshopify.com, Shopify.theme
+  if (
+    struct.includes("cdn.shopify.com") ||
+    struct.includes("myshopify.com") ||
+    struct.includes("shopify.theme") ||
+    head.includes("shopify")
+  ) {
+    details.push("Shopify platform signatures detected")
+    if (struct.includes("shopify-section")) details.push("Shopify Sections/Liquid templates in use")
+    return { platform: "Shopify", confidence: "high", details }
+  }
+
+  // Wix — parastorage.com, static.wixstatic.com, _wix classes
+  if (
+    struct.includes("static.wixstatic.com") ||
+    struct.includes("parastorage.com") ||
+    struct.includes("_wix_browser_sess") ||
+    head.includes("wix.com") ||
+    struct.includes("x-wix-")
+  ) {
+    details.push("Wix platform signatures detected")
+    return { platform: "Wix", confidence: "high", details }
+  }
+
+  // Squarespace — static.squarespace.com, sqsp
+  if (
+    struct.includes("static.squarespace.com") ||
+    struct.includes("squarespace-cdn.com") ||
+    struct.includes("sqsp.net") ||
+    head.includes("squarespace")
+  ) {
+    details.push("Squarespace platform signatures detected")
+    return { platform: "Squarespace", confidence: "high", details }
+  }
+
+  // Adobe Experience Manager (AEM) — /content/dam/, /etc.clientlibs/, data-cmp-
+  if (
+    struct.includes("/content/dam/") ||
+    struct.includes("/etc.clientlibs/") ||
+    struct.includes("/libs/granite/") ||
+    struct.includes("data-cmp-")
+  ) {
+    details.push("Adobe Experience Manager (AEM) signatures detected")
+    if (struct.includes("/content/dam/")) details.push("AEM DAM asset paths found")
+    if (struct.includes("/etc.clientlibs/")) details.push("AEM client libraries detected")
+    return { platform: "Adobe AEM", confidence: "high", details }
+  }
+
+  // Optimizely (Episerver) — episerver paths, epi-contentarea
+  if (
+    struct.includes("episerver") ||
+    struct.includes("epi-contentarea") ||
+    struct.includes("/episerver/") ||
+    struct.includes("episerverapi")
   ) {
     details.push("Optimizely (Episerver) CMS signatures detected")
     return { platform: "Optimizely", confidence: "high", details }
   }
 
-  // Contentful
+  // Kentico
   if (
-    lower.includes("contentful") ||
-    lower.includes("ctfassets.net") ||
-    lower.includes("images.ctfassets.net")
+    struct.includes("kentico") ||
+    struct.includes("cmspages/") ||
+    struct.includes("cmsmodules/") ||
+    struct.includes("getmedia/")
   ) {
+    details.push("Kentico CMS signatures detected")
+    return { platform: "Kentico", confidence: "high", details }
+  }
+
+  // Contentful
+  if (struct.includes("contentful") || struct.includes("ctfassets.net")) {
     details.push("Contentful headless CMS signatures detected")
     return { platform: "Contentful", confidence: "high", details }
   }
 
   // Umbraco
-  if (
-    lower.includes("umbraco") ||
-    lower.includes("/umbraco/") ||
-    lower.includes("umb-") 
-  ) {
+  if (struct.includes("/umbraco/") || head.includes("umbraco")) {
     details.push("Umbraco CMS signatures detected")
     return { platform: "Umbraco", confidence: "high", details }
   }
 
-  // WordPress
-  if (lower.includes("wp-content") || lower.includes("wp-includes") || lower.includes("wordpress")) {
-    details.push("WordPress signatures detected (wp-content, wp-includes)")
-    // Check for common page builders
-    if (lower.includes("elementor")) details.push("Elementor page builder detected")
-    if (lower.includes("divi")) details.push("Divi theme/builder detected")
-    if (lower.includes("wpbakery") || lower.includes("js_composer")) details.push("WPBakery page builder detected")
-    if (lower.includes("woocommerce")) details.push("WooCommerce e-commerce plugin detected")
-    if (lower.includes("yoast") || lower.includes("rank-math")) details.push("SEO plugin detected")
-    return { platform: "WordPress", confidence: "high", details }
-  }
-
-  // Shopify
-  if (lower.includes("shopify") || lower.includes("cdn.shopify.com") || lower.includes("myshopify.com")) {
-    details.push("Shopify platform signatures detected")
-    if (lower.includes("shopify-section")) details.push("Shopify Sections/Liquid templates in use")
-    return { platform: "Shopify", confidence: "high", details }
-  }
-
-  // Wix
-  if (lower.includes("wix.com") || lower.includes("_wix") || lower.includes("x-wix")) {
-    details.push("Wix platform signatures detected")
-    return { platform: "Wix", confidence: "high", details }
-  }
-
-  // Squarespace
-  if (lower.includes("squarespace") || lower.includes("static.squarespace.com") || lower.includes("sqsp")) {
-    details.push("Squarespace platform signatures detected")
-    return { platform: "Squarespace", confidence: "high", details }
-  }
-
   // HubSpot CMS
-  if (lower.includes("hubspot") || lower.includes("hs-scripts.com") || lower.includes("hbspt")) {
+  if (struct.includes("hs-scripts.com") || struct.includes("hbspt.") || head.includes("hubspot")) {
     details.push("HubSpot CMS/Marketing Hub detected")
     return { platform: "HubSpot", confidence: "high", details }
   }
 
   // Drupal
-  if (lower.includes("drupal") || lower.includes("/sites/default/files") || lower.includes("drupal.js")) {
+  if (struct.includes("/sites/default/files") || struct.includes("drupal.js") || head.includes('content="drupal')) {
     details.push("Drupal CMS signatures detected")
     return { platform: "Drupal", confidence: "high", details }
   }
 
   // Joomla
-  if (lower.includes("/media/jui/") || lower.includes("joomla") || lower.includes("/components/com_")) {
+  if (struct.includes("/media/jui/") || struct.includes("/components/com_") || head.includes('content="joomla')) {
     details.push("Joomla CMS signatures detected")
     return { platform: "Joomla", confidence: "medium", details }
   }
 
   // Magento / Adobe Commerce
-  if (lower.includes("magento") || lower.includes("mage/") || lower.includes("/static/version")) {
+  if (struct.includes("/static/version") || struct.includes("mage/cookies")) {
     details.push("Magento/Adobe Commerce signatures detected")
     return { platform: "Magento", confidence: "medium", details }
   }
 
   // Ghost
-  if (lower.includes("ghost.org") || lower.includes("ghost-api") || lower.includes('content="ghost"')) {
+  if (struct.includes("ghost.org") || struct.includes("ghost-api") || head.includes('content="ghost"')) {
     details.push("Ghost CMS signatures detected")
     return { platform: "Ghost", confidence: "high", details }
   }
 
   // Framer
-  if (lower.includes("framer") || lower.includes("framerusercontent.com")) {
+  if (struct.includes("framerusercontent.com") || struct.includes("framer.com/m/")) {
     details.push("Framer platform signatures detected")
     return { platform: "Framer", confidence: "high", details }
   }
 
   // GoDaddy Website Builder
-  if (lower.includes("godaddy") || lower.includes("secureserver.net")) {
+  if (struct.includes("secureserver.net") || struct.includes("godaddy.com/websites")) {
     details.push("GoDaddy platform signatures detected")
     return { platform: "GoDaddy", confidence: "medium", details }
   }
 
   // Weebly
-  if (lower.includes("weebly") || lower.includes("editmysite.com")) {
+  if (struct.includes("editmysite.com") || head.includes("weebly")) {
     details.push("Weebly platform signatures detected")
     return { platform: "Weebly", confidence: "high", details }
   }
@@ -761,37 +755,37 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
   // --- JavaScript frameworks (lower confidence, usually custom-built) ---
 
   // Next.js
-  if (lower.includes("__next") || lower.includes("_next/static") || lower.includes("/_next/")) {
+  if (struct.includes("__next") || struct.includes("_next/static") || struct.includes("/_next/")) {
     details.push("Next.js framework signatures detected")
     return { platform: "Next.js", confidence: "medium", details }
   }
 
   // Nuxt.js
-  if (lower.includes("__nuxt") || lower.includes("/_nuxt/")) {
+  if (struct.includes("__nuxt") || struct.includes("/_nuxt/")) {
     details.push("Nuxt.js framework signatures detected")
     return { platform: "Nuxt.js", confidence: "medium", details }
   }
 
   // Gatsby
-  if (lower.includes("gatsby") || lower.includes("___gatsby")) {
+  if (struct.includes("___gatsby") || struct.includes("gatsby-")) {
     details.push("Gatsby framework signatures detected")
     return { platform: "Gatsby", confidence: "medium", details }
   }
 
   // Angular
-  if (lower.includes("ng-version") || lower.includes("angular")) {
+  if (struct.includes("ng-version") || struct.includes("ng-app")) {
     details.push("Angular framework signatures detected")
     return { platform: "Angular", confidence: "medium", details }
   }
 
   // React (generic, lower confidence)
-  if (lower.includes("react") && lower.includes("__reactfiber") || lower.includes("data-reactroot")) {
+  if (struct.includes("data-reactroot") || struct.includes("__reactfiber")) {
     details.push("React application signatures detected")
     return { platform: "React", confidence: "low", details }
   }
 
   // Laravel
-  if (lower.includes("laravel") || lower.includes("csrf-token")) {
+  if (struct.includes("csrf-token") && headerValues.includes("laravel")) {
     details.push("Possible Laravel framework detected")
     return { platform: "Laravel", confidence: "low", details }
   }

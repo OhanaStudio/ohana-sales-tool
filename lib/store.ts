@@ -62,12 +62,12 @@ export async function getReport(id: string): Promise<StoredReport | undefined> {
 export async function getCachedReportForUrl(url: string): Promise<StoredReport | undefined> {
   const sql = getDb()
   const normalizedUrl = normalizeUrl(url)
-  // Return most recent report for this URL within last 24h
+  // Return most recent report for this URL within last 1 hour
   const rows = await sql`
     SELECT id, url, timestamp, result_json
     FROM reports
     WHERE url = ${normalizedUrl}
-      AND created_at > NOW() - INTERVAL '24 hours'
+      AND created_at > NOW() - INTERVAL '1 hour'
     ORDER BY version DESC
     LIMIT 1
   `
