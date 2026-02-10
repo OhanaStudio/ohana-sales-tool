@@ -203,7 +203,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             RECOMMENDED NEXT STEPS
-        ────────────────────────────────────────────── */}
+        ────────────────────��───────────────────────── */}
         <div className="mb-10 print-break-before print-compact">
           <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
             Recommended next steps
@@ -245,7 +245,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             FULL HEALTH CHECK DETAILS DIVIDER
         ────────────────────────────────────────────── */}
         <div className="mt-4 mb-10 print-break-before">
-          <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-4 print:text-3xl">
+          <h2 className="font-serif text-5xl md:text-6xl text-foreground mb-4 print:text-4xl">
             Full Health Check Details
           </h2>
           <div className="border-t border-border" />
