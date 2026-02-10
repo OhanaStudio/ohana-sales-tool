@@ -147,7 +147,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const pills: RiskPill[] = [
     { label: "High Risks", count: risks.high, variant: "red" },
     { label: "Moderate Risks", count: risks.moderate, variant: "amber" },
-    { label: "Accessibility Risks", count: risks.accessibility, variant: "filled-red" },
+    { label: "Accessibility Risks", count: risks.accessibility, variant: "blue" },
   ]
 
   return (
@@ -216,7 +216,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             SCREENSHOTS
-        ────────────────────────────────────────────── */}
+        ───────────���────────────────────────────────── */}
         <div className="mb-10 print-break-avoid print-compact">
           <SiteScreenshots
             url={result.url}

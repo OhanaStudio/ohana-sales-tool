@@ -17,7 +17,7 @@ function scoreLabel(score: number): string {
 export interface RiskPill {
   label: string
   count: number
-  variant: "red" | "amber" | "filled-red"
+  variant: "red" | "amber" | "blue"
 }
 
 export function ScoreDisplay({
@@ -104,11 +104,11 @@ export function ScoreDisplay({
           <div className="flex flex-wrap gap-2">
             {pills.map((pill) => {
               const classes =
-                pill.variant === "filled-red"
-                  ? "bg-red-600 text-white border-red-600"
-                  : pill.variant === "red"
-                    ? "bg-red-50 text-red-700 border-red-200"
-                    : "bg-amber-50 text-amber-700 border-amber-200"
+                    pill.variant === "blue"
+                      ? "bg-sky-50 text-sky-700 border-sky-200"
+                      : pill.variant === "red"
+                        ? "bg-red-50 text-red-700 border-red-200"
+                        : "bg-amber-50 text-amber-700 border-amber-200"
               return (
                 <span
                   key={pill.label}
