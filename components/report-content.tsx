@@ -100,7 +100,7 @@ function PrintSection({
       )}
       <div
         className={`transition-opacity duration-200 ${!enabled ? "no-print" : ""}`}
-        style={{ opacity: enabled ? 1 : 0.15 }}
+        style={{ opacity: enabled ? 1 : 0.35 }}
       >
         {children}
       </div>

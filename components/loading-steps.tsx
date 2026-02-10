@@ -30,7 +30,7 @@ export function LoadingSteps({ onCancel }: { onCancel?: () => void }) {
           key={step}
           className={cn(
             "flex items-center gap-3 transition-opacity duration-500",
-            i <= currentStep ? "opacity-100" : "opacity-30"
+            i <= currentStep ? "opacity-100" : "opacity-50"
           )}
         >
           {i < currentStep ? (

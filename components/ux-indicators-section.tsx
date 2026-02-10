@@ -39,7 +39,7 @@ function Indicator({
           <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
         )}
         {note && (
-          <p className="text-xs text-muted-foreground/70 italic mt-1 leading-relaxed">Note: {note}</p>
+          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed">Note: {note}</p>
         )}
       </div>
     </div>

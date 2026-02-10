@@ -30,12 +30,12 @@ function A11yRow({
         <div className="flex items-center gap-2">
           <p className="text-sm font-bold text-foreground">{label}</p>
           {wcagRef && (
-            <span className="text-[10px] text-muted-foreground/60 font-medium">{wcagRef}</span>
+            <span className="text-[10px] text-muted-foreground font-semibold">{wcagRef}</span>
           )}
         </div>
         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{detail}</p>
         {note && (
-          <p className="text-xs text-muted-foreground/70 italic mt-1 leading-relaxed">Note: {note}</p>
+          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed">Note: {note}</p>
         )}
       </div>
     </div>

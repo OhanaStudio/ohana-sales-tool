@@ -74,14 +74,14 @@ export function RecapSection({ result }: { result: AuditResult }) {
       <div className="rounded-xl bg-foreground text-background p-6 md:p-8">
         {loading ? (
           <div className="flex items-center gap-3 py-4">
-            <Loader2 className="h-4 w-4 animate-spin text-background/60" />
-            <p className="text-sm text-background/60">
+            <Loader2 className="h-4 w-4 animate-spin text-background/80" />
+            <p className="text-sm text-background/80">
               Generating personalised recommendations...
             </p>
           </div>
         ) : (
           <div className="space-y-6">
-            <p className="text-sm leading-relaxed text-background/90">
+            <p className="text-sm leading-relaxed text-background">
               {displayText ? renderBoldText(displayText) : null}
             </p>
 
@@ -89,7 +89,7 @@ export function RecapSection({ result }: { result: AuditResult }) {
               <p className="font-sans text-lg font-bold text-background mb-2">
                 Let{"'"}s talk about what we found
               </p>
-              <p className="text-sm leading-relaxed text-background/70 mb-4">
+              <p className="text-sm leading-relaxed text-background/85 mb-4">
                 Book a free 30-minute clarity call to walk through your results
                 and discuss quick wins.
               </p>
