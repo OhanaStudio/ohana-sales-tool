@@ -120,7 +120,7 @@ export function RiskGroups({ result }: { result: AuditResult }) {
       {groups.map((group) => {
         const config = groupConfig[group.level]
         return (
-          <div key={group.level}>
+          <div key={group.level} id={`risk-${group.level}`}>
             <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
               {config.heading}
             </h2>

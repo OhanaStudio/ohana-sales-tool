@@ -146,9 +146,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
   const risks = countRisks(result)
   const pills: RiskPill[] = [
-    { label: "High Risks", count: risks.high, variant: "red" },
-    { label: "Moderate Risks", count: risks.moderate, variant: "amber" },
-    { label: "Accessibility Risks", count: risks.accessibility, variant: "blue" },
+    { label: "High Risks", count: risks.high, variant: "red", scrollTo: "risk-red" },
+    { label: "Moderate Risks", count: risks.moderate, variant: "amber", scrollTo: "risk-amber" },
+    { label: "Accessibility Risks", count: risks.accessibility, variant: "blue", scrollTo: "risk-accessibility" },
   ].filter((p) => p.count > 0)
 
   return (
@@ -429,13 +429,15 @@ export function ReportContent({ result }: { result: AuditResult }) {
             ACCESSIBILITY
         ────────────────────────────────────────────── */}
         {result.accessibilityIndicators && (
-          <PrintSection
-            enabled={sections.accessibility}
-            className="mb-10 print-break-before print-compact"
-            toggle={<SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />}
-          >
-            <AccessibilitySection indicators={result.accessibilityIndicators} />
-          </PrintSection>
+          <div id="risk-accessibility">
+            <PrintSection
+              enabled={sections.accessibility}
+              className="mb-10 print-break-before print-compact"
+              toggle={<SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />}
+            >
+              <AccessibilitySection indicators={result.accessibilityIndicators} />
+            </PrintSection>
+          </div>
         )}
 
         {/* ──────────────────────────────────────────────

@@ -18,6 +18,7 @@ export interface RiskPill {
   label: string
   count: number
   variant: "red" | "amber" | "blue"
+  scrollTo?: string
 }
 
 export function ScoreDisplay({
@@ -109,13 +110,21 @@ export function ScoreDisplay({
                       : pill.variant === "red"
                         ? "bg-red-50 text-red-700 border-red-200"
                         : "bg-amber-50 text-amber-700 border-amber-200"
+              const handleClick = pill.scrollTo
+                ? () => {
+                    const el = document.getElementById(pill.scrollTo!)
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                : undefined
               return (
-                <span
+                <button
                   key={pill.label}
-                  className={`inline-flex items-center text-xs font-medium px-3 py-1 rounded-full border ${classes}`}
+                  type="button"
+                  onClick={handleClick}
+                  className={`inline-flex items-center text-xs font-medium px-3 py-1 border cursor-pointer hover:opacity-80 transition-opacity ${classes}`}
                 >
                   {pill.count} {pill.label}
-                </span>
+                </button>
               )
             })}
           </div>
