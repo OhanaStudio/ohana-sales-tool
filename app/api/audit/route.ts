@@ -556,23 +556,32 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
 
   // --- CMS / Platform signatures (ordered by specificity) ---
 
-  // Webflow — check FIRST, very reliable via data-wf-* attributes and CDN
-  if (
-    struct.includes("data-wf-site") ||
-    struct.includes("data-wf-page") ||
-    struct.includes("data-wf-domain") ||
-    struct.includes(".webflow.") ||
-    struct.includes("website-files.com") ||
-    struct.includes("w-mod-js") ||
-    struct.includes("wf-force-outline") ||
-    struct.includes('class="w-nav') ||
-    struct.includes('class="w-slider') ||
-    struct.includes('class="w-form') ||
-    struct.includes('class="w-richtext') ||
-    struct.includes('class="w-embed') ||
-    struct.includes('class="w-dyn') ||
-    struct.includes('class="w-container')
-  ) {
+  // Webflow — check FIRST. Dead giveaways: data-wf-* attributes, webflow CDN, webflow.js
+  const webflowSignals = [
+    "data-wf-domain",     // <html data-wf-domain="...">
+    "data-wf-page",       // <html data-wf-page="...">
+    "data-wf-site",       // <html data-wf-site="...">
+    "webflow.js",         // Webflow runtime JS
+    "website-files.com",  // Webflow CDN (assets-global.website-files.com, cdn.prod.website-files.com)
+    "uploads-ssl.webflow.com", // Webflow uploads CDN
+    " w-nav",             // Webflow nav class (space prefix to match in class lists)
+    " w-dropdown",        // Webflow dropdown class
+    " w-richtext",        // Webflow richtext class
+    " w-button",          // Webflow button class
+    " w-slider",          // Webflow slider class
+    " w-form",            // Webflow form class
+    " w-embed",           // Webflow embed class
+    " w-dyn-",            // Webflow CMS dynamic content
+    '"w-nav',             // Webflow class at start of attribute
+    '"w-dropdown',
+    '"w-richtext',
+    '"w-button',
+    '"w-slider',
+    '"w-form',
+    '"w-embed',
+    '"w-dyn-',
+  ]
+  if (webflowSignals.some(sig => struct.includes(sig))) {
     details.push("Webflow platform signatures detected")
     if (struct.includes("data-wf-site")) details.push("Webflow site ID attribute found")
     if (struct.includes("website-files.com")) details.push("Webflow CDN assets detected")
@@ -606,15 +615,19 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "Sitecore", confidence: "high", details }
   }
 
-  // WordPress — wp-content/themes/ and wp-includes/ are definitive
-  if (
-    struct.includes("wp-content/") ||
-    struct.includes("wp-includes/") ||
-    struct.includes("wp-json/") ||
-    head.includes('name="generator" content="wordpress') ||
-    head.includes("content=\"wordpress")
-  ) {
+  // WordPress — /wp-content/, /wp-includes/, /wp-admin/, wp-json API
+  const wpSignals = [
+    "/wp-content/",       // Theme and plugin assets
+    "/wp-includes/",      // Core WordPress JS/CSS
+    "/wp-admin/",         // Admin path
+    "/wp-json/",          // REST API endpoint
+    "wp-embed.min.js",    // WP embed script
+  ]
+  const wpMeta = head.includes('content="wordpress')
+  if (wpSignals.some(sig => struct.includes(sig)) || wpMeta) {
     details.push("WordPress signatures detected")
+    if (struct.includes("/wp-content/themes/")) details.push("WordPress theme assets found")
+    if (struct.includes("/wp-content/plugins/")) details.push("WordPress plugins detected")
     if (struct.includes("elementor")) details.push("Elementor page builder detected")
     if (struct.includes("divi")) details.push("Divi theme/builder detected")
     if (struct.includes("woocommerce")) details.push("WooCommerce e-commerce plugin detected")
@@ -622,37 +635,46 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "WordPress", confidence: "high", details }
   }
 
-  // Shopify — cdn.shopify.com, myshopify.com, Shopify.theme
-  if (
-    struct.includes("cdn.shopify.com") ||
-    struct.includes("myshopify.com") ||
-    struct.includes("shopify.theme") ||
-    head.includes("shopify")
-  ) {
+  // Shopify — /cdn/shop/, cdn.shopify.com, Shopify.theme, shopify-checkout-api-token
+  const shopifySignals = [
+    "cdn.shopify.com",
+    "/cdn/shop/",
+    "/cdn/s/files/",
+    "myshopify.com",
+    "shopify-checkout-api-token",
+    "shopify.theme",
+    "shopifyanalytics",
+    "shopify.routes",
+  ]
+  if (shopifySignals.some(sig => struct.includes(sig))) {
     details.push("Shopify platform signatures detected")
     if (struct.includes("shopify-section")) details.push("Shopify Sections/Liquid templates in use")
+    if (struct.includes("/cart.js")) details.push("Shopify cart API detected")
     return { platform: "Shopify", confidence: "high", details }
   }
 
-  // Wix — parastorage.com, static.wixstatic.com, _wix classes
-  if (
-    struct.includes("static.wixstatic.com") ||
-    struct.includes("parastorage.com") ||
-    struct.includes("_wix_browser_sess") ||
-    head.includes("wix.com") ||
-    struct.includes("x-wix-")
-  ) {
+  // Wix — static.wixstatic.com, parastorage.com, wix-code-sdk, X-Wix headers
+  const wixSignals = [
+    "static.wixstatic.com",
+    "parastorage.com",
+    "wix-code-sdk",
+    "_wixcidx",
+  ]
+  const wixMeta = head.includes('content="wix.com')
+  if (wixSignals.some(sig => struct.includes(sig)) || wixMeta || headerValues.includes("x-wix-request-id")) {
     details.push("Wix platform signatures detected")
     return { platform: "Wix", confidence: "high", details }
   }
 
-  // Squarespace — static.squarespace.com, sqsp
-  if (
-    struct.includes("static.squarespace.com") ||
-    struct.includes("squarespace-cdn.com") ||
-    struct.includes("sqsp.net") ||
-    head.includes("squarespace")
-  ) {
+  // Squarespace — static.squarespace.com, assets.squarespace.com, collection IDs
+  const sqspSignals = [
+    "static.squarespace.com",
+    "assets.squarespace.com",
+    "sqsp.net",
+    "<!-- this is squarespace",
+  ]
+  const sqspMeta = head.includes("squarespace")
+  if (sqspSignals.some(sig => struct.includes(sig)) || sqspMeta || lower.includes("<!-- this is squarespace")) {
     details.push("Squarespace platform signatures detected")
     return { platform: "Squarespace", confidence: "high", details }
   }
@@ -693,9 +715,21 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
   }
 
   // Contentful
-  if (struct.includes("contentful") || struct.includes("ctfassets.net")) {
+  if (struct.includes("ctfassets.net") || struct.includes("cdn.contentful.com")) {
     details.push("Contentful headless CMS signatures detected")
     return { platform: "Contentful", confidence: "high", details }
+  }
+
+  // Sanity
+  if (struct.includes("api.sanity.io") || struct.includes("cdn.sanity.io")) {
+    details.push("Sanity headless CMS signatures detected")
+    return { platform: "Sanity", confidence: "high", details }
+  }
+
+  // Prismic
+  if (struct.includes("prismic.io") || struct.includes("cdn.prismic.io")) {
+    details.push("Prismic headless CMS signatures detected")
+    return { platform: "Prismic", confidence: "high", details }
   }
 
   // Umbraco
@@ -710,13 +744,18 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "HubSpot", confidence: "high", details }
   }
 
-  // Drupal
-  if (struct.includes("/sites/default/files") || struct.includes("drupal.js") || head.includes('content="drupal')) {
+  // Drupal — /sites/default/files/, /core/, drupalSettings
+  if (
+    struct.includes("/sites/default/files/") ||
+    struct.includes("drupalsettings") ||
+    struct.includes("/core/misc/drupal") ||
+    head.includes('content="drupal')
+  ) {
     details.push("Drupal CMS signatures detected")
     return { platform: "Drupal", confidence: "high", details }
   }
 
-  // Joomla
+  // Joomla — /media/jui/, /components/com_, generator meta
   if (struct.includes("/media/jui/") || struct.includes("/components/com_") || head.includes('content="joomla')) {
     details.push("Joomla CMS signatures detected")
     return { platform: "Joomla", confidence: "medium", details }
@@ -728,8 +767,8 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "Magento", confidence: "medium", details }
   }
 
-  // Ghost
-  if (struct.includes("ghost.org") || struct.includes("ghost-api") || head.includes('content="ghost"')) {
+  // Ghost — /ghost/ admin, ghost.min.js, generator meta
+  if (struct.includes("ghost.min.js") || struct.includes("ghost-api") || head.includes('content="ghost') || struct.includes("data-ghost")) {
     details.push("Ghost CMS signatures detected")
     return { platform: "Ghost", confidence: "high", details }
   }
