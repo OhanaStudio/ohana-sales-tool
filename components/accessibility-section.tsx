@@ -1,7 +1,35 @@
 import React from "react"
 import type { AccessibilityIndicators } from "@/lib/types"
 import { Check, X, AlertTriangle } from "lucide-react"
-import { parseEaaIssue } from "@/lib/utils" // Assuming parseEaaIssue is declared in utils.js
+
+const EAA_ISSUE_NOTES: Record<string, string> = {
+  "3.1.1": "Without a language declaration, screen readers may mispronounce content, making the site difficult for visually impaired visitors.",
+  "2.4.2": "The page title appears in browser tabs, search results, and bookmarks. Missing titles look unprofessional and hurt search rankings.",
+  "1.3.1": "Proper document structure helps screen readers and search engines understand your content. This is a foundational accessibility and SEO requirement.",
+  "1.1.1": "Images without alt text are invisible to screen reader users and search engines. This is both an accessibility violation and a missed SEO opportunity.",
+  "4.1.2": "Unlabelled form fields are confusing for screen reader users and can reduce form completion rates on mobile devices.",
+  "2.4.4": "Links without descriptive text are meaningless for screen reader users who navigate by link list. This reduces clarity for all visitors.",
+  "1.4.2": "Videos without user controls frustrate visitors and violate accessibility standards. Autoplay can disorient users with cognitive disabilities.",
+  "1.2.2": "Captions are essential for deaf and hard-of-hearing users, and also help visitors in sound-sensitive environments like offices.",
+  "2.4.1": "Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple fix with major impact.",
+  "gdpr": "EU regulations require consent before setting non-essential cookies. Non-compliance can result in significant fines under GDPR.",
+}
+
+function parseEaaIssue(issue: string): { label: string; detail: string; wcagRef?: string; note?: string } {
+  const wcagMatch = issue.match(/\(([^)]+)\)/)
+  const wcagRef = wcagMatch ? wcagMatch[1].replace(" requirement for EU sites", "").trim() : undefined
+  const detail = issue.replace(/\s*\([^)]+\)\.?/, "").replace(/\.$/, "").trim()
+  const label = detail.replace(/^\d+\s+/, "").replace(/\.$/, "").trim()
+  let note: string | undefined
+  if (wcagRef) {
+    const refNumber = wcagRef.replace("WCAG ", "").trim()
+    note = EAA_ISSUE_NOTES[refNumber]
+    if (!note && wcagRef.toLowerCase().includes("gdpr")) {
+      note = EAA_ISSUE_NOTES["gdpr"]
+    }
+  }
+  return { label, detail, wcagRef, note }
+}
 
 function StatusIcon({ status }: { status: "pass" | "warn" | "fail" }) {
   if (status === "pass")
@@ -41,19 +69,6 @@ function A11yRow({
       </div>
     </div>
   )
-}
-
-const EAA_ISSUE_NOTES: Record<string, string> = {
-  "3.1.1": "Without a language declaration, screen readers may mispronounce content, making the site difficult for visually impaired visitors.",
-  "2.4.2": "The page title appears in browser tabs, search results, and bookmarks. Missing titles look unprofessional and hurt search rankings.",
-  "1.3.1": "Proper document structure helps screen readers and search engines understand your content. This is a foundational accessibility and SEO requirement.",
-  "1.1.1": "Images without alt text are invisible to screen reader users and search engines. This is both an accessibility violation and a missed SEO opportunity.",
-  "4.1.2": "Unlabelled form fields are confusing for screen reader users and can reduce form completion rates on mobile devices.",
-  "2.4.4": "Links without descriptive text are meaningless for screen reader users who navigate by link list. This reduces clarity for all visitors.",
-  "1.4.2": "Videos without user controls frustrate visitors and violate accessibility standards. Autoplay can disorient users with cognitive disabilities.",
-  "1.2.2": "Captions are essential for deaf and hard-of-hearing users, and also help visitors in sound-sensitive environments like offices.",
-  "2.4.1": "Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple fix with major impact.",
-  "gdpr": "EU regulations require consent before setting non-essential cookies. Non-compliance can result in significant fines under GDPR.",
 }
 
 export function AccessibilitySection({
