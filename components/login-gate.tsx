@@ -38,7 +38,7 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
           />
           <h1 className="font-serif text-2xl text-foreground mb-2">Welcome back</h1>
           <p className="text-sm text-muted-foreground">
-            Enter the password to continue.
+            Enter the password to continue.<br></br> notber-8syjvi-sivnaV
           </p>
         </div>
 

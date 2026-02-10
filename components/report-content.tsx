@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import type { AuditResult } from "@/lib/types"
 import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
 import { RiskCard } from "./risk-card"
@@ -11,6 +12,7 @@ import { AdvancedUXSection } from "./advanced-ux-section"
 import { SiteScreenshots } from "./site-screenshots"
 import { ScoreDisplay } from "./score-display"
 import { PlatformInfoSection } from "./platform-info-section"
+import { SectionToggle } from "./section-toggle"
 import {
   Download,
   ArrowLeft,
@@ -55,6 +57,21 @@ function formatTime(iso: string): string {
 }
 
 export function ReportContent({ result }: { result: AuditResult }) {
+  const [sections, setSections] = useState({
+    platform: true,
+    screenshots: true,
+    executive: true,
+    performance: true,
+    ux: true,
+    design: true,
+    advancedUx: true,
+    accessibility: true,
+    nextStep: true,
+  })
+
+  const toggle = (key: keyof typeof sections) =>
+    setSections((prev) => ({ ...prev, [key]: !prev[key] }))
+
   const handlePrint = () => {
     window.print()
   }
@@ -92,178 +109,248 @@ export function ReportContent({ result }: { result: AuditResult }) {
           </div>
         </div>
 
-          {result.platformInfo && (
-            <div className="mb-10 print-break-avoid print-compact">
-              <PlatformInfoSection info={result.platformInfo} />
+        {result.platformInfo && (
+          <div className={`mb-10 print-break-avoid print-compact ${!sections.platform ? "no-print" : ""}`}>
+            <div className="flex items-center justify-between mb-4 no-print">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Platform</span>
+              <SectionToggle label="Platform" enabled={sections.platform} onToggle={() => toggle("platform")} />
             </div>
-          )}
+            {sections.platform && <PlatformInfoSection info={result.platformInfo} />}
+            {!sections.platform && (
+              <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+            )}
+          </div>
+        )}
 
-          <div className="mb-10 print-break-avoid print-compact">
+        <div className={`mb-10 print-break-avoid print-compact ${!sections.screenshots ? "no-print" : ""}`}>
+          <div className="flex items-center justify-between mb-4 no-print">
+            <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Screenshots</span>
+            <SectionToggle label="Screenshots" enabled={sections.screenshots} onToggle={() => toggle("screenshots")} />
+          </div>
+          {sections.screenshots ? (
             <SiteScreenshots
-            url={result.url}
-            desktopScreenshot={result.desktop.screenshot}
-            mobileScreenshot={result.mobile.screenshot}
-          />
-        </div>
-
-        <div className="mb-10 print-compact">
-          <h2 className="font-sans text-2xl text-foreground mb-6 print:text-xl print:mb-4">Executive summary</h2>
-          <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
-          <div className="flex flex-col gap-4 mt-8">
-            <RiskCard card={result.riskCards.visibility} variant="featured" />
-            <RiskCard card={result.riskCards.conversion} variant="featured" />
-            <RiskCard card={result.riskCards.trust} variant="featured" />
-          </div>
-        </div>
-
-        <div className="mb-10 print-break-before print-compact">
-          <h2 className="font-sans text-2xl text-foreground mb-4 print:text-xl print:mb-3">Performance overview</h2>
-          <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
-            Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
-          </p>
-          {/* Row 1: 2 cards */}
-          <div className="grid grid-cols-2 gap-3">
-            <MetricTile
-              label="Largest Contentful Paint"
-              icon={<ImageIcon className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.lcp)}
-              desktopValue={formatMs(result.desktop.metrics.lcp)}
-              unit={result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000 ? "s" : "ms"}
-              mobileStatus={getMetricStatus("lcp", result.mobile.metrics.lcp)}
-              desktopStatus={getMetricStatus("lcp", result.desktop.metrics.lcp)}
+              url={result.url}
+              desktopScreenshot={result.desktop.screenshot}
+              mobileScreenshot={result.mobile.screenshot}
             />
-            <MetricTile
-              label="First Contentful Paint"
-              icon={<Paintbrush className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.fcp)}
-              desktopValue={formatMs(result.desktop.metrics.fcp)}
-              unit={result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000 ? "s" : "ms"}
-              mobileStatus={getMetricStatus("fcp", result.mobile.metrics.fcp)}
-              desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
-            />
-          </div>
-
-          {/* Row 2: 3 cards */}
-          <div className="grid grid-cols-3 gap-3 mt-3">
-            <MetricTile
-              label="Cumulative Layout Shift"
-              icon={<Move className="h-4 w-4" />}
-              mobileValue={formatCls(result.mobile.metrics.cls)}
-              desktopValue={formatCls(result.desktop.metrics.cls)}
-              mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
-              desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
-            />
-            <MetricTile
-              label="Total Blocking Time"
-              icon={<Clock className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.tbt)}
-              desktopValue={formatMs(result.desktop.metrics.tbt)}
-              unit="ms"
-              mobileStatus={getMetricStatus("tbt", result.mobile.metrics.tbt)}
-              desktopStatus={getMetricStatus("tbt", result.desktop.metrics.tbt)}
-            />
-            <MetricTile
-              label="Speed Index"
-              icon={<Gauge className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.speedIndex)}
-              desktopValue={formatMs(result.desktop.metrics.speedIndex)}
-              unit={result.mobile.metrics.speedIndex && result.mobile.metrics.speedIndex >= 1000 ? "s" : "ms"}
-              mobileStatus={getMetricStatus("speedIndex", result.mobile.metrics.speedIndex)}
-              desktopStatus={getMetricStatus("speedIndex", result.desktop.metrics.speedIndex)}
-            />
-          </div>
-
-          {/* Row 3: 2 cards */}
-          <div className="grid grid-cols-2 gap-3 mt-3">
-            <MetricTile
-              label="Performance"
-              icon={<Zap className="h-4 w-4" />}
-              mobileValue={String(result.mobile.performanceScore)}
-              desktopValue={String(result.desktop.performanceScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.performanceScore)}
-              desktopStatus={getScoreStatus(result.desktop.performanceScore)}
-            />
-            <MetricTile
-              label="Accessibility"
-              icon={<Eye className="h-4 w-4" />}
-              mobileValue={String(result.mobile.accessibilityScore)}
-              desktopValue={String(result.desktop.accessibilityScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
-              desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
-            />
-          </div>
-
-          {/* Row 4: 2 cards */}
-          <div className="grid grid-cols-2 gap-3 mt-3">
-            <MetricTile
-              label="SEO"
-              icon={<Search className="h-4 w-4" />}
-              mobileValue={String(result.mobile.seoScore)}
-              desktopValue={String(result.desktop.seoScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.seoScore)}
-              desktopStatus={getScoreStatus(result.desktop.seoScore)}
-            />
-            <MetricTile
-              label="Best Practices"
-              icon={<ShieldCheck className="h-4 w-4" />}
-              mobileValue={String(result.mobile.bestPracticesScore)}
-              desktopValue={String(result.desktop.bestPracticesScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.bestPracticesScore)}
-              desktopStatus={getScoreStatus(result.desktop.bestPracticesScore)}
-            />
-          </div>
-
-          {result.mobile.notes.length > 0 && (
-            <p className="text-xs text-muted-foreground mt-3 italic">
-              {result.mobile.notes[0]}
-            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
           )}
         </div>
 
-        <div className="mb-10 print-break-before print-compact">
-          <UXIndicatorsSection indicators={result.uxIndicators} />
+        <div className={`mb-10 print-compact ${!sections.executive ? "no-print" : ""}`}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-sans text-2xl text-foreground print:text-xl">Executive summary</h2>
+            <SectionToggle label="Executive summary" enabled={sections.executive} onToggle={() => toggle("executive")} />
+          </div>
+          {sections.executive ? (
+            <>
+              <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
+              <div className="flex flex-col gap-4 mt-8">
+                <RiskCard card={result.riskCards.visibility} variant="featured" />
+                <RiskCard card={result.riskCards.conversion} variant="featured" />
+                <RiskCard card={result.riskCards.trust} variant="featured" />
+              </div>
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+          )}
+        </div>
+
+        <div className={`mb-10 print-break-before print-compact ${!sections.performance ? "no-print" : ""}`}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-sans text-2xl text-foreground print:text-xl print:mb-0">Performance overview</h2>
+            <SectionToggle label="Performance" enabled={sections.performance} onToggle={() => toggle("performance")} />
+          </div>
+          {sections.performance && (
+            <>
+              <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
+                Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
+              </p>
+              {/* Row 1: 2 cards */}
+              <div className="grid grid-cols-2 gap-3">
+                <MetricTile
+                  label="Largest Contentful Paint"
+                  icon={<ImageIcon className="h-4 w-4" />}
+                  mobileValue={formatMs(result.mobile.metrics.lcp)}
+                  desktopValue={formatMs(result.desktop.metrics.lcp)}
+                  unit={result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000 ? "s" : "ms"}
+                  mobileStatus={getMetricStatus("lcp", result.mobile.metrics.lcp)}
+                  desktopStatus={getMetricStatus("lcp", result.desktop.metrics.lcp)}
+                />
+                <MetricTile
+                  label="First Contentful Paint"
+                  icon={<Paintbrush className="h-4 w-4" />}
+                  mobileValue={formatMs(result.mobile.metrics.fcp)}
+                  desktopValue={formatMs(result.desktop.metrics.fcp)}
+                  unit={result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000 ? "s" : "ms"}
+                  mobileStatus={getMetricStatus("fcp", result.mobile.metrics.fcp)}
+                  desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
+                />
+              </div>
+
+              {/* Row 2: 3 cards */}
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                <MetricTile
+                  label="Cumulative Layout Shift"
+                  icon={<Move className="h-4 w-4" />}
+                  mobileValue={formatCls(result.mobile.metrics.cls)}
+                  desktopValue={formatCls(result.desktop.metrics.cls)}
+                  mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
+                  desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
+                />
+                <MetricTile
+                  label="Total Blocking Time"
+                  icon={<Clock className="h-4 w-4" />}
+                  mobileValue={formatMs(result.mobile.metrics.tbt)}
+                  desktopValue={formatMs(result.desktop.metrics.tbt)}
+                  unit="ms"
+                  mobileStatus={getMetricStatus("tbt", result.mobile.metrics.tbt)}
+                  desktopStatus={getMetricStatus("tbt", result.desktop.metrics.tbt)}
+                />
+                <MetricTile
+                  label="Speed Index"
+                  icon={<Gauge className="h-4 w-4" />}
+                  mobileValue={formatMs(result.mobile.metrics.speedIndex)}
+                  desktopValue={formatMs(result.desktop.metrics.speedIndex)}
+                  unit={result.mobile.metrics.speedIndex && result.mobile.metrics.speedIndex >= 1000 ? "s" : "ms"}
+                  mobileStatus={getMetricStatus("speedIndex", result.mobile.metrics.speedIndex)}
+                  desktopStatus={getMetricStatus("speedIndex", result.desktop.metrics.speedIndex)}
+                />
+              </div>
+
+              {/* Row 3: 2 cards */}
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <MetricTile
+                  label="Performance"
+                  icon={<Zap className="h-4 w-4" />}
+                  mobileValue={String(result.mobile.performanceScore)}
+                  desktopValue={String(result.desktop.performanceScore)}
+                  maxScore={100}
+                  mobileStatus={getScoreStatus(result.mobile.performanceScore)}
+                  desktopStatus={getScoreStatus(result.desktop.performanceScore)}
+                />
+                <MetricTile
+                  label="Accessibility"
+                  icon={<Eye className="h-4 w-4" />}
+                  mobileValue={String(result.mobile.accessibilityScore)}
+                  desktopValue={String(result.desktop.accessibilityScore)}
+                  maxScore={100}
+                  mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
+                  desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
+                />
+              </div>
+
+              {/* Row 4: 2 cards */}
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <MetricTile
+                  label="SEO"
+                  icon={<Search className="h-4 w-4" />}
+                  mobileValue={String(result.mobile.seoScore)}
+                  desktopValue={String(result.desktop.seoScore)}
+                  maxScore={100}
+                  mobileStatus={getScoreStatus(result.mobile.seoScore)}
+                  desktopStatus={getScoreStatus(result.desktop.seoScore)}
+                />
+                <MetricTile
+                  label="Best Practices"
+                  icon={<ShieldCheck className="h-4 w-4" />}
+                  mobileValue={String(result.mobile.bestPracticesScore)}
+                  desktopValue={String(result.desktop.bestPracticesScore)}
+                  maxScore={100}
+                  mobileStatus={getScoreStatus(result.mobile.bestPracticesScore)}
+                  desktopStatus={getScoreStatus(result.desktop.bestPracticesScore)}
+                />
+              </div>
+
+              {result.mobile.notes.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-3 italic">
+                  {result.mobile.notes[0]}
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
+        <div className={`mb-10 print-break-before print-compact ${!sections.ux ? "no-print" : ""}`}>
+          <div className="flex items-center justify-between mb-4 no-print">
+            <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">UX Indicators</span>
+            <SectionToggle label="UX Indicators" enabled={sections.ux} onToggle={() => toggle("ux")} />
+          </div>
+          {sections.ux ? (
+            <UXIndicatorsSection indicators={result.uxIndicators} />
+          ) : (
+            <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+          )}
         </div>
 
         {result.designIndicators && (
-          <div className="mb-10 print-break-before print-compact">
-            <DesignIndicatorsSection indicators={result.designIndicators} />
+          <div className={`mb-10 print-break-before print-compact ${!sections.design ? "no-print" : ""}`}>
+            <div className="flex items-center justify-between mb-4 no-print">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Design</span>
+              <SectionToggle label="Design" enabled={sections.design} onToggle={() => toggle("design")} />
+            </div>
+            {sections.design ? (
+              <DesignIndicatorsSection indicators={result.designIndicators} />
+            ) : (
+              <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+            )}
           </div>
         )}
 
         {result.advancedUX && (
-          <div className="mb-10 print-break-before print-compact">
-            <AdvancedUXSection indicators={result.advancedUX} />
+          <div className={`mb-10 print-break-before print-compact ${!sections.advancedUx ? "no-print" : ""}`}>
+            <div className="flex items-center justify-between mb-4 no-print">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">UX Friction</span>
+              <SectionToggle label="UX Friction" enabled={sections.advancedUx} onToggle={() => toggle("advancedUx")} />
+            </div>
+            {sections.advancedUx ? (
+              <AdvancedUXSection indicators={result.advancedUX} />
+            ) : (
+              <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+            )}
           </div>
         )}
 
         {result.accessibilityIndicators && (
-          <div className="mb-10 print-break-before print-compact">
-            <AccessibilitySection indicators={result.accessibilityIndicators} />
+          <div className={`mb-10 print-break-before print-compact ${!sections.accessibility ? "no-print" : ""}`}>
+            <div className="flex items-center justify-between mb-4 no-print">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Accessibility</span>
+              <SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />
+            </div>
+            {sections.accessibility ? (
+              <AccessibilitySection indicators={result.accessibilityIndicators} />
+            ) : (
+              <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+            )}
           </div>
         )}
 
-        <div className="mb-10 print-break-before print-compact">
-          <h2 className="font-sans text-2xl text-foreground mb-4 print:text-xl print:mb-3">Recommended next step</h2>
-          <div className="rounded-lg border-2 border-border bg-card p-6 md:p-8">
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">What we found</p>
-                <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whatWeFound}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Why it matters</p>
-                <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whyItMatters}</p>
-              </div>
-              <div className="pt-2 border-t border-border">
-                <p className="font-sans text-lg text-card-foreground mb-2">Book a clarity review</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">{result.salesTalkTrack.suggestedNextStep}</p>
+        <div className={`mb-10 print-break-before print-compact ${!sections.nextStep ? "no-print" : ""}`}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-sans text-2xl text-foreground print:text-xl">Recommended next step</h2>
+            <SectionToggle label="Next step" enabled={sections.nextStep} onToggle={() => toggle("nextStep")} />
+          </div>
+          {sections.nextStep ? (
+            <div className="rounded-lg border-2 border-border bg-card p-6 md:p-8">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">What we found</p>
+                  <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whatWeFound}</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Why it matters</p>
+                  <p className="text-sm text-card-foreground leading-relaxed">{result.salesTalkTrack.whyItMatters}</p>
+                </div>
+                <div className="pt-2 border-t border-border">
+                  <p className="font-sans text-lg text-card-foreground mb-2">Book a clarity review</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{result.salesTalkTrack.suggestedNextStep}</p>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <p className="text-xs text-muted-foreground italic no-print">This section is hidden from the report.</p>
+          )}
         </div>
 
         <div className="border-t border-border pt-6 pb-8 print:pt-4 print:pb-4 print:mt-8">
