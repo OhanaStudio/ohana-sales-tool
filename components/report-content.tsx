@@ -148,7 +148,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
     { label: "High Risks", count: risks.high, variant: "red" },
     { label: "Moderate Risks", count: risks.moderate, variant: "amber" },
     { label: "Accessibility Risks", count: risks.accessibility, variant: "blue" },
-  ]
+  ].filter((p) => p.count > 0)
 
   return (
     <div className="min-h-screen bg-background">
@@ -216,7 +216,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
         {/* ──────────────────────────────────────────────
             SCREENSHOTS
-        ───────────�����────────────────────────────────── */}
+        ───────────�������────────────────────────────────── */}
         <div className="mb-10 print-break-avoid print-compact">
           <SiteScreenshots
             url={result.url}

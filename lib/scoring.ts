@@ -24,7 +24,7 @@ export function calculateOverallScore(
 
 function riskLevel(score: number): RiskLevel {
   if (score >= 75) return "green"
-  if (score >= 50) return "amber"
+  if (score >= 45) return "amber"
   return "red"
 }
 
