@@ -645,13 +645,15 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "Webflow", confidence: "high", details }
   }
 
-  // Optimizely (Episerver) — must be the CMS, not just the experimentation/A/B snippet
+  // Optimizely (Episerver) — must be the CMS platform, not the A/B experimentation snippet
+  // Note: "optimizely" alone is NOT sufficient — their experimentation product is widely embedded on non-Optimizely sites
   if (
     lower.includes("episerver") ||
     lower.includes("epi-contentarea") ||
     lower.includes("/episerver/") ||
     lower.includes("episerverapi") ||
-    (lower.includes("optimizely") && (lower.includes("cms") || lower.includes("epi-") || lower.includes("/optimizely/")))
+    lower.includes("optimizely.com/cms") ||
+    lower.includes("optimizely cms")
   ) {
     details.push("Optimizely (Episerver) CMS signatures detected")
     return { platform: "Optimizely", confidence: "high", details }
