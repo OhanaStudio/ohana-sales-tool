@@ -62,7 +62,8 @@ Rules:
 - Use plain business language, not technical jargon
 - Focus on the impact on the business (lost customers, lower search rankings, etc.)
 - End with an encouraging tone about what can be improved
-- Do NOT use bullet points, headers, or formatting
+- Wrap the most important phrases and key findings in **double asterisks** for emphasis (e.g. **slow mobile loading times**, **no visible trust signals**). Use this sparingly on 3-5 key phrases only.
+- Do NOT use bullet points, headers, or any other formatting besides **bold**
 - Do NOT mention scores or numbers`,
         },
         {

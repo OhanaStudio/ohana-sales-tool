@@ -6,6 +6,21 @@ import { Calendar, ArrowRight, Loader2 } from "lucide-react"
 
 const BOOKING_URL = "https://calendar.notion.so/meet/ollie-ohana/ohana-30min"
 
+/** Parse **bold** markdown into React nodes */
+function renderBoldText(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="text-background font-semibold">
+          {part.slice(2, -2)}
+        </strong>
+      )
+    }
+    return <span key={i}>{part}</span>
+  })
+}
+
 export function RecapSection({ result }: { result: AuditResult }) {
   const [recap, setRecap] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -67,7 +82,7 @@ export function RecapSection({ result }: { result: AuditResult }) {
         ) : (
           <div className="space-y-6">
             <p className="text-sm leading-relaxed text-background/90">
-              {displayText}
+              {displayText ? renderBoldText(displayText) : null}
             </p>
 
             <div className="pt-4 border-t border-background/20">
