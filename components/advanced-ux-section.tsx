@@ -1,11 +1,6 @@
-"use client"
-
 import React from "react"
-
-import { useState } from "react"
 import type { AdvancedUXIndicators } from "@/lib/types"
 import {
-  ChevronDown,
   Eye,
   Navigation,
   AlignLeft,
@@ -17,9 +12,7 @@ import {
 
 type StatusColor = "emerald" | "amber" | "red"
 
-function statusColor(
-  status: string
-): StatusColor {
+function statusColor(status: string): StatusColor {
   const green = ["clear", "low", "scannable", "clear_path", "strong"]
   const amber = ["mixed", "medium", "partial", "moderate"]
   if (green.includes(status)) return "emerald"
@@ -64,46 +57,32 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-function CategorySection({
+function CategoryRow({
   icon,
   title,
   status,
   bullets,
-  defaultOpen = false,
 }: {
   icon: React.ReactNode
   title: string
   status: string
   bullets: string[]
-  defaultOpen?: boolean
 }) {
-  const [open, setOpen] = useState(defaultOpen)
-
   return (
     <div className="py-3 first:pt-0 last:pb-0">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full text-left gap-3 min-h-[44px] bg-transparent border-0 p-0"
-        aria-expanded={open}
-      >
+      <div className="flex items-center justify-between w-full gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-muted-foreground shrink-0">{icon}</span>
           <span className="text-sm font-bold text-foreground truncate">
             {title}
           </span>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="shrink-0">
           <StatusBadge status={status} />
-          <ChevronDown
-            className={`h-4 w-4 text-muted-foreground transition-transform ${
-              open ? "rotate-180" : ""
-            }`}
-          />
         </div>
-      </button>
+      </div>
 
-      {open && bullets.length > 0 && (
+      {bullets.length > 0 && (
         <ul className="mt-2 ml-7 space-y-1.5">
           {bullets.map((bullet, i) => (
             <li
@@ -114,12 +93,6 @@ function CategorySection({
             </li>
           ))}
         </ul>
-      )}
-
-      {open && bullets.length === 0 && (
-        <p className="mt-2 ml-7 text-xs text-muted-foreground italic">
-          No issues detected in this area.
-        </p>
       )}
     </div>
   )
@@ -138,23 +111,64 @@ export function AdvancedUXSection({
   const d = indicators
 
   const allCategories = [
-    { key: "firstImpression", icon: <Eye className="h-4 w-4" />, title: "First-impression clarity", ...d.firstImpression },
-    { key: "navigationFriction", icon: <Navigation className="h-4 w-4" />, title: "Decision friction", ...d.navigationFriction },
-    { key: "scanability", icon: <AlignLeft className="h-4 w-4" />, title: "Scanability", ...d.scanability },
-    { key: "conversionPath", icon: <MousePointerClick className="h-4 w-4" />, title: "Conversion path", ...d.conversionPath },
-    { key: "formFriction", icon: <FormInput className="h-4 w-4" />, title: "Form friction", ...d.formFriction },
-    { key: "trustDepth", icon: <ShieldCheck className="h-4 w-4" />, title: "Trust depth", ...d.trustDepth },
-    { key: "mobileFriction", icon: <Smartphone className="h-4 w-4" />, title: "Mobile friction", ...d.mobileFriction },
+    {
+      key: "firstImpression",
+      icon: <Eye className="h-4 w-4" />,
+      title: "First-impression clarity",
+      ...d.firstImpression,
+    },
+    {
+      key: "navigationFriction",
+      icon: <Navigation className="h-4 w-4" />,
+      title: "Decision friction",
+      ...d.navigationFriction,
+    },
+    {
+      key: "scanability",
+      icon: <AlignLeft className="h-4 w-4" />,
+      title: "Scanability",
+      ...d.scanability,
+    },
+    {
+      key: "conversionPath",
+      icon: <MousePointerClick className="h-4 w-4" />,
+      title: "Conversion path",
+      ...d.conversionPath,
+    },
+    {
+      key: "formFriction",
+      icon: <FormInput className="h-4 w-4" />,
+      title: "Form friction",
+      ...d.formFriction,
+    },
+    {
+      key: "trustDepth",
+      icon: <ShieldCheck className="h-4 w-4" />,
+      title: "Trust depth",
+      ...d.trustDepth,
+    },
+    {
+      key: "mobileFriction",
+      icon: <Smartphone className="h-4 w-4" />,
+      title: "Mobile friction",
+      ...d.mobileFriction,
+    },
   ]
 
-  // Filter out n/a categories
   const visibleCategories = allCategories.filter((c) => isApplicable(c.status))
 
   if (visibleCategories.length === 0) return null
 
-  const totalIssues = visibleCategories.reduce((sum, c) => sum + c.bullets.length, 0)
-  const redCategories = visibleCategories.filter((c) => statusColor(c.status) === "red").length
-  const amberCategories = visibleCategories.filter((c) => statusColor(c.status) === "amber").length
+  const totalIssues = visibleCategories.reduce(
+    (sum, c) => sum + c.bullets.length,
+    0,
+  )
+  const redCategories = visibleCategories.filter(
+    (c) => statusColor(c.status) === "red",
+  ).length
+  const amberCategories = visibleCategories.filter(
+    (c) => statusColor(c.status) === "amber",
+  ).length
 
   const summaryColor =
     redCategories > 0
@@ -184,13 +198,12 @@ export function AdvancedUXSection({
       </div>
       <div className="rounded-lg border border-border bg-card p-5 divide-y divide-border">
         {visibleCategories.map((cat) => (
-          <CategorySection
+          <CategoryRow
             key={cat.key}
             icon={cat.icon}
             title={cat.title}
             status={cat.status}
             bullets={cat.bullets}
-            defaultOpen={statusColor(cat.status) === "red"}
           />
         ))}
       </div>
