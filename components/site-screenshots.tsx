@@ -26,10 +26,6 @@ export function SiteScreenshots({
 
   return (
     <div>
-      <h3 className="font-sans text-xl text-foreground mb-2">
-        Site preview
-      </h3>
-
       <div className="flex flex-col md:flex-row gap-6 md:items-stretch">
         {/* Desktop screenshot */}
         {desktopScreenshot && (
