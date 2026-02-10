@@ -19,11 +19,13 @@ export default function ReportPage() {
         const res = await fetch(`/api/report/${id}`)
         if (res.ok) {
           const data = await res.json()
+          console.log("[v0] Report data loaded, keys:", Object.keys(data), "overallScore:", data.overallScore)
           setResult(data)
           return
         }
-      } catch {
-        // API failed, try fallback
+        console.log("[v0] Report API returned", res.status)
+      } catch (e) {
+        console.log("[v0] Report API fetch failed:", e)
       }
 
       // Fallback: check sessionStorage (survives server restarts)

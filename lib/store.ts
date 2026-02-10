@@ -48,6 +48,19 @@ export async function saveReport(report: StoredReport): Promise<void> {
   `
 }
 
+/** Safely parse result_json -- Neon JSONB may come back as object or string */
+function parseResultJson(raw: unknown): Record<string, unknown> {
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return {}
+    }
+  }
+  if (typeof raw === "object" && raw !== null) return raw as Record<string, unknown>
+  return {}
+}
+
 export async function getReport(id: string): Promise<StoredReport | undefined> {
   const sql = getDb()
   if (!sql) {
@@ -64,7 +77,7 @@ export async function getReport(id: string): Promise<StoredReport | undefined> {
     id: rows[0].id,
     url: rows[0].url,
     timestamp: rows[0].timestamp,
-    result: rows[0].result_json,
+    result: parseResultJson(rows[0].result_json),
   }
 }
 
@@ -90,7 +103,7 @@ export async function getCachedReportForUrl(url: string): Promise<StoredReport |
     id: rows[0].id,
     url: rows[0].url,
     timestamp: rows[0].timestamp,
-    result: rows[0].result_json,
+    result: parseResultJson(rows[0].result_json),
   }
 }
 
