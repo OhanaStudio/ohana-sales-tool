@@ -1,8 +1,10 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { ExternalLink, RotateCcw } from "lucide-react"
+import { ExternalLink, RotateCcw, Trash2 } from "lucide-react"
 
 interface HistoryItem {
   id: string
@@ -45,6 +47,20 @@ function truncateUrl(url: string): string {
 }
 
 export function HistoryList({ items }: { items: HistoryItem[] }) {
+  const router = useRouter()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this report?")) return
+    setDeletingId(id)
+    try {
+      await fetch(`/api/reports?id=${id}`, { method: "DELETE" })
+      router.refresh()
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   return (
     <>
       {/* Mobile: stacked cards */}
@@ -87,6 +103,14 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                 <RotateCcw className="h-3.5 w-3.5" />
                 Rerun
               </Link>
+              <button
+                type="button"
+                onClick={() => handleDelete(item.id)}
+                disabled={deletingId === item.id}
+                className="inline-flex items-center gap-1.5 rounded-md border border-red-200 bg-card text-red-600 px-3 py-2 text-xs font-medium hover:bg-red-50 transition-colors min-h-[44px] disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
         ))}
@@ -151,6 +175,15 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                         <RotateCcw className="h-3.5 w-3.5" />
                         Rerun
                       </Link>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(item.id)}
+                        disabled={deletingId === item.id}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] disabled:opacity-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
