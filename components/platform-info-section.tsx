@@ -157,10 +157,10 @@ export function PlatformInfoSection({ info }: { info: PlatformInfo }) {
 
   return (
     <div>
-      <h3 className="font-sans text-xl font-bold text-foreground mb-1">
+      <h3 className="font-sans text-2xl font-bold text-foreground mb-2">
         Platform detection
       </h3>
-      <p className="text-sm text-muted-foreground italic mb-4">
+      <p className="text-sm text-muted-foreground italic mb-5">
         Detected from page source signatures.
       </p>
 

@@ -103,8 +103,8 @@ export function DesignIndicatorsSection({
 
   return (
     <div>
-      <div className="flex items-start justify-between gap-4 mb-1">
-        <h3 className="font-sans text-xl font-bold text-foreground">
+      <div className="flex items-start justify-between gap-4 mb-2">
+        <h3 className="font-sans text-2xl font-bold text-foreground">
           Design & image quality
         </h3>
         <span
