@@ -2,7 +2,7 @@
 
 import React from "react"
 
-import { useState } from "react"
+import { useState, useRef, useCallback } from "react"
 import type { AuditResult } from "@/lib/types"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
@@ -14,6 +14,13 @@ export default function Page() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<AuditResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  const handleCancel = useCallback(() => {
+    abortRef.current?.abort()
+    abortRef.current = null
+    setLoading(false)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,11 +30,15 @@ export default function Page() {
     setError(null)
     setResult(null)
 
+    const controller = new AbortController()
+    abortRef.current = controller
+
     try {
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),
+        signal: controller.signal,
       })
 
       const data = await res.json()
@@ -45,9 +56,11 @@ export default function Page() {
       } catch {
         // sessionStorage full or unavailable
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return
       setError("Unable to connect. Please check your internet and try again.")
     } finally {
+      abortRef.current = null
       setLoading(false)
     }
   }
@@ -105,7 +118,7 @@ export default function Page() {
         )}
 
         {/* Loading */}
-        {loading && <LoadingSteps />}
+        {loading && <LoadingSteps onCancel={handleCancel} />}
 
         {/* Results */}
         {result && (

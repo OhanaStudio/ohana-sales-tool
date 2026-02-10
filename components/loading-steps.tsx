@@ -10,7 +10,7 @@ const steps = [
   "Building report",
 ]
 
-export function LoadingSteps() {
+export function LoadingSteps({ onCancel }: { onCancel?: () => void }) {
   const [currentStep, setCurrentStep] = useState(0)
 
   useEffect(() => {
@@ -43,6 +43,15 @@ export function LoadingSteps() {
           <span className="text-sm text-foreground">{step}</span>
         </div>
       ))}
+      {onCancel && (
+        <button
+          type="button"
+          onClick={onCancel}
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors mt-2 self-start bg-transparent"
+        >
+          Stop check
+        </button>
+      )}
     </div>
   )
 }
