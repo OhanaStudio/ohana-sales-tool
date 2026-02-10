@@ -69,7 +69,7 @@ export default function Page() {
     <div className="min-h-screen bg-background">
       <TopBar />
 
-      <main className="px-5 md:px-8 max-w-3xl mx-auto pb-12">
+      <main className="px-5 md:px-8 max-w-[900px] mx-auto pb-12">
         {/* Hero */}
         {!loading && (
           <div className="pt-12 md:pt-20 pb-8 md:pb-12">

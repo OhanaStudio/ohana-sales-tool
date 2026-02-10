@@ -183,7 +183,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12 print:px-0 print:max-w-none">
+      <div className="max-w-[900px] mx-auto px-5 md:px-8 pb-12 print:px-0 print:max-w-none">
         {/* ──────────────────────────────────────────────
             HEADER: Logo + Title + URL/Date
         ────────────────────────────────────────────── */}
