@@ -1,5 +1,4 @@
 import { generateText, Output } from "ai"
-import { createOpenAI } from "@ai-sdk/openai"
 import { z } from "zod"
 
 const recapSchema = z.object({
@@ -17,12 +16,6 @@ export async function POST(req: Request) {
     if (!result) {
       return Response.json({ error: "No result provided" }, { status: 400 })
     }
-
-    const openai = createOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      baseURL: "https://api.openai.com/v1",
-      compatibility: "strict",
-    })
 
     // Build a concise context from the audit result
     const riskCards = result.riskCards ?? {}
@@ -50,7 +43,7 @@ export async function POST(req: Request) {
     ]
 
     const { output } = await generateText({
-      model: openai.chat("gpt-4o-mini"),
+      model: "openai/gpt-4o-mini",
       output: Output.object({ schema: recapSchema }),
       messages: [
         {
