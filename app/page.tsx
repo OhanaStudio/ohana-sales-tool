@@ -1,19 +1,20 @@
 "use client"
 
 import React from "react"
-
+import { AuditResult } from "@/types/audit-result" // Declare AuditResult here
+import { ResultsDashboard } from "@/components/results-dashboard" // Declare ResultsDashboard here
 import { useState, useRef, useCallback } from "react"
-import type { AuditResult } from "@/lib/types"
+import { useRouter } from "next/navigation"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
-import { ResultsDashboard } from "@/components/results-dashboard"
 import { Search } from "lucide-react"
 
 export default function Page() {
+  const router = useRouter()
   const [url, setUrl] = useState("")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<AuditResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<AuditResult | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
   const handleCancel = useCallback(() => {
@@ -48,14 +49,13 @@ export default function Page() {
         return
       }
 
-      const auditResult = data as AuditResult
-      setResult(auditResult)
-      // Cache in sessionStorage so the report page can access it after server restarts
+      // Cache in sessionStorage so the report page can access it immediately
       try {
-        sessionStorage.setItem(`ohana-report-${auditResult.id}`, JSON.stringify(auditResult))
+        sessionStorage.setItem(`ohana-report-${data.id}`, JSON.stringify(data))
       } catch {
         // sessionStorage full or unavailable
       }
+      router.push(`/report/${data.id}`)
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return
       setError("Unable to connect. Please check your internet and try again.")
@@ -71,7 +71,7 @@ export default function Page() {
 
       <main className="px-5 md:px-8 max-w-3xl mx-auto pb-12">
         {/* Hero */}
-        {!result && !loading && (
+        {!loading && (
           <div className="pt-12 md:pt-20 pb-8 md:pb-12">
             <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground leading-tight text-balance mb-4">
               Website health check.
@@ -83,7 +83,7 @@ export default function Page() {
         )}
 
         {/* URL Input */}
-        {!result && (
+        {!loading && (
           <form onSubmit={handleSubmit} className="mb-6">
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative flex-1">
@@ -119,23 +119,6 @@ export default function Page() {
 
         {/* Loading */}
         {loading && <LoadingSteps onCancel={handleCancel} />}
-
-        {/* Results */}
-        {result && (
-          <div className="pt-8 md:pt-12">
-            <button
-              type="button"
-              onClick={() => {
-                setResult(null)
-                setUrl("")
-              }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-            >
-              {"<-"} Run another check
-            </button>
-            <ResultsDashboard result={result} />
-          </div>
-        )}
       </main>
     </div>
   )
