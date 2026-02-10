@@ -12,28 +12,60 @@ interface MetricTileProps {
   icon?: ReactNode
 }
 
-const statusDotColor: Record<RiskLevel, string> = {
+const dotColor: Record<RiskLevel, string> = {
   green: "bg-emerald-500",
   amber: "bg-amber-500",
   red: "bg-red-500",
 }
 
-const statusBorderColor: Record<RiskLevel, string> = {
-  green: "border-emerald-500",
-  amber: "border-amber-500",
-  red: "border-red-500",
+const borderColor: Record<RiskLevel, string> = {
+  green: "border-emerald-400/60",
+  amber: "border-amber-400/60",
+  red: "border-red-400/60",
 }
 
-function worstStatus(
-  a?: RiskLevel,
-  b?: RiskLevel
-): RiskLevel | undefined {
+function worstStatus(a?: RiskLevel, b?: RiskLevel): RiskLevel | undefined {
   if (!a && !b) return undefined
   const order: RiskLevel[] = ["red", "amber", "green"]
   for (const level of order) {
     if (a === level || b === level) return level
   }
   return undefined
+}
+
+function ValueDisplay({
+  value,
+  unit,
+  maxScore,
+  status,
+}: {
+  value: string | null
+  unit?: string
+  maxScore?: number
+  status?: RiskLevel
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {status && (
+        <span
+          className={`inline-block h-2.5 w-2.5 rounded-full shrink-0 ${dotColor[status]}`}
+        />
+      )}
+      <p className="text-xl font-sans font-semibold text-card-foreground leading-tight">
+        {value ?? "N/A"}
+        {value && maxScore ? (
+          <span className="text-sm font-normal text-muted-foreground">
+            /{maxScore}
+          </span>
+        ) : null}
+        {value && unit && !maxScore ? (
+          <span className="text-sm font-normal text-muted-foreground ml-0.5">
+            {unit}
+          </span>
+        ) : null}
+      </p>
+    </div>
+  )
 }
 
 export function MetricTile({
@@ -50,66 +82,43 @@ export function MetricTile({
 
   return (
     <div
-      className={`rounded-lg border bg-card p-4 print-break-avoid ${
-        tileBorder ? statusBorderColor[tileBorder] : "border-border"
+      className={`rounded-xl border-2 bg-card p-5 print-break-avoid ${
+        tileBorder ? borderColor[tileBorder] : "border-border"
       }`}
     >
-      <div className="flex items-center gap-2 mb-3">
-        {icon && (
-          <span className="text-muted-foreground/70">{icon}</span>
-        )}
-        <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold">
-          {label}
-        </p>
-      </div>
-      <div className="flex items-end gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-0.5">
+      {/* Icon */}
+      {icon && (
+        <div className="mb-2 text-muted-foreground/60">{icon}</div>
+      )}
+
+      {/* Title */}
+      <h4 className="font-sans text-base font-bold text-card-foreground mb-4 leading-snug">
+        {label}
+      </h4>
+
+      {/* Mobile | Desktop split */}
+      <div className="grid grid-cols-2 gap-0">
+        <div className="pr-3 border-r border-border/60">
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-1">
             Mobile
           </p>
-          <div className="flex items-center gap-1.5">
-            {mobileStatus && (
-              <span
-                className={`inline-block h-2 w-2 rounded-full ${statusDotColor[mobileStatus]}`}
-                aria-label={`Mobile status: ${mobileStatus}`}
-              />
-            )}
-            <p className="text-lg font-sans text-card-foreground">
-              {mobileValue ?? "N/A"}
-              {mobileValue && unit ? (
-                <span className="text-xs text-muted-foreground ml-0.5">
-                  {unit}
-                </span>
-              ) : null}
-              {mobileValue && maxScore ? (
-                <span className="text-xs text-muted-foreground">/{maxScore}</span>
-              ) : null}
-            </p>
-          </div>
+          <ValueDisplay
+            value={mobileValue}
+            unit={unit}
+            maxScore={maxScore}
+            status={mobileStatus}
+          />
         </div>
-        <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-0.5">
+        <div className="pl-3">
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-1">
             Desktop
           </p>
-          <div className="flex items-center gap-1.5">
-            {desktopStatus && (
-              <span
-                className={`inline-block h-2 w-2 rounded-full ${statusDotColor[desktopStatus]}`}
-                aria-label={`Desktop status: ${desktopStatus}`}
-              />
-            )}
-            <p className="text-lg font-sans text-card-foreground">
-              {desktopValue ?? "N/A"}
-              {desktopValue && unit ? (
-                <span className="text-xs text-muted-foreground ml-0.5">
-                  {unit}
-                </span>
-              ) : null}
-              {desktopValue && maxScore ? (
-                <span className="text-xs text-muted-foreground">/{maxScore}</span>
-              ) : null}
-            </p>
-          </div>
+          <ValueDisplay
+            value={desktopValue}
+            unit={unit}
+            maxScore={maxScore}
+            status={desktopStatus}
+          />
         </div>
       </div>
     </div>

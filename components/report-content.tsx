@@ -340,7 +340,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
             Performance overview
           </h2>
-          <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-lg">
+          <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed">
             Key metrics from Google Lighthouse, measured for both mobile and
             desktop experiences.
           </p>
