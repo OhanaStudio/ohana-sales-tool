@@ -215,7 +215,8 @@ function extractDesignIndicators(
 function extractAccessibilityIndicators(
   // biome-ignore lint: audits is complex PSI shape
   mobileAudits: any,
-  html: string
+  html: string,
+  aiCookieConsentVisible = false,
 ): AccessibilityIndicators {
   const getItemCount = (audit: any) =>
     Array.isArray(audit?.details?.items) ? audit.details.items.length : 0
@@ -281,8 +282,8 @@ function extractAccessibilityIndicators(
     }
   }
 
-  // Cookie consent / GDPR banner
-  const cookieConsentFound =
+  // Cookie consent / GDPR banner — check HTML source first, fall back to AI screenshot analysis
+  const cookieConsentInCode =
     lowerHtml.includes("cookie") ||
     lowerHtml.includes("consent") ||
     lowerHtml.includes("gdpr") ||
@@ -291,6 +292,7 @@ function extractAccessibilityIndicators(
     lowerHtml.includes("cookie-consent") ||
     lowerHtml.includes("cookie-banner") ||
     lowerHtml.includes("cc-banner")
+  const cookieConsentFound = cookieConsentInCode || aiCookieConsentVisible
 
   // Compile EAA issues
   const eaaIssues: string[] = []
@@ -805,7 +807,7 @@ export async function POST(request: Request) {
     )
     const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
-    const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml)
+    const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
     const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
 
     const overallScore = calculateOverallScore(mobile, desktop)

@@ -16,6 +16,7 @@ const uxVisionSchema = z.object({
   verifiedSources: z.array(z.string()).describe("Names of third-party review platforms found"),
   phoneFound: z.boolean().describe("Whether a phone number is visible anywhere on the page"),
   emailFound: z.boolean().describe("Whether an email address is visible anywhere on the page"),
+  cookieConsentVisible: z.boolean().describe("Whether a cookie consent banner, popup, or dialog is visible in either screenshot (e.g. 'Accept Cookies', 'Cookie Settings', 'Cookies Settings', GDPR notice)"),
 })
 
 const frictionCategorySchema = z.object({
@@ -53,6 +54,7 @@ const combinedSchema = z.object({
 })
 
 export interface AIAnalysisResult {
+  cookieConsentVisible: boolean
   uxIndicators: UXIndicators
   advancedUX: AdvancedUXIndicators
 }
@@ -76,6 +78,7 @@ Identify what is visible on the page:
 - **Third-party reviews**: Trustpilot, Google Reviews, G2, Capterra, Yelp, BBB widgets/badges.
 - **Phone number**: Any visible phone number.
 - **Email address**: Any visible email address.
+- **Cookie consent**: Is there a cookie consent banner, popup, or dialog visible? Look for "Accept Cookies", "Cookie Settings", "Manage Cookies", "Reject All", GDPR notices, etc.
 
 ## 2. Advanced UX Friction Analysis
 For each of the 7 categories, provide a status and 0-3 bullet points describing specific issues. If no issues, return an empty bullets array.
@@ -139,6 +142,7 @@ export async function analyseScreenshotsWithAI(
     if (!output) return null
 
     return {
+      cookieConsentVisible: output.uxIndicators.cookieConsentVisible ?? false,
       uxIndicators: {
         ...output.uxIndicators,
         fetchBlocked: false,
