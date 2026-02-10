@@ -45,7 +45,7 @@ export function ScoreDisplay({
   const rotationDeg = 90 + gapDeg / 2
 
   return (
-    <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:gap-10">
+    <div className="w-full flex flex-col items-start gap-6 md:flex-row md:items-center md:gap-10">
       {/* Score circle */}
       <div className="shrink-0 relative">
         <svg
@@ -93,11 +93,11 @@ export function ScoreDisplay({
       </div>
 
       {/* Text + pills */}
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <h3 className="font-sans text-xl font-semibold text-foreground mb-2">
           {scoreLabel(score)}
         </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-md mb-4">
+        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
           {summary}
         </p>
         {pills && pills.length > 0 && (
