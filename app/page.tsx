@@ -7,7 +7,7 @@ import type { AuditResult } from "@/lib/types"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
 import { ResultsDashboard } from "@/components/results-dashboard"
-import { Search } from "lucide-react"
+import { Search, RotateCw } from "lucide-react"
 
 export default function Page() {
   const [url, setUrl] = useState("")
@@ -22,9 +22,8 @@ export default function Page() {
     setLoading(false)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!url.trim()) return
+  const runAudit = async (targetUrl: string) => {
+    if (!targetUrl.trim()) return
 
     const controller = new AbortController()
     abortRef.current = controller
@@ -37,7 +36,7 @@ export default function Page() {
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({ url: targetUrl.trim() }),
         signal: controller.signal,
       })
 
@@ -50,7 +49,6 @@ export default function Page() {
 
       const auditResult = data as AuditResult
       setResult(auditResult)
-      // Cache in sessionStorage so the report page can access it after server restarts
       try {
         sessionStorage.setItem(`ohana-report-${auditResult.id}`, JSON.stringify(auditResult))
       } catch {
@@ -58,7 +56,6 @@ export default function Page() {
       }
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
-        // User cancelled -- do nothing
         return
       }
       setError("Unable to connect. Please check your internet and try again.")
@@ -66,6 +63,17 @@ export default function Page() {
       abortRef.current = null
       setLoading(false)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    runAudit(url)
+  }
+
+  const handleRerun = () => {
+    const targetUrl = result?.url || url
+    setUrl(targetUrl)
+    runAudit(targetUrl)
   }
 
   return (
@@ -137,16 +145,26 @@ export default function Page() {
         {/* Results */}
         {result && (
           <div className="pt-8 md:pt-12">
-            <button
-              type="button"
-              onClick={() => {
-                setResult(null)
-                setUrl("")
-              }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-            >
-              {"<-"} Run another check
-            </button>
+            <div className="flex items-center justify-between mb-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setResult(null)
+                  setUrl("")
+                }}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {"<-"} Run another check
+              </button>
+              <button
+                type="button"
+                onClick={handleRerun}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+              >
+                <RotateCw className="h-3.5 w-3.5" />
+                Re-run check
+              </button>
+            </div>
             <ResultsDashboard result={result} />
           </div>
         )}
