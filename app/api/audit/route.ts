@@ -619,13 +619,39 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
     return { platform: "Kentico", confidence: "high", details }
   }
 
-  // Optimizely (Episerver)
+  // Webflow (check BEFORE Optimizely — many Webflow sites use Optimizely for A/B testing)
+  if (
+    lower.includes("webflow") ||
+    lower.includes("assets-global.website-files.com") ||
+    lower.includes("w-webflow") ||
+    lower.includes("website-files.com") ||
+    lower.includes("webflow.io") ||
+    lower.includes("wf-page") ||
+    lower.includes("w-layout") ||
+    lower.includes("w-nav") ||
+    lower.includes("w-slider") ||
+    lower.includes("w-form") ||
+    lower.includes("w-container") ||
+    lower.includes("w-embed") ||
+    lower.includes("w-richtext") ||
+    lower.includes("w-dyn") ||
+    lower.includes("w-background-video") ||
+    lower.includes("data-wf-") ||
+    lower.includes("wf-section")
+  ) {
+    details.push("Webflow platform signatures detected")
+    if (lower.includes("w-dyn")) details.push("Webflow CMS dynamic content in use")
+    if (lower.includes("w-commerce")) details.push("Webflow E-commerce detected")
+    return { platform: "Webflow", confidence: "high", details }
+  }
+
+  // Optimizely (Episerver) — must be the CMS, not just the experimentation/A/B snippet
   if (
     lower.includes("episerver") ||
-    lower.includes("optimizely") && lower.includes("cms") ||
     lower.includes("epi-contentarea") ||
     lower.includes("/episerver/") ||
-    lower.includes("episerverapi")
+    lower.includes("episerverapi") ||
+    (lower.includes("optimizely") && (lower.includes("cms") || lower.includes("epi-") || lower.includes("/optimizely/")))
   ) {
     details.push("Optimizely (Episerver) CMS signatures detected")
     return { platform: "Optimizely", confidence: "high", details }
@@ -680,12 +706,6 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
   if (lower.includes("squarespace") || lower.includes("static.squarespace.com") || lower.includes("sqsp")) {
     details.push("Squarespace platform signatures detected")
     return { platform: "Squarespace", confidence: "high", details }
-  }
-
-  // Webflow
-  if (lower.includes("webflow") || lower.includes("assets-global.website-files.com") || lower.includes("w-webflow")) {
-    details.push("Webflow platform signatures detected")
-    return { platform: "Webflow", confidence: "high", details }
   }
 
   // HubSpot CMS
