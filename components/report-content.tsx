@@ -4,7 +4,6 @@ import React from "react"
 import { useState } from "react"
 import type { AuditResult } from "@/lib/types"
 import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
-import { RiskCard } from "./risk-card"
 import { MetricTile } from "./metric-tile"
 import { UXIndicatorsSection } from "./ux-indicators-section"
 import { DesignIndicatorsSection } from "./design-indicators-section"
@@ -15,6 +14,7 @@ import { ScoreDisplay } from "./score-display"
 import type { RiskPill } from "./score-display"
 import { PlatformInfoSection } from "./platform-info-section"
 import { SectionToggle } from "./section-toggle"
+import { RiskGroups } from "./risk-groups"
 import {
   Download,
   ArrowLeft,
@@ -220,7 +220,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </PrintSection>
 
         {/* ──────────────────────────────────────────────
-            RISK CARDS
+            RISK CARDS -- grouped by severity
         ────────────────────────────────────────────── */}
         <PrintSection
           enabled={sections.riskCards}
@@ -235,11 +235,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             </div>
           }
         >
-          <div className="flex flex-col gap-4">
-            <RiskCard card={result.riskCards.visibility} variant="featured" />
-            <RiskCard card={result.riskCards.conversion} variant="featured" />
-            <RiskCard card={result.riskCards.trust} variant="featured" />
-          </div>
+          <RiskGroups result={result} />
         </PrintSection>
 
         {/* ──────────────────────────────────────────────
@@ -504,32 +500,35 @@ export function ReportContent({ result }: { result: AuditResult }) {
             </div>
           }
         >
-          <h2 className="font-sans text-2xl text-foreground mb-4 print:text-xl">
-            Recommended next step
+          <h2 className="font-sans text-2xl text-foreground mb-2 print:text-xl">
+            Recommended next steps
           </h2>
-          <div className="rounded-lg border-2 border-border bg-card p-6 md:p-8">
-            <div className="space-y-4">
+          <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed max-w-lg">
+            {result.summaryText}
+          </p>
+          <div className="rounded-xl bg-foreground text-background p-6 md:p-8">
+            <div className="space-y-5">
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
+                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
                   What we found
                 </p>
-                <p className="text-sm text-card-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-background/90">
                   {result.salesTalkTrack.whatWeFound}
                 </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
+                <p className="text-xs uppercase tracking-wider font-bold mb-1 text-background/70">
                   Why it matters
                 </p>
-                <p className="text-sm text-card-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-background/90">
                   {result.salesTalkTrack.whyItMatters}
                 </p>
               </div>
-              <div className="pt-2 border-t border-border">
-                <p className="font-sans text-lg text-card-foreground mb-2">
+              <div className="pt-4 border-t border-background/20">
+                <p className="font-sans text-lg font-bold text-background mb-2">
                   Book a clarity review
                 </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-background/70">
                   {result.salesTalkTrack.suggestedNextStep}
                 </p>
               </div>
