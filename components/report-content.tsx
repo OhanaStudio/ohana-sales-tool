@@ -20,6 +20,7 @@ import { RiskGroups } from "./risk-groups"
 import {
   Download,
   ArrowLeft,
+  RefreshCw,
   ImageIcon,
   Paintbrush,
   Move,
@@ -119,8 +120,27 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const toggle = (key: keyof typeof sections) =>
     setSections((prev) => ({ ...prev, [key]: !prev[key] }))
 
+  const [rerunning, setRerunning] = useState(false)
+
   const handlePrint = () => {
     window.print()
+  }
+
+  const handleRerun = async () => {
+    setRerunning(true)
+    try {
+      const res = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: result.url }),
+      })
+      const data = await res.json()
+      if (data.id) {
+        window.location.href = `/report/${data.id}`
+      }
+    } catch {
+      setRerunning(false)
+    }
   }
 
   const risks = countRisks(result)
@@ -141,14 +161,25 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Link>
-        <button
-          type="button"
-          onClick={handlePrint}
-          className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-5 py-3 text-sm font-medium hover:opacity-90 transition-opacity min-h-[44px]"
-        >
-          <Download className="h-4 w-4" />
-          Download PDF
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleRerun}
+            disabled={rerunning}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-transparent text-foreground px-5 py-3 text-sm font-medium hover:bg-muted transition-colors min-h-[44px] disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${rerunning ? "animate-spin" : ""}`} />
+            {rerunning ? "Running..." : "Re-run check"}
+          </button>
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-5 py-3 text-sm font-medium hover:opacity-90 transition-opacity min-h-[44px]"
+          >
+            <Download className="h-4 w-4" />
+            Download PDF
+          </button>
+        </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-5 md:px-8 pb-12 print:px-0 print:max-w-none">
