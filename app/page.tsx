@@ -14,10 +14,20 @@ export default function Page() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<AuditResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const abortRef = React.useRef<AbortController | null>(null)
+
+  const handleStop = () => {
+    abortRef.current?.abort()
+    abortRef.current = null
+    setLoading(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!url.trim()) return
+
+    const controller = new AbortController()
+    abortRef.current = controller
 
     setLoading(true)
     setError(null)
@@ -28,6 +38,7 @@ export default function Page() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),
+        signal: controller.signal,
       })
 
       const data = await res.json()
@@ -45,9 +56,14 @@ export default function Page() {
       } catch {
         // sessionStorage full or unavailable
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        // User cancelled -- do nothing
+        return
+      }
       setError("Unable to connect. Please check your internet and try again.")
     } finally {
+      abortRef.current = null
       setLoading(false)
     }
   }
@@ -105,7 +121,18 @@ export default function Page() {
         )}
 
         {/* Loading */}
-        {loading && <LoadingSteps />}
+        {loading && (
+          <>
+            <LoadingSteps />
+            <button
+              type="button"
+              onClick={handleStop}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+            >
+              Stop test
+            </button>
+          </>
+        )}
 
         {/* Results */}
         {result && (
