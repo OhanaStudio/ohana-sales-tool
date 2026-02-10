@@ -81,7 +81,7 @@ export function ScoreDisplay({
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
-            className="font-serif leading-none text-foreground"
+            className="font-sans leading-none text-foreground"
             style={{ fontSize: "4rem", fontWeight: 700, letterSpacing: "-0.02em" }}
           >
             {score}
