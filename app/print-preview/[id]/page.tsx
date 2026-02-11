@@ -31,26 +31,43 @@ export default function PrintPreviewPage() {
   const params = useParams()
   const id = params.id as string
   const [result, setResult] = useState<AuditResult | null>(null)
+  const [recapText, setRecapText] = useState<string>("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
+      let r: AuditResult | null = null
       try {
         const res = await fetch(`/api/report/${id}`)
-        if (res.ok) {
-          setResult(await res.json())
-          return
-        }
+        if (res.ok) { r = await res.json() }
       } catch { /* fallback */ }
 
-      try {
-        const cached = sessionStorage.getItem(`ohana-report-${id}`)
-        if (cached) { setResult(JSON.parse(cached)); return }
-      } catch { /* noop */ }
+      if (!r) {
+        try {
+          const cached = sessionStorage.getItem(`ohana-report-${id}`)
+          if (cached) { r = JSON.parse(cached) }
+        } catch { /* noop */ }
+      }
+
+      if (r) {
+        setResult(r)
+        // Fetch AI recap (same as RecapSection on the report page)
+        try {
+          const recapRes = await fetch("/api/recap", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ result: r }),
+          })
+          if (recapRes.ok) {
+            const data = await recapRes.json()
+            if (data.recap) setRecapText(data.recap)
+          }
+        } catch { /* use fallback salesTalkTrack */ }
+      }
 
       setLoading(false)
     }
-    load().finally(() => setLoading(false))
+    load()
   }, [id])
 
   if (loading) {
@@ -78,7 +95,7 @@ export default function PrintPreviewPage() {
 
   const pages = [
     { label: "Cover", node: <CoverPage url={result.url} date={date} /> },
-    { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} /> },
+    { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
     { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },

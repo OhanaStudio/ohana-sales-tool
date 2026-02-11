@@ -156,7 +156,7 @@ function CoverPage({ url, date }: { url: string; date: string }) {
 }
 
 /* ═══ PAGE 2: Intro + Score + Recap ═══ */
-function IntroPage({ r, date, riskLabel, risks }: { r: AuditResult; date: string; riskLabel: string; risks: { high: number; moderate: number; accessibility: number } }) {
+function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; date: string; riskLabel: string; risks: { high: number; moderate: number; accessibility: number }; recapText?: string }) {
   const size = 110, cx = 55, cy = 55, radius = 44, sw = 5
   const gap = 20, circ = 2 * Math.PI * radius, arc = circ * ((360 - gap) / 360)
   const fill = (Math.max(0, Math.min(100, r.overallScore)) / 100) * arc
@@ -169,7 +169,7 @@ function IntroPage({ r, date, riskLabel, risks }: { r: AuditResult; date: string
         <div>
           <h1 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>Introduction</h1>
           <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>
-            {r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : r.summaryText}
+            {recapText || (r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : r.summaryText)}
           </p>
         </div>
 

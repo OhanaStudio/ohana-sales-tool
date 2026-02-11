@@ -84,19 +84,17 @@ export function MetricTile({
 
   return (
     <div
-      className={`rounded-xl border-2 bg-card p-5 print-break-avoid ${
-        tileBorder ? borderColor[tileBorder] : "border-border"
-      }`}
+      className={`rounded-xl border bg-card p-5 print-break-avoid ${tileBorder ? borderColor[tileBorder] : "border-border"
+        }`}
     >
       {/* Icon + Title */}
       <div className={`flex items-center ${compact ? "gap-2 mb-3" : "gap-3 mb-4"}`}>
         {icon && (
           <div
-            className={`flex items-center justify-center rounded-lg bg-muted/60 text-muted-foreground shrink-0 ${
-              compact
-                ? "h-7 w-7 [&>svg]:h-3.5 [&>svg]:w-3.5"
-                : "h-9 w-9 [&>svg]:h-5 [&>svg]:w-5"
-            }`}
+            className={`flex items-center justify-center rounded-lg bg-muted/60 text-muted-foreground shrink-0 ${compact
+              ? "h-7 w-7 [&>svg]:h-3.5 [&>svg]:w-3.5"
+              : "h-9 w-9 [&>svg]:h-5 [&>svg]:w-5"
+              }`}
           >
             {icon}
           </div>
