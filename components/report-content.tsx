@@ -18,8 +18,7 @@ import { PlatformInfoSection } from "./platform-info-section"
 import { SectionToggle } from "./section-toggle"
 import { RiskGroups } from "./risk-groups"
 import { RecapSection } from "./recap-section"
-import { PrintCover } from "./print-cover"
-import { PrintPageHeader, PrintPageFooter } from "./print-page-frame"
+import { PrintReport } from "./print-report"
 import {
   Download,
   ArrowLeft,
@@ -82,27 +81,6 @@ function countRisks(result: AuditResult) {
   return { high, moderate, accessibility: a11yCount }
 }
 
-/** Wraps a section in a full A4 print page with header + footer.
- *  Only visible in print. */
-function PrintPage({
-  children,
-  url,
-  timestamp,
-  riskLabel,
-}: {
-  children: React.ReactNode
-  url: string
-  timestamp: string
-  riskLabel?: string
-}) {
-  return (
-    <div className="hidden print:block print-page-section">
-      <PrintPageHeader url={url} timestamp={timestamp} riskLabel={riskLabel} />
-      <div>{children}</div>
-      <PrintPageFooter />
-    </div>
-  )
-}
 
 /** Wrapper: fades content when excluded, fully hidden in print.
  *  Toggle controls are rendered OUTSIDE the faded area so they stay at full opacity. */
@@ -182,8 +160,8 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ══════════════ PRINT COVER ══════════════ */}
-      <PrintCover url={result.url} timestamp={result.timestamp} />
+      {/* ══════════════ PRINT REPORT (self-contained A4 pages) ══════════════ */}
+      <PrintReport result={result} />
 
       {/* Top bar: Back + Download -- hidden in print */}
       <div className="no-print flex items-center justify-between px-5 md:px-8 py-4">
@@ -487,125 +465,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
       </div>
 
-      {/* ══════════════ PRINT-ONLY PAGES ══════════════
-          These mirror the web content but in explicit A4 page sections
-          with consistent header/footer. Hidden on screen. */}
-
-      {/* PAGE 2: Introduction + Score + Screenshots + Recap */}
-      <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-        <h1 className="print-intro-heading">
-          Website Health Check
-        </h1>
-        <div className="print-divider">
-          <p className="print-intro-label">Introduction</p>
-          <p className="print-intro-text">
-            {result.summaryText}
-          </p>
-        </div>
-
-        <ScoreDisplay
-          score={result.overallScore}
-          summary=""
-          pills={pills}
-        />
-
-        <div style={{ marginTop: '12px' }}>
-          <SiteScreenshots
-            url={result.url}
-            desktopScreenshot={result.desktop.screenshot}
-            mobileScreenshot={result.mobile.screenshot}
-          />
-        </div>
-
-        <div style={{ marginTop: '12px' }}>
-          <RecapSection result={result} />
-        </div>
-      </PrintPage>
-
-      {/* PAGE 3: Risk Cards */}
-      <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-        <RiskGroups result={result} />
-      </PrintPage>
-
-      {/* PAGE 4: Platform + Performance */}
-      <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-        {result.platformInfo && (
-          <div style={{ marginBottom: '14px' }}>
-            <PlatformInfoSection info={result.platformInfo} />
-          </div>
-        )}
-        <h2 className="font-sans text-2xl font-bold text-foreground mb-2">Performance overview</h2>
-        <p className="text-sm text-muted-foreground italic mb-4">
-          Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          <MetricTile
-            label="Largest Contentful Paint"
-            icon={<ImageIcon className="h-4 w-4" />}
-            mobileValue={formatMs(result.mobile.metrics.lcp)}
-            desktopValue={formatMs(result.desktop.metrics.lcp)}
-            unit={result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000 ? "s" : "ms"}
-            mobileStatus={getMetricStatus("lcp", result.mobile.metrics.lcp)}
-            desktopStatus={getMetricStatus("lcp", result.desktop.metrics.lcp)}
-          />
-          <MetricTile
-            label="First Contentful Paint"
-            icon={<Paintbrush className="h-4 w-4" />}
-            mobileValue={formatMs(result.mobile.metrics.fcp)}
-            desktopValue={formatMs(result.desktop.metrics.fcp)}
-            unit={result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000 ? "s" : "ms"}
-            mobileStatus={getMetricStatus("fcp", result.mobile.metrics.fcp)}
-            desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
-          />
-        </div>
-        <div className="grid grid-cols-3 gap-3 mt-2">
-          <MetricTile compact label="Cumulative Layout Shift" icon={<Move className="h-4 w-4" />}
-            mobileValue={formatCls(result.mobile.metrics.cls)} desktopValue={formatCls(result.desktop.metrics.cls)}
-            mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)} desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)} />
-          <MetricTile compact label="Total Blocking Time" icon={<Clock className="h-4 w-4" />}
-            mobileValue={formatMs(result.mobile.metrics.tbt)} desktopValue={formatMs(result.desktop.metrics.tbt)} unit="ms"
-            mobileStatus={getMetricStatus("tbt", result.mobile.metrics.tbt)} desktopStatus={getMetricStatus("tbt", result.desktop.metrics.tbt)} />
-          <MetricTile compact label="Speed Index" icon={<Gauge className="h-4 w-4" />}
-            mobileValue={formatMs(result.mobile.metrics.speedIndex)} desktopValue={formatMs(result.desktop.metrics.speedIndex)}
-            unit={result.mobile.metrics.speedIndex && result.mobile.metrics.speedIndex >= 1000 ? "s" : "ms"}
-            mobileStatus={getMetricStatus("speedIndex", result.mobile.metrics.speedIndex)} desktopStatus={getMetricStatus("speedIndex", result.desktop.metrics.speedIndex)} />
-        </div>
-        <div className="grid grid-cols-3 gap-3 mt-2">
-          <MetricTile compact label="Performance Score" icon={<Zap className="h-4 w-4" />}
-            mobileValue={String(result.mobile.performanceScore)} desktopValue={String(result.desktop.performanceScore)} maxScore={100}
-            mobileStatus={getScoreStatus(result.mobile.performanceScore)} desktopStatus={getScoreStatus(result.desktop.performanceScore)} />
-          <MetricTile compact label="Accessibility" icon={<Eye className="h-4 w-4" />}
-            mobileValue={String(result.mobile.accessibilityScore)} desktopValue={String(result.desktop.accessibilityScore)} maxScore={100}
-            mobileStatus={getScoreStatus(result.mobile.accessibilityScore)} desktopStatus={getScoreStatus(result.desktop.accessibilityScore)} />
-          <MetricTile compact label="Best Practices" icon={<ShieldCheck className="h-4 w-4" />}
-            mobileValue={String(result.mobile.bestPracticesScore)} desktopValue={String(result.desktop.bestPracticesScore)} maxScore={100}
-            mobileStatus={getScoreStatus(result.mobile.bestPracticesScore)} desktopStatus={getScoreStatus(result.desktop.bestPracticesScore)} />
-        </div>
-      </PrintPage>
-
-      {/* PAGE 5: UX Indicators + Design */}
-      <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-        <UXIndicatorsSection indicators={result.uxIndicators} />
-        {result.designIndicators && (
-          <div style={{ marginTop: '14px' }}>
-            <DesignIndicatorsSection indicators={result.designIndicators} />
-          </div>
-        )}
-      </PrintPage>
-
-      {/* PAGE 6: UX Friction */}
-      {result.advancedUX && (
-        <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-          <AdvancedUXSection indicators={result.advancedUX} />
-        </PrintPage>
-      )}
-
-      {/* PAGE 7: Accessibility */}
-      {result.accessibilityIndicators && (
-        <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-          <AccessibilitySection indicators={result.accessibilityIndicators} />
-        </PrintPage>
-      )}
+      
     </div>
   )
 }
