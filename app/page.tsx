@@ -116,7 +116,7 @@ export default function Page() {
                 className="inline-flex items-center gap-1.5 text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Clock className="h-3.5 w-3.5" />
-                History
+                Health check history
               </Link>
             </div>
           </>

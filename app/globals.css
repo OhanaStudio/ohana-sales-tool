@@ -60,7 +60,7 @@
     display: none !important;
   }
 
-  /* Force colour rendering for borders, badges, and backgrounds */
+  /* Force colour rendering */
   *,
   *::before,
   *::after {
@@ -70,66 +70,236 @@
 
   body {
     background: white !important;
-    font-size: 11pt;
-    line-height: 1.5;
+    font-size: 10pt;
+    line-height: 1.45;
+    color: #171717 !important;
   }
 
-  /* Page setup */
+  /* ── A4 Page setup ── */
   @page {
     size: A4;
-    margin: 1.5cm 1.5cm 2cm 1.5cm;
+    margin: 0;
   }
 
-  /* Prevent orphans and widows */
+  /* ── Cover page ── */
+  .print-cover {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    background: white;
+  }
+
+  .print-cover-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-height: none !important;
+  }
+
+  .print-cover-logo {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 1;
+  }
+
+  .print-cover-logo img {
+    height: 28px;
+    width: auto;
+    max-height: none !important;
+  }
+
+  .print-cover-content {
+    position: absolute;
+    bottom: 80px;
+    left: 40px;
+    z-index: 1;
+  }
+
+  .print-cover-title {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 54pt;
+    font-weight: 700;
+    line-height: 1.05;
+    color: #171717;
+    margin: 0 0 16px 0;
+  }
+
+  .print-cover-url {
+    font-size: 11pt;
+    color: #525252;
+    margin: 0 0 4px 0;
+  }
+
+  .print-cover-date {
+    font-size: 11pt;
+    color: #525252;
+    margin: 0;
+  }
+
+  .print-cover-studio {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    font-size: 9pt;
+    color: #525252;
+    z-index: 1;
+    margin: 0;
+  }
+
+  /* ── Per-page print sections ── */
+  .print-page-section {
+    position: relative;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 32px 40px 60px 40px;
+    box-sizing: border-box;
+    page-break-after: always;
+    break-after: page;
+    background: white;
+  }
+
+  /* Last section should not force trailing blank page */
+  .print-page-section:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  /* ── Page header (top of every body page) ── */
+  .print-page-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #d4d4d4;
+  }
+
+  .print-header-title {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #171717;
+    margin: 0;
+  }
+
+  .print-header-url {
+    font-size: 8pt;
+    color: #737373;
+    margin: 2px 0 0 0;
+  }
+
+  .print-header-right {
+    text-align: right;
+  }
+
+  .print-header-date {
+    font-size: 8pt;
+    color: #737373;
+    margin: 0;
+  }
+
+  .print-header-risk {
+    font-size: 8pt;
+    color: #737373;
+    margin: 2px 0 0 0;
+  }
+
+  /* ── Page footer (bottom of every body page) ── */
+  .print-page-footer {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 28px;
+    left: 40px;
+    right: 40px;
+  }
+
+  .print-footer-logo {
+    height: 18px;
+    width: auto;
+    opacity: 0.6;
+    max-height: none !important;
+  }
+
+  .print-footer-url {
+    font-size: 8pt;
+    color: #a3a3a3;
+    margin: 0;
+  }
+
+  /* ── General print utilities ── */
   p, li, h1, h2, h3, h4 {
     orphans: 3;
     widows: 3;
   }
 
-  /* Keep headings with their content */
   h1, h2, h3, h4 {
     break-after: avoid;
     page-break-after: avoid;
   }
 
-  /* Cards, tiles, and sections should not break */
   .print-break-avoid {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* Force page breaks where needed */
   .print-break-before {
     break-before: page;
     page-break-before: always;
   }
 
-  /* Tighten spacing for print */
   .print-compact {
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 1rem !important;
   }
 
-  /* Ensure images don't overflow pages */
-  img {
-    max-height: 40vh;
-    object-fit: contain;
-  }
-
-  /* SVG gauge should be smaller for print */
-  svg {
-    max-height: 150px;
-  }
-
-  /* Remove shadows for cleaner print */
+  /* Remove shadows */
   * {
     box-shadow: none !important;
     text-shadow: none !important;
   }
 
-  /* Ensure links show their URL after text */
-  a[href^="http"]::after {
-    content: none; /* Disable for report, would be too noisy */
+  /* Constrain images in body pages */
+  .print-page-section img {
+    max-height: 35vh;
+    object-fit: contain;
   }
 
+  /* SVG gauges */
+  .print-page-section svg {
+    max-height: 120px;
+  }
 
+  /* Don't append URLs to links */
+  a[href^="http"]::after {
+    content: none;
+  }
+
+  /* Print body section headings */
+  .print-section-heading {
+    font-size: 16pt;
+    font-weight: 700;
+    color: #171717;
+    margin: 0 0 4px 0;
+  }
+
+  .print-section-sub {
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #737373;
+    margin: 0 0 14px 0;
+  }
+
+  /* ── Override the web container to be flush for print ── */
+  .print-report-body {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
