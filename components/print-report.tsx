@@ -168,7 +168,9 @@ function IntroPage({ r, date, riskLabel, risks }: { r: AuditResult; date: string
       <div style={BODY}>
         <div>
           <h1 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>Introduction</h1>
-          <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>{r.summaryText}</p>
+          <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>
+            {r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : r.summaryText}
+          </p>
         </div>
 
         {/* Score gauge + label + pills */}
