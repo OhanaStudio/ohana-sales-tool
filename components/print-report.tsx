@@ -444,52 +444,142 @@ function FrictionPage({ r, date, riskLabel }: { r: AuditResult; date: string; ri
   )
 }
 
+/* ── A11y status icons matching report (Check / AlertTriangle / X) ── */
+function A11yIcon({ status }: { status: 'pass' | 'warn' | 'fail' }) {
+  const s = 12
+  if (status === 'pass') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  )
+  if (status === 'warn') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  )
+  return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  )
+}
+
+/* ── EAA issue parser (matches report) ── */
+const EAA_NOTES: Record<string, string> = {
+  '3.1.1': 'Without a language declaration, screen readers may mispronounce content, making the site difficult for visually impaired visitors.',
+  '2.4.2': 'The page title appears in browser tabs, search results, and bookmarks. Missing titles look unprofessional and hurt search rankings.',
+  '1.3.1': 'Proper document structure helps screen readers and search engines understand your content. This is a foundational accessibility and SEO requirement.',
+  '1.1.1': 'Images without alt text are invisible to screen reader users and search engines. This is both an accessibility violation and a missed SEO opportunity.',
+  '4.1.2': 'Unlabelled form fields are confusing for screen reader users and can reduce form completion rates on mobile devices.',
+  '2.4.4': 'Links without descriptive text are meaningless for screen reader users who navigate by link list. This reduces clarity for all visitors.',
+  '1.4.2': 'Videos without user controls frustrate visitors and violate accessibility standards. Autoplay can disorient users with cognitive disabilities.',
+  '1.2.2': 'Captions are essential for deaf and hard-of-hearing users, and also help visitors in sound-sensitive environments like offices.',
+  '2.4.1': 'Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple fix with major impact.',
+  'gdpr': 'EU regulations require consent before setting non-essential cookies. Non-compliance can result in significant fines under GDPR.',
+}
+function parseEaaIssue(issue: string) {
+  const wcagMatch = issue.match(/\(([^)]+)\)/)
+  const wcagRef = wcagMatch ? wcagMatch[1].replace(' requirement for EU sites', '').trim() : undefined
+  const detail = issue.replace(/\s*\([^)]+\)\.?/, '').replace(/\.$/, '').trim()
+  const label = detail.replace(/^\d+\s+/, '').replace(/\.$/, '').trim()
+  let note: string | undefined
+  if (wcagRef) {
+    const refNumber = wcagRef.replace('WCAG ', '').trim()
+    note = EAA_NOTES[refNumber]
+    if (!note && wcagRef.toLowerCase().includes('gdpr')) note = EAA_NOTES['gdpr']
+  }
+  return { label, detail, wcagRef, note }
+}
+
 /* ═══ PAGE 7: Accessibility ═══ */
-function A11yPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
+function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string }) {
   const a = r.accessibilityIndicators
   if (!a) return null
 
-  const checks: { label: string; wcag?: string; passed: boolean; detail: string; note: string }[] = [
-    { label: 'Video controls', passed: a.videosFound === 0 || a.videosWithControls > 0, detail: a.videosFound === 0 ? 'No video elements detected on the page.' : `${a.videosWithControls}/${a.videosFound} videos have controls.`, note: '' },
-    { label: 'Language attribute', wcag: 'WCAG 3.1.1', passed: a.htmlLangPresent, detail: a.htmlLangPresent ? 'The page declares a language for screen readers.' : 'No language attribute found.', note: 'Properly declared language helps screen readers pronounce content correctly for visually impaired users.' },
-    { label: 'Page title', wcag: 'WCAG 2.4.2', passed: a.documentTitlePresent, detail: a.documentTitlePresent ? 'The page has a descriptive title.' : 'No page title found.', note: 'A descriptive title helps users and search engines understand the page at a glance.' },
-    { label: 'Heading hierarchy', wcag: 'WCAG 1.3.1', passed: a.headingOrderValid, detail: a.headingOrderValid ? 'Headings follow a logical order.' : 'Heading order is incorrect.', note: 'A logical heading structure helps both screen readers and search engines understand the page content.' },
-    { label: 'Image alt text', wcag: 'WCAG 1.1.1', passed: a.missingAltText === 0, detail: a.missingAltText === 0 ? 'All images have alt text.' : `${a.missingAltText} images missing alt text.`, note: 'Alt text ensures images are accessible and improves image search rankings.' },
-    { label: 'Form labels', wcag: 'WCAG 4.1.2', passed: a.missingFormLabels === 0, detail: a.missingFormLabels === 0 ? 'All form inputs have associated labels.' : `${a.missingFormLabels} form inputs missing labels.`, note: 'Labelled form fields ensure all users can complete enquiry forms successfully.' },
-    { label: 'Link text', wcag: 'WCAG 2.4.4', passed: a.missingLinkNames === 0, detail: a.missingLinkNames === 0 ? 'All links have discernible text.' : `${a.missingLinkNames} links missing text.`, note: 'Descriptive link text helps all users understand where links lead before clicking.' },
-    { label: 'Skip navigation', wcag: 'WCAG 2.4.1', passed: a.skipNavFound, detail: a.skipNavFound ? 'Skip navigation link found.' : 'No skip navigation link found.', note: 'Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple addition that significantly improves the experience for disabled users.' },
-    { label: 'ARIA landmarks', wcag: 'WCAG 1.3.1', passed: a.landmarksFound.length > 0, detail: a.landmarksFound.length > 0 ? `Found: ${a.landmarksFound.join(', ')}` : 'No semantic landmarks detected.', note: 'Without proper landmarks, screen reader users cannot efficiently navigate the page. This is a code-level fix that makes a big difference for accessibility.' },
-    { label: 'Cookie consent (GDPR)', wcag: 'ePrivacy / GDPR', passed: a.cookieConsentFound, detail: a.cookieConsentFound ? 'A cookie consent mechanism was detected.' : 'No cookie consent mechanism found.', note: 'Having a cookie consent mechanism helps ensure compliance with EU privacy regulations.' },
-  ]
+  type Row = { label: string; status: 'pass' | 'warn' | 'fail'; detail: string; wcag?: string; note?: string }
+  const rows: Row[] = []
+
+  // Video controls
+  if (a.videosFound > 0) {
+    rows.push({
+      label: 'Video controls',
+      status: a.videosWithControls >= a.videosFound && a.videosAutoplay === 0 ? 'pass' : a.videosAutoplay > 0 ? 'fail' : 'warn',
+      detail: a.videosWithControls >= a.videosFound && a.videosAutoplay === 0 ? `${a.videosFound} video(s) found, all with controls and no autoplay.` : a.videosAutoplay > 0 ? `${a.videosAutoplay} of ${a.videosFound} video(s) set to autoplay.` : `${a.videosFound - a.videosWithControls} of ${a.videosFound} video(s) missing controls.`,
+      wcag: 'WCAG 1.4.2', note: 'Videos without user controls frustrate visitors and violate accessibility standards.',
+    })
+    if (a.videoCaptionIssues > 0) rows.push({ label: 'Video captions', status: 'fail', detail: `${a.videoCaptionIssues} video(s) missing captions.`, wcag: 'WCAG 1.2.2', note: 'Captions are essential for deaf and hard-of-hearing users.' })
+  } else {
+    rows.push({ label: 'Video controls', status: 'pass', detail: 'No video elements detected on the page.' })
+  }
+
+  rows.push(
+    { label: 'Language attribute', wcag: 'WCAG 3.1.1', status: a.htmlLangPresent ? 'pass' : 'fail', detail: a.htmlLangPresent ? 'The page declares a language for screen readers.' : 'Missing lang attribute on <html>.', note: a.htmlLangPresent ? 'Properly declared language helps screen readers pronounce content correctly for visually impaired users.' : 'Without a language declaration, screen readers may mispronounce content.' },
+    { label: 'Page title', wcag: 'WCAG 2.4.2', status: a.documentTitlePresent ? 'pass' : 'fail', detail: a.documentTitlePresent ? 'The page has a descriptive title.' : 'Missing or empty page title.', note: a.documentTitlePresent ? 'A descriptive title helps users and search engines understand the page at a glance.' : 'The page title appears in browser tabs, search results, and bookmarks.' },
+    { label: 'Heading hierarchy', wcag: 'WCAG 1.3.1', status: a.headingOrderValid ? 'pass' : 'warn', detail: a.headingOrderValid ? 'Headings follow a logical order.' : 'Heading levels skip or are out of order.', note: 'A logical heading structure helps both screen readers and search engines understand the page content.' },
+    { label: 'Image alt text', wcag: 'WCAG 1.1.1', status: a.missingAltText === 0 ? 'pass' : a.missingAltText <= 2 ? 'warn' : 'fail', detail: a.missingAltText === 0 ? 'All images have alt text.' : `${a.missingAltText} image(s) missing alt text.`, note: 'Alt text ensures images are accessible and improves image search rankings.' },
+    { label: 'Form labels', wcag: 'WCAG 4.1.2', status: a.missingFormLabels === 0 ? 'pass' : 'fail', detail: a.missingFormLabels === 0 ? 'All form inputs have associated labels.' : `${a.missingFormLabels} form input(s) missing labels.`, note: 'Labelled form fields ensure all users can complete enquiry forms successfully.' },
+    { label: 'Link text', wcag: 'WCAG 2.4.4', status: a.missingLinkNames === 0 ? 'pass' : a.missingLinkNames <= 2 ? 'warn' : 'fail', detail: a.missingLinkNames === 0 ? 'All links have discernible text.' : `${a.missingLinkNames} link(s) have no accessible name.`, note: 'Descriptive link text helps all users understand where links lead before clicking.' },
+    { label: 'Skip navigation', wcag: 'WCAG 2.4.1', status: a.skipNavFound ? 'pass' : 'warn', detail: a.skipNavFound ? 'A skip navigation mechanism was detected.' : 'No skip navigation link found.', note: 'Without skip navigation, keyboard users must tab through every menu item on every page load. This is a simple addition that significantly improves the experience for disabled users.' },
+    { label: 'ARIA landmarks', wcag: 'WCAG 1.3.1', status: a.landmarksFound.length >= 3 ? 'pass' : a.landmarksFound.length >= 1 ? 'warn' : 'fail', detail: a.landmarksFound.length >= 3 ? `Landmarks found: ${a.landmarksFound.join(', ')}.` : a.landmarksFound.length > 0 ? `Only ${a.landmarksFound.join(', ')} detected.` : 'No semantic landmarks detected.', note: 'Without proper landmarks, screen reader users cannot efficiently navigate the page. This is a code-level fix that makes a big difference for accessibility.' },
+    { label: 'Cookie consent (GDPR)', wcag: 'ePrivacy / GDPR', status: a.cookieConsentFound ? 'pass' : 'warn', detail: a.cookieConsentFound ? 'A cookie consent mechanism was detected.' : 'No cookie consent banner detected.', note: a.cookieConsentFound ? 'Having a cookie consent mechanism helps ensure compliance with EU privacy regulations.' : 'EU regulations require websites to obtain consent before setting non-essential cookies.' },
+  )
+
+  const failCount = rows.filter((r) => r.status === 'fail').length
+  const warnCount = rows.filter((r) => r.status === 'warn').length
+  const issueCount = failCount + warnCount
+  const badgeBg = failCount > 0 ? '#fef2f2' : warnCount > 0 ? '#fffbeb' : '#ecfdf5'
+  const badgeColor = failCount > 0 ? '#b91c1c' : warnCount > 0 ? '#92400e' : '#065f46'
+  const badgeLabel = issueCount === 0 ? 'All clear' : `${issueCount} Accessibility Risk${issueCount !== 1 ? 's' : ''}`
 
   return (
     <div style={PAGE}>
-      <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <div style={BODY}>
+      <PH url={r.url} date={date} />
+      <div style={{ ...BODY, gap: 10 }}>
         <div>
-          <SH badge={a.eaaIssues.length > 0 ? `${a.eaaIssues.length} Accessibility Risks` : undefined} badgeColor="#f0f9ff">Accessibility &amp; EAA compliance</SH>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>Accessibility & EAA compliance</h2>
+            <span style={{ fontSize: 7, fontWeight: 600, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeColor}20` }}>{badgeLabel}</span>
+          </div>
           <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
 
-          {checks.map((ch) => (
-            <div key={ch.label} style={{ padding: '4px 0', borderBottom: '1px solid #e5e5e5' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 1 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: ch.passed ? '#16a34a' : '#dc2626', flexShrink: 0 }} />
-                <span style={{ fontWeight: 600, fontSize: 10, color: C.black }}>{ch.label}</span>
-                {ch.wcag && <span style={{ fontSize: 8, color: C.light, marginLeft: 4 }}>{ch.wcag}</span>}
+          {/* Main checks in a rounded bordered container */}
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+            {rows.map((ch, i) => (
+              <div key={ch.label} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                  <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={ch.status} /></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
+                      <span style={{ fontWeight: 700, fontSize: 8.5, color: C.black }}>{ch.label}</span>
+                      {ch.wcag && <span style={{ fontSize: 6.5, fontWeight: 600, color: C.light, background: '#f5f5f4', borderRadius: 3, padding: '0.5px 4px' }}>{ch.wcag}</span>}
+                    </div>
+                    <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{ch.detail}</p>
+                    {ch.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.45 }}>Note: {ch.note}</p>}
+                  </div>
+                </div>
               </div>
-              <p style={{ margin: '1px 0 0 13px', fontSize: 9, color: C.grey, lineHeight: 1.4 }}>{ch.detail}</p>
-              {ch.note && <p style={{ margin: '1px 0 0 13px', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {ch.note}</p>}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* EAA Issue Summary */}
+        {/* EAA Issue Summary — matching report's parsed layout */}
         {a.eaaIssues.length > 0 && (
-          <div style={{ padding: '8px 10px', border: `1px solid ${C.border}`, background: '#fafafa' }}>
-            <p style={{ margin: '0 0 4px', fontSize: 10, fontWeight: 700, color: C.black }}>EAA / WCAG ISSUE SUMMARY</p>
-            {a.eaaIssues.map((issue, i) => (
-              <p key={i} style={{ margin: '2px 0', fontSize: 9, color: C.grey, lineHeight: 1.4 }}>{issue}</p>
-            ))}
+          <div>
+            <p style={{ margin: '0 0 4px', fontSize: 7, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: C.light }}>EAA / WCAG issue summary</p>
+            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+              {a.eaaIssues.map((issue, i) => {
+                const parsed = parseEaaIssue(issue)
+                return (
+                  <div key={i} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                      <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status="fail" /></div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
+                          <span style={{ fontWeight: 700, fontSize: 8.5, color: C.black }}>{parsed.label}</span>
+                          {parsed.wcagRef && <span style={{ fontSize: 6.5, fontWeight: 600, color: C.light, background: '#f5f5f4', borderRadius: 3, padding: '0.5px 4px' }}>{parsed.wcagRef}</span>}
+                        </div>
+                        <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{parsed.detail}</p>
+                        {parsed.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.45 }}>Note: {parsed.note}</p>}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
