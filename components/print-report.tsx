@@ -57,7 +57,7 @@ function scoreLabel(s: number) {
 function statusDot(status: string) {
   const c = status === 'good' ? '#10b981' : status === 'warning' || status === 'needs-improvement' ? '#f59e0b' : status === 'poor' ? '#ef4444' : C.light
   return <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: 1.5, background: c, flexShrink: 0 }} />
-  }
+}
 
 function countRisks(r: AuditResult) {
   let high = 0, moderate = 0
@@ -79,7 +79,7 @@ function PH({ url, date }: { url: string; date: string; riskLabel?: string }) {
       display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
       paddingTop: 1, paddingBottom: 3, borderBottom: `1px solid ${C.border}`,
     }}>
-      <p style={{ margin: 0, fontSize: 11, fontWeight: 700, fontFamily: SERIF, color: C.black, flexShrink: 0 }}>Website Health Check</p>
+      <p style={{ margin: 0, fontSize: 11, fontFamily: SERIF, color: C.black, flexShrink: 0 }}>Website Health Check</p>
       <p style={{ margin: 0, fontSize: 9, color: C.light, textAlign: 'center', flex: '1 1 auto' }}>{url.startsWith('http') ? url : `https://${url}`}</p>
       <p style={{ margin: 0, fontSize: 9, color: C.light, flexShrink: 0, textAlign: 'right' }}>{date}</p>
     </div>
@@ -117,8 +117,8 @@ function Sub({ children }: { children: React.ReactNode }) {
 function IR({ label, detail, note, status }: { label: string; detail?: string; note?: string; status?: string }) {
   const dotColor = status === 'clear' || status === 'good' || status === 'pass' || status === 'low' || status === 'scannable' || status === 'clear_path' || status === 'strong'
     ? '#16a34a' : status === 'mixed' || status === 'warn' || status === 'medium' || status === 'moderate' || status === 'partial'
-    ? '#d97706' : status === 'unclear' || status === 'fail' || status === 'high' || status === 'dense' || status === 'broken' || status === 'weak'
-    ? '#dc2626' : '#a3a3a3'
+      ? '#d97706' : status === 'unclear' || status === 'fail' || status === 'high' || status === 'dense' || status === 'broken' || status === 'weak'
+        ? '#dc2626' : '#a3a3a3'
   return (
     <div style={{ padding: '4px 0', borderBottom: '1px solid #e7e5e4' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
@@ -144,7 +144,7 @@ function CoverPage({ url, date }: { url: string; date: string }) {
         <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 28 }} />
       </div>
       <div style={{ position: 'absolute', bottom: 90, left: 23, zIndex: 1 }}>
-        <h1 style={{ fontFamily: SERIF, fontSize: 64, fontWeight: 700, lineHeight: 1.0, color: C.black, margin: '0 0 9px' }}>
+        <h1 style={{ fontFamily: SERIF, fontSize: 64, lineHeight: 1.0, color: C.black, margin: '0 0 9px' }}>
           Website<br />Health Check
         </h1>
         <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: '0 0 2px' }}>{'www.' + url.replace(/^https?:\/\/(www\.)?/, '')}</p>
@@ -177,7 +177,7 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
       <PH url={r.url} date={date} riskLabel={riskLabel} />
       <div style={BODY}>
         <div>
-          <h1 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>Introduction</h1>
+          <h1 style={{ fontFamily: SERIF, fontSize: 28, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>Introduction</h1>
           <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>
             {renderMarkdown(recapText || (r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : r.summaryText))}
           </p>
@@ -247,13 +247,13 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   /* Card icon lookup — simple SVG icons matching the report's lucide icons */
   const cardIcon = (label: string) => {
     if (label.includes('Conversion')) return (
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 9 5 12 1.8-5.2L21 14Z" /><path d="M7.2 2.2 8 5.1" /><path d="m5.1 8-2.9-.8" /><path d="M14 4.1 12 6" /><path d="m6 12-1.9 2" /></svg>
     )
     if (label.includes('Trust')) return (
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
     )
     return (
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="4" /><line x1="21.17" y1="8" x2="12" y2="8" /><line x1="3.95" y1="6.06" x2="8.54" y2="14" /><line x1="10.88" y1="21.94" x2="15.46" y2="14" /></svg>
     )
   }
 
@@ -265,7 +265,7 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           const c = cfg[g.level]
           return (
             <div key={g.level}>
-              <h2 style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>{c.heading}</h2>
+              <h2 style={{ margin: '0 0 2px', fontSize: 14, color: C.black, fontFamily: SERIF }}>{c.heading}</h2>
               <p style={{ margin: '0 0 8px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {g.cards.map((card) => (
@@ -308,7 +308,7 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 
 /* ═══ PAGE 4: Platform + Performance ═══ */
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
-  /* Print tile — mirrors report MetricTile: rounded-xl, border-2, coloured borders,
+  /* Print tile — mirrors report MetricTile: rounded-xl, border, coloured borders,
      inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
   function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
     const worst = mobSt === 'good' && deskSt === 'good' ? 'good' : mobSt === 'poor' || deskSt === 'poor' ? 'poor' : 'needs-improvement'
@@ -464,7 +464,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
         {/* UX Indicators */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>UX indicators</h2>
+            <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>UX indicators</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
           </div>
           <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
@@ -489,7 +489,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
         {di && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-              <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>Design & image quality</h2>
+              <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>Design & image quality</h2>
               {!di.contrastIssues && di.imageIssues.oversizedCount === 0 && (
                 <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
               )}
@@ -576,7 +576,7 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
       <div style={{ ...BODY, gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>UX friction analysis</h2>
+            <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>UX friction analysis</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
           </div>
           <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
@@ -613,13 +613,13 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
 function A11yIcon({ status }: { status: 'pass' | 'warn' | 'fail' }) {
   const s = 12
   if (status === 'pass') return (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
   )
   if (status === 'warn') return (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
   )
   return (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
   )
 }
 
@@ -696,7 +696,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
       <div style={{ ...BODY, gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>Accessibility & EAA compliance</h2>
+            <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>Accessibility & EAA compliance</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeColor}20` }}>{badgeLabel}</span>
           </div>
           <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
