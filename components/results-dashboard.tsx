@@ -21,7 +21,7 @@ import {
   Gauge,
   Zap,
 } from "lucide-react"
-import Link from "next/link"
+
 import { useState } from "react"
 
 function formatMs(val: number | null): string | null {
@@ -58,13 +58,13 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
         <p className="text-xs text-muted-foreground mb-6">{result.url}</p>
         <ScoreDisplay score={result.overallScore} summary={result.summaryText} />
         <div className="flex flex-wrap gap-3 mt-6">
-          <Link
+          <a
             href={`/report/${result.id}`}
             className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-5 py-3 text-sm font-medium hover:opacity-90 transition-opacity min-h-[44px]"
           >
             <FileText className="h-4 w-4" />
             View full report
-          </Link>
+          </a>
           <button
             type="button"
             onClick={handleCopyLink}
