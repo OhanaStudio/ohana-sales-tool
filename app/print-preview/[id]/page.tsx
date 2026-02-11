@@ -14,7 +14,8 @@ import {
   FrictionPage,
   A11yPage,
 } from "@/components/print-report"
-import { Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2 } from "lucide-react"
+import Link from "next/link"
 
 /**
  * A4 at 72 dpi = 595 x 842 px (matches Figma frame).
@@ -24,6 +25,7 @@ import { Loader2 } from "lucide-react"
 
 const A4_W = 595
 const A4_H = 842
+const CONTENT_W = A4_W - 97.5 - 92 // matches print-report: PAD_L + PAD_R
 
 export default function PrintPreviewPage() {
   const params = useParams()
@@ -87,12 +89,23 @@ export default function PrintPreviewPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: "40px 0" }}>
       {/* Title bar */}
-      <div style={{ textAlign: "center", marginBottom: 32 }}>
+      <div style={{ maxWidth: A4_W, margin: "0 auto 32px", padding: "0 0 0 0" }}>
+        <Link
+          href={`/report/${id}`}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+            color: "#525252", textDecoration: "none", marginBottom: 16,
+          }}
+        >
+          <ArrowLeft style={{ width: 14, height: 14 }} />
+          Back to report
+        </Link>
         <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#171717", margin: "0 0 4px" }}>
           Print Preview
         </h1>
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: "#525252", margin: 0 }}>
-          A4 ratio (595 x 842px) - Content area 405px wide
+          A4 ratio ({A4_W} x {A4_H}px) — Content area {Math.round(CONTENT_W)}px wide
         </p>
       </div>
 
