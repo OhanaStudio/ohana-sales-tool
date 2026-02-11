@@ -103,14 +103,14 @@ function PF() {
 function SH({ children, badge, badgeColor }: { children: React.ReactNode; badge?: string; badgeColor?: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-      <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, fontFamily: FONT, color: C.black }}>{children}</h2>
-      {badge && <span style={{ fontSize: 8, fontWeight: 600, padding: '1px 6px', borderRadius: 2, background: badgeColor || '#f5f5f5', color: C.grey }}>{badge}</span>}
+      <h2 style={{ margin: 0, fontSize: 12, fontWeight: 700, fontFamily: FONT, color: C.black }}>{children}</h2>
+      {badge && <span style={{ fontSize: 7, fontWeight: 600, padding: '1px 7px', borderRadius: 99, background: badgeColor || '#f5f5f4', color: C.grey }}>{badge}</span>}
     </div>
   )
 }
 
 function Sub({ children }: { children: React.ReactNode }) {
-  return <p style={{ margin: '0 0 8px', fontSize: 9, fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>{children}</p>
+  return <p style={{ margin: '0 0 5px', fontSize: 7.5, fontStyle: 'italic', color: C.light, lineHeight: 1.45 }}>{children}</p>
 }
 
 /* ── Indicator row ── */
@@ -120,13 +120,13 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
     ? '#d97706' : status === 'unclear' || status === 'fail' || status === 'high' || status === 'dense' || status === 'broken' || status === 'weak'
     ? '#dc2626' : '#a3a3a3'
   return (
-    <div style={{ padding: '5px 0', borderBottom: '1px solid #e5e5e5' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 1 }}>
-        <span style={{ width: 7, height: 7, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
-        <span style={{ fontWeight: 600, fontSize: 10, color: C.black }}>{label}</span>
+    <div style={{ padding: '4px 0', borderBottom: '1px solid #e7e5e4' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
+        <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
+        <span style={{ fontWeight: 600, fontSize: 8, color: C.black }}>{label}</span>
       </div>
-      {detail && <p style={{ margin: '1px 0 0 13px', fontSize: 9, color: C.grey, lineHeight: 1.4 }}>{detail}</p>}
-      {note && <p style={{ margin: '1px 0 0 13px', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {note}</p>}
+      {detail && <p style={{ margin: '1px 0 0 11px', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{detail}</p>}
+      {note && <p style={{ margin: '1px 0 0 11px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35 }}>Note: {note}</p>}
     </div>
   )
 }
@@ -244,12 +244,12 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
             <div key={g.level}>
               <h2 style={{ margin: '0 0 1px', fontSize: 13, fontWeight: 700, color: C.black, fontFamily: FONT }}>{c.heading}</h2>
               <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
-              <div style={{ border: `1px solid ${c.borderC}`, overflow: 'hidden' }}>
-                {g.cards.map((card, ci) => (
-                  <div key={card.label} style={{ padding: '5px 8px', borderBottom: ci < g.cards.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {g.cards.map((card) => (
+                  <div key={card.label} style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, padding: '6px 8px', background: '#fff' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                       <span style={{ fontWeight: 700, fontSize: 9, color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
-                      <span style={{ fontSize: 7, fontWeight: 600, padding: '1px 5px', background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
+                      <span style={{ fontSize: 7, fontWeight: 600, padding: '1px 6px', borderRadius: 99, background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
                     </div>
                     {card.bullets.map((b, bi) => (
                       <div key={bi} style={{ marginBottom: 2 }}>
@@ -272,19 +272,23 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 
 /* ═══ PAGE 4: Platform + Performance ═══ */
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
+  /* Print tile matching report's MetricTile: rounded-xl, border-2, coloured borders,
+     inner rounded-lg muted bg with mobile|desktop grid split + divider */
   function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
-    const border = mobSt === 'good' && deskSt === 'good' ? '#a7f3d0' : mobSt === 'poor' || deskSt === 'poor' ? '#fecaca' : '#fde68a'
+    const worst = mobSt === 'good' && deskSt === 'good' ? 'good' : mobSt === 'poor' || deskSt === 'poor' ? 'poor' : 'needs-improvement'
+    const borderC = worst === 'good' ? '#34d399' : worst === 'poor' ? '#f87171' : '#fbbf24'
     return (
-      <div style={{ border: `1px solid ${border}`, padding: wide ? '8px 10px' : '6px 8px', flex: wide ? '1 1 48%' : '1 1 30%' }}>
-        <p style={{ margin: '0 0 4px', fontSize: 9, fontWeight: 600, color: C.black }}>{label}</p>
-        <div style={{ display: 'flex', gap: wide ? 20 : 12 }}>
-          <div>
-            <p style={{ margin: 0, fontSize: 7, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>MOBILE</p>
-            <p style={{ margin: 0, fontSize: wide ? 16 : 13, fontWeight: 700, color: C.black }}>{statusDot(mobSt)}{mob}{unit || ''}</p>
+      <div style={{ border: `2px solid ${borderC}`, borderRadius: 10, padding: wide ? '6px 8px' : '5px 7px', flex: wide ? '1 1 48%' : '1 1 30%', background: '#fff' }}>
+        <p style={{ margin: '0 0 4px', fontSize: 8, fontWeight: 700, color: C.black }}>{label}</p>
+        {/* Inner muted split */}
+        <div style={{ background: '#f5f5f4', borderRadius: 6, padding: '4px 6px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+          <div style={{ paddingRight: 6, borderRight: '1px solid #e5e5e5' }}>
+            <p style={{ margin: 0, fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.06em', fontWeight: 500 }}>MOBILE</p>
+            <p style={{ margin: '1px 0 0', fontSize: wide ? 12 : 10, fontWeight: 700, color: C.black, display: 'flex', alignItems: 'center', gap: 3 }}>{statusDot(mobSt)}{mob}{unit || ''}</p>
           </div>
-          <div>
-            <p style={{ margin: 0, fontSize: 7, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>DESKTOP</p>
-            <p style={{ margin: 0, fontSize: wide ? 16 : 13, fontWeight: 700, color: C.black }}>{statusDot(deskSt)}{desk}{unit || ''}</p>
+          <div style={{ paddingLeft: 6 }}>
+            <p style={{ margin: 0, fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.06em', fontWeight: 500 }}>DESKTOP</p>
+            <p style={{ margin: '1px 0 0', fontSize: wide ? 12 : 10, fontWeight: 700, color: C.black, display: 'flex', alignItems: 'center', gap: 3 }}>{statusDot(deskSt)}{desk}{unit || ''}</p>
           </div>
         </div>
       </div>
@@ -295,20 +299,20 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <div style={BODY}>
+      <div style={{ ...BODY, gap: 16 }}>
         {r.platformInfo && (
           <div>
-            <h2 style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: C.black }}>Platform detection</h2>
-            <p style={{ margin: '0 0 6px', fontSize: 9, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '6px 10px', border: `1px solid ${C.border}` }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
-              <span style={{ fontSize: 9, color: C.light }}>{r.platformInfo.confidence} confidence</span>
+            <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Platform detection</h2>
+            <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '5px 8px', border: `1px solid ${C.border}`, borderRadius: 8, background: '#fff' }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
+              <span style={{ fontSize: 8, color: C.light, background: '#f5f5f4', borderRadius: 4, padding: '1px 6px' }}>{r.platformInfo.confidence} confidence</span>
             </div>
           </div>
         )}
 
         <div>
-          <h2 style={{ margin: '0 0 2px', fontSize: 17, fontWeight: 700, color: C.black, fontFamily: FONT }}>Performance overview</h2>
+          <h2 style={{ margin: '0 0 2px', fontSize: 13, fontWeight: 700, color: C.black, fontFamily: FONT }}>Performance overview</h2>
           <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
 
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
