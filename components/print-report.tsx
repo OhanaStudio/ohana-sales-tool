@@ -71,22 +71,17 @@ function countRisks(r: AuditResult) {
 /* ── Edge inset for header / footer (full-width with small margin) ── */
 const EDGE = 36
 
-/* ── Page header — sits at the very top of the A4 frame, full width ── */
-function PH({ url, date, riskLabel }: { url: string; date: string; riskLabel: string }) {
+/* ── Page header — single row: Title (left) · URL (centre) · Date (right) ── */
+function PH({ url, date }: { url: string; date: string; riskLabel?: string }) {
   return (
     <div style={{
       position: 'absolute', top: 25, left: EDGE, right: EDGE,
-      display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-      paddingBottom: 6, borderBottom: `1px solid ${C.border}`,
+      display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+      paddingTop: 1, paddingBottom: 3, borderBottom: `1px solid ${C.border}`,
     }}>
-      <div>
-        <p style={{ margin: 0, fontSize: 10, fontWeight: 600, fontFamily: SERIF, color: C.black }}>Website Health Check</p>
-        <p style={{ margin: '2px 0 0', fontSize: 8, color: C.light }}>{url.replace(/^https?:\/\//, '')}</p>
-      </div>
-      <div style={{ textAlign: 'right' }}>
-        <p style={{ margin: 0, fontSize: 8, color: C.light }}>{date}</p>
-        <p style={{ margin: '2px 0 0', fontSize: 8, color: C.light }}>{riskLabel}</p>
-      </div>
+      <p style={{ margin: 0, fontSize: 11, fontWeight: 700, fontFamily: SERIF, color: C.black, flexShrink: 0 }}>Website Health Check</p>
+      <p style={{ margin: 0, fontSize: 9, color: C.light, textAlign: 'center', flex: '1 1 auto' }}>{url.startsWith('http') ? url : `https://${url}`}</p>
+      <p style={{ margin: 0, fontSize: 9, color: C.light, flexShrink: 0, textAlign: 'right' }}>{date}</p>
     </div>
   )
 }
