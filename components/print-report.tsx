@@ -310,12 +310,16 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
   /* Print tile — mirrors report MetricTile: rounded-xl, border, coloured borders,
      inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
-  function Tile({ label, mob, desk, unit, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt?: string; deskSt?: string; wide?: boolean }) {
+  function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
+    const dotColors: Record<string, string> = { good: '#10b981', 'needs-improvement': '#f59e0b', poor: '#ef4444' }
+    const borderColors: Record<string, string> = { good: '#34d399', 'needs-improvement': '#fbbf24', poor: '#f87171' }
+    const worst = mobSt === 'good' && deskSt === 'good' ? 'good' : mobSt === 'poor' || deskSt === 'poor' ? 'poor' : 'needs-improvement'
+    const borderC = borderColors[worst] || C.border
     const valSize = wide ? 14 : 11
     const unitSize = wide ? 9 : 7
-    const dot = <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: 1.5, background: C.black, flexShrink: 0 }} />
+    const makeDot = (st: string) => <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: dotColors[st] || C.black, flexShrink: 0 }} />
     return (
-      <div style={{ border: `1px solid ${C.border}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: 'rgb(255 255 255 / 60%)' }}>
+      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: 'rgb(255 255 255 / 60%)' }}>
         {/* Label */}
         <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
@@ -323,7 +327,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <div style={{ paddingRight: 8, borderRight: '1px solid rgba(0,0,0,0.08)' }}>
             <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 500 }}>MOBILE</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              {dot}
+              {makeDot(mobSt)}
               <span style={{ fontSize: valSize, fontWeight: 500, color: C.black }}>{mob}</span>
               {unit && <span style={{ fontSize: unitSize, fontWeight: 400, color: C.light }}>{unit}</span>}
             </div>
@@ -331,7 +335,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <div style={{ paddingLeft: 8 }}>
             <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 500 }}>DESKTOP</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              {dot}
+              {makeDot(deskSt)}
               <span style={{ fontSize: valSize, fontWeight: 500, color: C.black }}>{desk}</span>
               {unit && <span style={{ fontSize: unitSize, fontWeight: 400, color: C.light }}>{unit}</span>}
             </div>
