@@ -191,7 +191,7 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
               {r.overallScore > 0 && <circle cx={cx} cy={cy} r={radius} fill="none" stroke={ringColor(r.overallScore)} strokeWidth={sw} strokeDasharray={`${fill} ${circ - fill}`} strokeLinecap="round" />}
             </svg>
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: FONT, fontSize: 34, fontWeight: 500, lineHeight: 1, color: C.black }}>{r.overallScore}</span>
+              <span style={{ fontFamily: FONT, fontSize: 34, fontWeight: 700, lineHeight: 1, color: C.black }}>{r.overallScore}</span>
               <span style={{ fontSize: 10, color: C.light }}>/100</span>
             </div>
           </div>
@@ -265,11 +265,11 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           const c = cfg[g.level]
           return (
             <div key={g.level}>
-              <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 500, color: C.black }}>{c.heading}</h2>
+              <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>{c.heading}</h2>
               <p style={{ margin: '0 0 8px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {g.cards.map((card) => (
-                  <div key={card.label} style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, padding: '10px 12px', background: '#fff' }}>
+                  <div key={card.label} style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, padding: '10px 12px', background: 'rgb(255 255 255 / 60%)' }}>
                     {/* Header: icon + title + badge */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -316,7 +316,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     const valSize = wide ? 14 : 11
     const unitSize = wide ? 9 : 7
     return (
-      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: '#fff' }}>
+      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: 'rgb(255 255 255 / 60%)' }}>
         {/* Label */}
         <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
@@ -349,9 +349,9 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
       <div style={{ ...BODY, gap: 16 }}>
         {r.platformInfo && (
           <div>
-            <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 500, color: C.black }}>Platform detection</h2>
+            <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Platform detection</h2>
             <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '5px 8px', border: `1px solid ${C.border}`, borderRadius: 8, background: '#fff' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '5px 8px', border: `1px solid ${C.border}`, borderRadius: 8, background: 'rgb(255 255 255 / 60%)' }}>
               <span style={{ fontSize: 10, fontWeight: 500, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
               <span style={{ fontSize: 8, color: C.light, background: '#f5f5f4', borderRadius: 4, padding: '1px 6px' }}>{r.platformInfo.confidence} confidence</span>
             </div>
@@ -359,7 +359,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
         )}
 
         <div>
-          <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 500, color: C.black }}>Performance overview</h2>
+          <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Performance overview</h2>
           <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
 
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
@@ -469,7 +469,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
           </div>
           <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
 
-          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
             {items.map((item, i) => (
               <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
@@ -489,13 +489,13 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
         {di && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-              <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>Design & image quality</h2>
+              <h2 style={{ margin: 0, fontSize: 12, fontWeight: 700, color: C.black }}>Design & image quality</h2>
               {!di.contrastIssues && di.imageIssues.oversizedCount === 0 && (
                 <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
               )}
             </div>
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
               {[
                 { found: di.imageIssues.oversizedCount === 0, label: 'Image optimisation', detail: di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised.', note: 'Well-optimised images keep the site fast and improve both user experience and search ranking.' },
                 { found: di.contrastPassed, label: 'Colour contrast', detail: di.contrastPassed ? 'All text meets WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issue${(di.contrastIssues ?? 0) > 1 ? 's' : ''} detected.`, note: 'Good contrast ensures text is readable for all users including those with visual impairments.' },
@@ -576,12 +576,12 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
       <div style={{ ...BODY, gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>UX friction analysis</h2>
+            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 700, color: C.black }}>UX friction analysis</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
           </div>
           <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
 
-          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
             {cats.map((cat, i) => {
               const color = frictionStatusColor(cat.status)
               const isGood = color === 'emerald'
@@ -696,13 +696,13 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
       <div style={{ ...BODY, gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>Accessibility & EAA compliance</h2>
+            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 700, color: C.black }}>Accessibility & EAA compliance</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeColor}20` }}>{badgeLabel}</span>
           </div>
           <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
 
           {/* Main checks in a rounded bordered container */}
-          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
             {rows.map((ch, i) => (
               <div key={ch.label} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
@@ -725,7 +725,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
         {a.eaaIssues.length > 0 && (
           <div>
             <p style={{ margin: '0 0 4px', fontSize: 7, fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: C.light }}>EAA / WCAG issue summary</p>
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
               {a.eaaIssues.map((issue, i) => {
                 const parsed = parseEaaIssue(issue)
                 return (
