@@ -143,7 +143,7 @@ function CoverPage({ url, date }: { url: string; date: string }) {
       <div style={{ position: 'absolute', top: 21, left: 23, zIndex: 1 }}>
         <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 28 }} />
       </div>
-      <div style={{ position: 'absolute', bottom: 90, left: 23, zIndex: 1 }}>
+      <div style={{ position: 'absolute', top: 120, left: 23, zIndex: 1 }}>
         <h1 style={{ fontFamily: SERIF, fontSize: 84, lineHeight: 1.0, color: C.black, margin: '0 0 9px' }}>
           Website<br />Health Check
         </h1>
