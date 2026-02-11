@@ -55,9 +55,9 @@ function scoreLabel(s: number) {
 }
 
 function statusDot(status: string) {
-  const c = status === 'good' ? '#16a34a' : status === 'warning' ? '#d97706' : status === 'poor' ? '#dc2626' : C.light
-  return <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: c, marginRight: 4, verticalAlign: 'middle' }} />
-}
+  const c = status === 'good' ? '#10b981' : status === 'warning' || status === 'needs-improvement' ? '#f59e0b' : status === 'poor' ? '#ef4444' : C.light
+  return <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: 1.5, background: c, flexShrink: 0 }} />
+  }
 
 function countRisks(r: AuditResult) {
   let high = 0, moderate = 0
@@ -272,23 +272,34 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 
 /* ═══ PAGE 4: Platform + Performance ═══ */
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
-  /* Print tile matching report's MetricTile: rounded-xl, border-2, coloured borders,
-     inner rounded-lg muted bg with mobile|desktop grid split + divider */
+  /* Print tile — mirrors report MetricTile: rounded-xl, border-2, coloured borders,
+     inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
   function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
     const worst = mobSt === 'good' && deskSt === 'good' ? 'good' : mobSt === 'poor' || deskSt === 'poor' ? 'poor' : 'needs-improvement'
     const borderC = worst === 'good' ? '#34d399' : worst === 'poor' ? '#f87171' : '#fbbf24'
+    const valSize = wide ? 14 : 11
+    const unitSize = wide ? 9 : 7
     return (
-      <div style={{ border: `2px solid ${borderC}`, borderRadius: 10, padding: wide ? '6px 8px' : '5px 7px', flex: wide ? '1 1 48%' : '1 1 30%', background: '#fff' }}>
-        <p style={{ margin: '0 0 4px', fontSize: 8, fontWeight: 700, color: C.black }}>{label}</p>
-        {/* Inner muted split */}
-        <div style={{ background: '#f5f5f4', borderRadius: 6, padding: '4px 6px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-          <div style={{ paddingRight: 6, borderRight: '1px solid #e5e5e5' }}>
-            <p style={{ margin: 0, fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.06em', fontWeight: 500 }}>MOBILE</p>
-            <p style={{ margin: '1px 0 0', fontSize: wide ? 12 : 10, fontWeight: 700, color: C.black, display: 'flex', alignItems: 'center', gap: 3 }}>{statusDot(mobSt)}{mob}{unit || ''}</p>
+      <div style={{ border: `2px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: '#fff' }}>
+        {/* Label */}
+        <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 700, color: C.black }}>{label}</p>
+        {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
+        <div style={{ background: '#f5f5f4', borderRadius: 8, padding: '5px 8px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+          <div style={{ paddingRight: 8, borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+            <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 500 }}>MOBILE</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {statusDot(mobSt)}
+              <span style={{ fontSize: valSize, fontWeight: 700, color: C.black }}>{mob}</span>
+              {unit && <span style={{ fontSize: unitSize, fontWeight: 400, color: C.light }}>{unit}</span>}
+            </div>
           </div>
-          <div style={{ paddingLeft: 6 }}>
-            <p style={{ margin: 0, fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.06em', fontWeight: 500 }}>DESKTOP</p>
-            <p style={{ margin: '1px 0 0', fontSize: wide ? 12 : 10, fontWeight: 700, color: C.black, display: 'flex', alignItems: 'center', gap: 3 }}>{statusDot(deskSt)}{desk}{unit || ''}</p>
+          <div style={{ paddingLeft: 8 }}>
+            <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 500 }}>DESKTOP</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {statusDot(deskSt)}
+              <span style={{ fontSize: valSize, fontWeight: 700, color: C.black }}>{desk}</span>
+              {unit && <span style={{ fontSize: unitSize, fontWeight: 400, color: C.light }}>{unit}</span>}
+            </div>
           </div>
         </div>
       </div>
@@ -325,9 +336,9 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
             <Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} />
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
-            <Tile label="Performance Score" mob={`${r.mobile.performanceScore}/100`} desk={`${r.desktop.performanceScore}/100`} mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} />
-            <Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}/100`} desk={`${r.desktop.accessibilityScore}/100`} mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} />
-            <Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}/100`} desk={`${r.desktop.bestPracticesScore}/100`} mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} />
+            <Tile label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} />
+            <Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} />
+            <Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} />
           </div>
         </div>
       </div>
