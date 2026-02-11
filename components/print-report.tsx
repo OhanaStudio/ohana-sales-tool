@@ -9,7 +9,7 @@ import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
 /* Figma A4 frame: 595 x 842 px. Content area: 405.5px wide.
    Padding: left 97.5px, right 92px, top 75px, bottom 88px (footer zone). */
 const FONT = 'neue-haas-grotesk-display, system-ui, sans-serif'
-const SERIF = '"Playfair Display", Georgia, serif'
+const SERIF = 'mencken-std-narrow, Georgia, serif'
 const C = { black: '#171717', grey: '#525252', light: '#737373', border: '#d4d4d4', faint: '#a3a3a3', white: '#ffffff', pampas: '#F0ECE5' }
 
 const A4_W = 595

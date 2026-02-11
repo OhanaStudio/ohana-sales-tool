@@ -28,10 +28,6 @@ export default function RootLayout({
     <html lang="en" className="bg-background">
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/igp4zgi.css" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <AuthProvider>
