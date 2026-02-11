@@ -17,11 +17,9 @@ import {
 import { Loader2 } from "lucide-react"
 
 /**
- * A4 at 72 dpi = 595 x 842 px.
- * We render each page component inside a 595x842 container, then scale it
- * down to fit comfortably on screen. The print-report components use mm
- * units (210mm x 297mm) — here we force them into the pixel frame so we
- * can preview the layout visually.
+ * A4 at 72 dpi = 595 x 842 px (matches Figma frame).
+ * The print-report components now use these exact pixel dimensions,
+ * so we render them 1:1 inside matching containers.
  */
 
 const A4_W = 595
@@ -115,29 +113,17 @@ export default function PrintPreviewPage() {
               Page {i + 1} - {page.label}
             </p>
 
-            {/* A4 frame */}
+            {/* A4 frame — 1:1 rendering */}
             <div
               style={{
                 width: A4_W,
                 height: A4_H,
-                background: "#ffffff",
                 boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
                 overflow: "hidden",
                 position: "relative",
               }}
             >
-              {/* Inner scaled container - the page components use mm units,
-                  so we need to scale from 210mm (793.7px at 96dpi) down to 595px */}
-              <div
-                style={{
-                  width: "210mm",
-                  height: "297mm",
-                  transform: `scale(${A4_W / 793.7})`,
-                  transformOrigin: "top left",
-                }}
-              >
-                {page.node}
-              </div>
+              {page.node}
             </div>
           </div>
         ))}

@@ -6,14 +6,30 @@ import type { AuditResult, RiskCard, RiskLevel } from "@/lib/types"
 import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
 
 /* ── shared inline-style constants ── */
+/* Figma A4 frame: 595 x 842 px. Content area: 405.5px wide.
+   Padding: left 97.5px, right 92px, top 75px, bottom 88px (footer zone). */
 const FONT = 'neue-haas-grotesk-display, system-ui, sans-serif'
 const SERIF = '"Playfair Display", Georgia, serif'
-const C = { black: '#171717', grey: '#525252', light: '#737373', border: '#d4d4d4', faint: '#a3a3a3', white: '#ffffff' }
+const C = { black: '#171717', grey: '#525252', light: '#737373', border: '#d4d4d4', faint: '#a3a3a3', white: '#ffffff', pampas: '#F8ECE5' }
+
+const A4_W = 595
+const A4_H = 842
+const PAD_L = 97.5
+const PAD_R = 92
+const PAD_T = 75
+const PAD_B = 88 // space reserved for footer
+const CONTENT_W = A4_W - PAD_L - PAD_R // ~405.5
+const CONTENT_GAP = 32
 
 const PAGE: React.CSSProperties = {
-  position: 'relative', width: '210mm', minHeight: '297mm', padding: '12mm 15mm 20mm 15mm',
-  boxSizing: 'border-box', background: C.white, pageBreakAfter: 'always', fontFamily: FONT,
-  fontSize: '8.5pt', lineHeight: '1.45', color: C.black, letterSpacing: '0.01em',
+  position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden',
+  boxSizing: 'border-box', background: C.pampas, pageBreakAfter: 'always', fontFamily: FONT,
+  fontSize: 11, lineHeight: '1.45', color: C.black, letterSpacing: '0.01em',
+}
+
+const BODY: React.CSSProperties = {
+  position: 'absolute', top: PAD_T, left: PAD_L, width: CONTENT_W,
+  display: 'flex', flexDirection: 'column', gap: CONTENT_GAP,
 }
 
 function formatDate(iso: string) {
@@ -52,28 +68,35 @@ function countRisks(r: AuditResult) {
   return { high, moderate, accessibility: r.accessibilityIndicators?.eaaIssues?.length ?? 0 }
 }
 
-/* ── Page header ── */
+/* ── Page header — sits at the very top of the A4 frame ── */
 function PH({ url, date, riskLabel }: { url: string; date: string; riskLabel: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: 8, marginBottom: 16, borderBottom: `1px solid ${C.border}` }}>
+    <div style={{
+      position: 'absolute', top: 25, left: PAD_L, right: PAD_R,
+      display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+      paddingBottom: 6, borderBottom: `1px solid ${C.border}`,
+    }}>
       <div>
-        <p style={{ margin: 0, fontSize: '8pt', fontWeight: 600, color: C.black }}>Website Health Check</p>
-        <p style={{ margin: '1px 0 0', fontSize: '7pt', color: C.light }}>{url.replace(/^https?:\/\//, '')}</p>
+        <p style={{ margin: 0, fontSize: 10, fontWeight: 600, fontFamily: SERIF, color: C.black }}>Website Health Check</p>
+        <p style={{ margin: '2px 0 0', fontSize: 8, color: C.light }}>{url.replace(/^https?:\/\//, '')}</p>
       </div>
       <div style={{ textAlign: 'right' }}>
-        <p style={{ margin: 0, fontSize: '7pt', color: C.light }}>{date}</p>
-        <p style={{ margin: '1px 0 0', fontSize: '7pt', color: C.light }}>{riskLabel}</p>
+        <p style={{ margin: 0, fontSize: 8, color: C.light }}>{date}</p>
+        <p style={{ margin: '2px 0 0', fontSize: 8, color: C.light }}>{riskLabel}</p>
       </div>
     </div>
   )
 }
 
-/* ── Page footer ── */
+/* ── Page footer — sits at bottom of A4 frame ── */
 function PF() {
   return (
-    <div style={{ position: 'absolute', bottom: '10mm', left: '15mm', right: '15mm', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 14, opacity: 0.45 }} />
-      <p style={{ margin: 0, fontSize: '7pt', color: C.faint }}>www.ohana.studio</p>
+    <div style={{
+      position: 'absolute', bottom: 30, left: PAD_L, right: PAD_R,
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    }}>
+      <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 16, opacity: 0.45 }} />
+      <p style={{ margin: 0, fontSize: 9, color: C.faint }}>www.ohana.studio</p>
     </div>
   )
 }
@@ -82,14 +105,14 @@ function PF() {
 function SH({ children, badge, badgeColor }: { children: React.ReactNode; badge?: string; badgeColor?: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-      <h2 style={{ margin: 0, fontSize: '13pt', fontWeight: 700, fontFamily: FONT, color: C.black }}>{children}</h2>
-      {badge && <span style={{ fontSize: '6.5pt', fontWeight: 600, padding: '1px 6px', borderRadius: 2, background: badgeColor || '#f5f5f5', color: C.grey }}>{badge}</span>}
+      <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, fontFamily: FONT, color: C.black }}>{children}</h2>
+      {badge && <span style={{ fontSize: 8, fontWeight: 600, padding: '1px 6px', borderRadius: 2, background: badgeColor || '#f5f5f5', color: C.grey }}>{badge}</span>}
     </div>
   )
 }
 
 function Sub({ children }: { children: React.ReactNode }) {
-  return <p style={{ margin: '0 0 10px', fontSize: '7.5pt', fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>{children}</p>
+  return <p style={{ margin: '0 0 8px', fontSize: 9, fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>{children}</p>
 }
 
 /* ── Indicator row ── */
@@ -99,13 +122,13 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
     ? '#d97706' : status === 'unclear' || status === 'fail' || status === 'high' || status === 'dense' || status === 'broken' || status === 'weak'
     ? '#dc2626' : '#a3a3a3'
   return (
-    <div style={{ padding: '5px 0', borderBottom: `1px solid #e5e5e5` }}>
+    <div style={{ padding: '5px 0', borderBottom: '1px solid #e5e5e5' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 1 }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
-        <span style={{ fontWeight: 600, fontSize: '8pt', color: C.black }}>{label}</span>
+        <span style={{ fontWeight: 600, fontSize: 10, color: C.black }}>{label}</span>
       </div>
-      {detail && <p style={{ margin: '1px 0 0 13px', fontSize: '7pt', color: C.grey, lineHeight: 1.4 }}>{detail}</p>}
-      {note && <p style={{ margin: '1px 0 0 13px', fontSize: '6.5pt', fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {note}</p>}
+      {detail && <p style={{ margin: '1px 0 0 13px', fontSize: 9, color: C.grey, lineHeight: 1.4 }}>{detail}</p>}
+      {note && <p style={{ margin: '1px 0 0 13px', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {note}</p>}
     </div>
   )
 }
@@ -113,26 +136,26 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
 /* ═══ COVER PAGE ═══ */
 function CoverPage({ url, date }: { url: string; date: string }) {
   return (
-    <div style={{ position: 'relative', width: '210mm', height: '297mm', overflow: 'hidden', pageBreakAfter: 'always', background: C.white }}>
+    <div style={{ position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden', pageBreakAfter: 'always', background: C.white }}>
       <img src="/cover-background.svg" alt="" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-      <div style={{ position: 'absolute', top: '15mm', left: '15mm', zIndex: 1 }}>
-        <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 22 }} />
+      <div style={{ position: 'absolute', top: 40, left: PAD_L, zIndex: 1 }}>
+        <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 24 }} />
       </div>
-      <div style={{ position: 'absolute', bottom: '28mm', left: '15mm', zIndex: 1 }}>
-        <h1 style={{ fontFamily: SERIF, fontSize: '48pt', fontWeight: 700, lineHeight: 1.05, color: C.black, margin: '0 0 12px' }}>
+      <div style={{ position: 'absolute', bottom: 100, left: PAD_L, zIndex: 1 }}>
+        <h1 style={{ fontFamily: SERIF, fontSize: 54, fontWeight: 700, lineHeight: 1.05, color: C.black, margin: '0 0 14px' }}>
           Website<br />Health Check
         </h1>
-        <p style={{ fontFamily: FONT, fontSize: '10pt', color: C.grey, margin: '0 0 3px' }}>{url.replace(/^https?:\/\//, '')}</p>
-        <p style={{ fontFamily: FONT, fontSize: '10pt', color: C.grey, margin: 0 }}>{date}</p>
+        <p style={{ fontFamily: FONT, fontSize: 12, color: C.grey, margin: '0 0 3px' }}>{url.replace(/^https?:\/\//, '')}</p>
+        <p style={{ fontFamily: FONT, fontSize: 12, color: C.grey, margin: 0 }}>{date}</p>
       </div>
-      <p style={{ position: 'absolute', bottom: '12mm', right: '15mm', fontFamily: FONT, fontSize: '8pt', color: C.light, margin: 0, zIndex: 1 }}>www.ohana.studio</p>
+      <p style={{ position: 'absolute', bottom: 30, right: PAD_R, fontFamily: FONT, fontSize: 9, color: C.light, margin: 0, zIndex: 1 }}>www.ohana.studio</p>
     </div>
   )
 }
 
 /* ═══ PAGE 2: Intro + Score + Recap ═══ */
 function IntroPage({ r, date, riskLabel, risks }: { r: AuditResult; date: string; riskLabel: string; risks: { high: number; moderate: number; accessibility: number } }) {
-  const size = 120, cx = 60, cy = 60, radius = 48, sw = 5
+  const size = 110, cx = 55, cy = 55, radius = 44, sw = 5
   const gap = 20, circ = 2 * Math.PI * radius, arc = circ * ((360 - gap) / 360)
   const fill = (Math.max(0, Math.min(100, r.overallScore)) / 100) * arc
   const rot = 90 + gap / 2
@@ -140,50 +163,54 @@ function IntroPage({ r, date, riskLabel, risks }: { r: AuditResult; date: string
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
-
-      <h1 style={{ fontFamily: SERIF, fontSize: '22pt', fontWeight: 700, lineHeight: 1.1, color: C.black, margin: '0 0 6px' }}>Website Health Check</h1>
-
-      <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 8, marginBottom: 12 }}>
-        <p style={{ margin: '0 0 2px', fontSize: '8pt', fontWeight: 600, color: C.black }}>Introduction</p>
-        <p style={{ margin: '0 0 10px', fontSize: '7.5pt', lineHeight: 1.5, color: C.grey }}>{r.summaryText}</p>
-      </div>
-
-      {/* Score gauge + label + pills */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 14 }}>
-        <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
-          <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} style={{ transform: `rotate(${rot}deg)` }}>
-            <circle cx={cx} cy={cy} r={radius} fill="none" stroke="#d6cfc4" strokeWidth={sw} strokeDasharray={`${arc} ${circ - arc}`} strokeLinecap="round" />
-            {r.overallScore > 0 && <circle cx={cx} cy={cy} r={radius} fill="none" stroke={ringColor(r.overallScore)} strokeWidth={sw} strokeDasharray={`${fill} ${circ - fill}`} strokeLinecap="round" />}
-          </svg>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontFamily: FONT, fontSize: '28pt', fontWeight: 700, lineHeight: 1, color: C.black }}>{r.overallScore}</span>
-            <span style={{ fontSize: '8pt', color: C.light }}>/100</span>
-          </div>
-        </div>
+      <div style={BODY}>
         <div>
-          <p style={{ margin: '0 0 3px', fontWeight: 600, fontSize: '10pt', color: C.black }}>{scoreLabel(r.overallScore)}</p>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const, marginTop: 6 }}>
-            {risks.high > 0 && <span style={{ fontSize: '7pt', fontWeight: 600, padding: '2px 8px', border: '1px solid #fecaca', background: '#fef2f2', color: '#b91c1c' }}>{risks.high} High Risks</span>}
-            {risks.moderate > 0 && <span style={{ fontSize: '7pt', fontWeight: 600, padding: '2px 8px', border: '1px solid #fde68a', background: '#fffbeb', color: '#92400e' }}>{risks.moderate} Moderate Risks</span>}
-            {risks.accessibility > 0 && <span style={{ fontSize: '7pt', fontWeight: 600, padding: '2px 8px', border: '1px solid #bae6fd', background: '#f0f9ff', color: '#0369a1' }}>{risks.accessibility} Accessibility Risks</span>}
+          <h1 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>Introduction</h1>
+          <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>{r.summaryText}</p>
+        </div>
+
+        {/* Score gauge + label + pills */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
+            <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} style={{ transform: `rotate(${rot}deg)` }}>
+              <circle cx={cx} cy={cy} r={radius} fill="none" stroke="#d6cfc4" strokeWidth={sw} strokeDasharray={`${arc} ${circ - arc}`} strokeLinecap="round" />
+              {r.overallScore > 0 && <circle cx={cx} cy={cy} r={radius} fill="none" stroke={ringColor(r.overallScore)} strokeWidth={sw} strokeDasharray={`${fill} ${circ - fill}`} strokeLinecap="round" />}
+            </svg>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontFamily: FONT, fontSize: 34, fontWeight: 700, lineHeight: 1, color: C.black }}>{r.overallScore}</span>
+              <span style={{ fontSize: 10, color: C.light }}>/100</span>
+            </div>
+          </div>
+          <div>
+            <p style={{ margin: '0 0 4px', fontWeight: 600, fontSize: 13, color: C.black }}>{scoreLabel(r.overallScore)}</p>
+            <p style={{ margin: '0 0 6px', fontSize: 9, color: C.grey, lineHeight: 1.5 }}>
+              There are several areas where improvements could make a meaningful difference to how this site performs and converts.
+            </p>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
+              {risks.high > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #fecaca', background: '#fef2f2', color: '#b91c1c' }}>{risks.high} High Risks</span>}
+              {risks.moderate > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #fde68a', background: '#fffbeb', color: '#92400e' }}>{risks.moderate} Moderate Risks</span>}
+              {risks.accessibility > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #bae6fd', background: '#f0f9ff', color: '#0369a1' }}>{risks.accessibility} Accessibility Risks</span>}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Recap / Next steps */}
-      <div style={{ marginBottom: 8 }}>
-        <p style={{ margin: '0 0 3px', fontSize: '10pt', fontWeight: 700, color: C.black }}>Recommended next steps</p>
-        <p style={{ margin: '0 0 10px', fontSize: '7.5pt', lineHeight: 1.55, color: C.grey }}>
-          {r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : ''}
-        </p>
-      </div>
+        {/* Screenshots placeholder */}
+        <div style={{ display: 'flex', gap: 10 }}>
+          {r.desktop.screenshot && (
+            <img src={r.desktop.screenshot || "/placeholder.svg"} alt="Desktop" style={{ flex: '2 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} crossOrigin="anonymous" />
+          )}
+          {r.mobile.screenshot && (
+            <img src={r.mobile.screenshot || "/placeholder.svg"} alt="Mobile" style={{ flex: '1 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} crossOrigin="anonymous" />
+          )}
+        </div>
 
-      <div style={{ background: C.black, color: C.white, padding: '12px 14px', borderRadius: 0, marginBottom: 0 }}>
-        <p style={{ margin: '0 0 3px', fontSize: '9pt', fontWeight: 700, color: C.white }}>Let&apos;s talk about what we found</p>
-        <p style={{ margin: '0 0 8px', fontSize: '7.5pt', lineHeight: 1.5, color: 'rgba(255,255,255,0.85)' }}>Book a free 30-minute clarity call to walk through your results and discuss quick wins.</p>
-        <span style={{ display: 'inline-block', background: C.white, color: C.black, fontSize: '7.5pt', fontWeight: 600, padding: '4px 10px' }}>Book a meeting</span>
+        {/* Recap CTA */}
+        <div style={{ background: C.black, color: C.white, padding: '14px 16px' }}>
+          <p style={{ margin: '0 0 3px', fontSize: 12, fontWeight: 700, color: C.white }}>{"Let's talk about what we found"}</p>
+          <p style={{ margin: '0 0 8px', fontSize: 10, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)' }}>Book a free 30-minute clarity call to walk through your results and discuss quick wins.</p>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, fontSize: 10, fontWeight: 600, padding: '5px 12px' }}>Book a meeting &rarr;</span>
+        </div>
       </div>
-
       <PF />
     </div>
   )
@@ -206,32 +233,34 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
-      {groups.map((g) => {
-        const c = cfg[g.level]
-        return (
-          <div key={g.level} style={{ marginBottom: 14 }}>
-            <h2 style={{ margin: '0 0 2px', fontSize: '13pt', fontWeight: 700, color: C.black, fontFamily: FONT }}>{c.heading}</h2>
-            <p style={{ margin: '0 0 8px', fontSize: '7.5pt', fontStyle: 'italic', color: C.light }}>{c.sub}</p>
-            <div style={{ border: `1px solid ${c.borderC}`, overflow: 'hidden' }}>
-              {g.cards.map((card, ci) => (
-                <div key={card.label} style={{ padding: '8px 10px', borderBottom: ci < g.cards.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                    <span style={{ fontWeight: 700, fontSize: '8.5pt', color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
-                    <span style={{ fontSize: '6.5pt', fontWeight: 600, padding: '1px 6px', background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
-                  </div>
-                  {card.bullets.map((b, bi) => (
-                    <div key={bi} style={{ marginBottom: 3 }}>
-                      <p style={{ margin: 0, fontSize: '7.5pt', color: C.grey, lineHeight: 1.45 }}>--{b}</p>
-                      {card.bulletNotes?.[bi] && <p style={{ margin: '0 0 0 10px', fontSize: '6.5pt', fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {card.bulletNotes[bi]}</p>}
+      <div style={BODY}>
+        {groups.map((g) => {
+          const c = cfg[g.level]
+          return (
+            <div key={g.level}>
+              <h2 style={{ margin: '0 0 2px', fontSize: 17, fontWeight: 700, color: C.black, fontFamily: FONT }}>{c.heading}</h2>
+              <p style={{ margin: '0 0 8px', fontSize: 9, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
+              <div style={{ border: `1px solid ${c.borderC}`, overflow: 'hidden' }}>
+                {g.cards.map((card, ci) => (
+                  <div key={card.label} style={{ padding: '8px 10px', borderBottom: ci < g.cards.length - 1 ? `1px solid ${C.border}` : 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <span style={{ fontWeight: 700, fontSize: 11, color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
+                      <span style={{ fontSize: 8, fontWeight: 600, padding: '1px 6px', background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
                     </div>
-                  ))}
-                  <p style={{ margin: '3px 0 0', fontSize: '6.5pt', fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>{card.whyItMatters}</p>
-                </div>
-              ))}
+                    {card.bullets.map((b, bi) => (
+                      <div key={bi} style={{ marginBottom: 3 }}>
+                        <p style={{ margin: 0, fontSize: 9, color: C.grey, lineHeight: 1.45 }}>-- {b}</p>
+                        {card.bulletNotes?.[bi] && <p style={{ margin: '0 0 0 10px', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {card.bulletNotes[bi]}</p>}
+                      </div>
+                    ))}
+                    <p style={{ margin: '3px 0 0', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>{card.whyItMatters}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
       <PF />
     </div>
   )
@@ -243,15 +272,15 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     const border = mobSt === 'good' && deskSt === 'good' ? '#a7f3d0' : mobSt === 'poor' || deskSt === 'poor' ? '#fecaca' : '#fde68a'
     return (
       <div style={{ border: `1px solid ${border}`, padding: wide ? '8px 10px' : '6px 8px', flex: wide ? '1 1 48%' : '1 1 30%' }}>
-        <p style={{ margin: '0 0 4px', fontSize: '7pt', fontWeight: 600, color: C.black }}>{label}</p>
+        <p style={{ margin: '0 0 4px', fontSize: 9, fontWeight: 600, color: C.black }}>{label}</p>
         <div style={{ display: 'flex', gap: wide ? 20 : 12 }}>
           <div>
-            <p style={{ margin: 0, fontSize: '6pt', color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>MOBILE</p>
-            <p style={{ margin: 0, fontSize: wide ? '12pt' : '10pt', fontWeight: 700, color: C.black }}>{statusDot(mobSt)}{mob}{unit || ''}</p>
+            <p style={{ margin: 0, fontSize: 7, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>MOBILE</p>
+            <p style={{ margin: 0, fontSize: wide ? 16 : 13, fontWeight: 700, color: C.black }}>{statusDot(mobSt)}{mob}{unit || ''}</p>
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: '6pt', color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>DESKTOP</p>
-            <p style={{ margin: 0, fontSize: wide ? '12pt' : '10pt', fontWeight: 700, color: C.black }}>{statusDot(deskSt)}{desk}{unit || ''}</p>
+            <p style={{ margin: 0, fontSize: 7, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>DESKTOP</p>
+            <p style={{ margin: 0, fontSize: wide ? 16 : 13, fontWeight: 700, color: C.black }}>{statusDot(deskSt)}{desk}{unit || ''}</p>
           </div>
         </div>
       </div>
@@ -262,36 +291,38 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
+      <div style={BODY}>
+        {r.platformInfo && (
+          <div>
+            <h2 style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: C.black }}>Platform detection</h2>
+            <p style={{ margin: '0 0 6px', fontSize: 9, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '6px 10px', border: `1px solid ${C.border}` }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
+              <span style={{ fontSize: 9, color: C.light }}>{r.platformInfo.confidence} confidence</span>
+            </div>
+          </div>
+        )}
 
-      {r.platformInfo && (
-        <div style={{ marginBottom: 14 }}>
-          <h2 style={{ margin: '0 0 2px', fontSize: '11pt', fontWeight: 700, color: C.black }}>Platform detection</h2>
-          <p style={{ margin: '0 0 6px', fontSize: '7pt', fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '6px 10px', border: `1px solid ${C.border}` }}>
-            <span style={{ fontSize: '9pt', fontWeight: 700, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
-            <span style={{ fontSize: '7pt', color: C.light }}>{r.platformInfo.confidence} confidence</span>
+        <div>
+          <h2 style={{ margin: '0 0 2px', fontSize: 17, fontWeight: 700, color: C.black, fontFamily: FONT }}>Performance overview</h2>
+          <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
+            <Tile wide label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} />
+            <Tile wide label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} />
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
+            <Tile label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} />
+            <Tile label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} />
+            <Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} />
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
+            <Tile label="Performance Score" mob={`${r.mobile.performanceScore}/100`} desk={`${r.desktop.performanceScore}/100`} mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} />
+            <Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}/100`} desk={`${r.desktop.accessibilityScore}/100`} mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} />
+            <Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}/100`} desk={`${r.desktop.bestPracticesScore}/100`} mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} />
           </div>
         </div>
-      )}
-
-      <h2 style={{ margin: '0 0 2px', fontSize: '13pt', fontWeight: 700, color: C.black, fontFamily: FONT }}>Performance overview</h2>
-      <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
-
-      <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
-        <Tile wide label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} />
-        <Tile wide label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} />
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
-        <Tile label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} />
-        <Tile label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} />
-        <Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} />
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
-        <Tile label="Performance Score" mob={`${r.mobile.performanceScore}/100`} desk={`${r.desktop.performanceScore}/100`} mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} />
-        <Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}/100`} desk={`${r.desktop.accessibilityScore}/100`} mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} />
-        <Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}/100`} desk={`${r.desktop.bestPracticesScore}/100`} mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} />
-      </div>
-
       <PF />
     </div>
   )
@@ -304,29 +335,28 @@ function UXPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabe
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
+      <div style={BODY}>
+        <div>
+          <SH>UX indicators</SH>
+          <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
+          <IR label="Call-to-action clarity" detail={ux.ctaFound ? `Found: ${ux.ctaKeywords.join(', ')}` : 'No clear CTA found'} note="Clear CTAs guide visitors toward taking action." />
+          <IR label="Trust signals" detail={ux.trustSignalsFound ? `Found: ${ux.trustKeywords.join(', ')}` : 'No obvious trust indicators detected'} note="Without visible trust indicators, visitors have no reason to choose this business." />
+          <IR label="Social proof above the fold" detail={ux.socialProofAboveFold ? `Found: ${ux.socialProofKeywordsAboveFold.join(', ')}` : 'No social proof detected'} note="Most visitors never scroll past the fold." />
+          <IR label="Verified third-party reviews" detail={ux.testimonialsVerified ? `Sources: ${ux.verifiedSources.join(', ')}` : 'No review sources detected'} note="Integrating verified third-party reviews dramatically increases credibility." />
+          <IR label="Phone number visible" detail={ux.phoneFound ? 'Phone number found' : 'No phone number detected'} note="A visible phone number is one of the simplest and most effective trust builders." />
+          <IR label="Email address visible" detail={ux.emailFound ? 'Email address found' : 'No email address detected'} note="A visible email address provides an alternative contact method." />
+        </div>
 
-      <SH>UX indicators</SH>
-      <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
-
-      <IR label="Call-to-action clarity" detail={ux.ctaFound ? `Found: ${ux.ctaKeywords.join(', ')}` : 'No clear CTA found'} note="Clear CTAs guide visitors toward taking action. Ensuring they are prominent and well-worded can further increase enquiry rates." />
-      <IR label="Trust signals" detail={ux.trustSignalsFound ? `Found: ${ux.trustKeywords.join(', ')}` : 'No obvious trust indicators detected'} note="88% of consumers trust online reviews as much as personal recommendations. Without visible trust indicators, visitors have no reason to choose this business over a competitor." />
-      <IR label="Social proof above the fold" detail={ux.socialProofAboveFold ? `Found: ${ux.socialProofKeywordsAboveFold.join(', ')}` : 'No social proof detected'} note="Most visitors never scroll past the fold. If reviews and testimonials are hidden below, the majority of potential customers never see them." />
-      <IR label="Verified third-party reviews" detail={ux.testimonialsVerified ? `Sources: ${ux.verifiedSources.join(', ')}` : 'No review sources detected'} note="Self-hosted testimonials can be fabricated and savvy consumers know this. Integrating verified third-party reviews dramatically increases credibility." />
-      <IR label="Phone number visible" detail={ux.phoneFound ? 'Phone number found' : 'No phone number detected'} note="Many visitors want to verify a business is legitimate before engaging. A visible phone number is one of the simplest and most effective trust builders." />
-      <IR label="Email address visible" detail={ux.emailFound ? 'Email address found' : 'No email address detected'} note="Not all visitors want to fill out a form. A visible email address provides an alternative contact method and signals openness." />
-
-      {di && (
-        <>
-          <div style={{ marginTop: 14 }}>
+        {di && (
+          <div>
             <SH badge={!di.contrastIssues && di.imageIssues.oversizedCount === 0 ? 'All clear' : undefined} badgeColor="#ecfdf5">Design &amp; image quality</SH>
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
+            <IR label="Image optimisation" detail={di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised.'} note="Well-optimised images keep the site fast." />
+            <IR label="Colour contrast" detail={di.contrastPassed ? 'All text meets WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issues found.`} note="Good contrast ensures text is readable for all users." />
+            <IR label="Spacing consistency" detail={di.inconsistentSpacing ? di.spacingDetails : 'No inline spacing styles detected.'} note="Consistent spacing contributes to a polished appearance." />
           </div>
-          <IR label="Image optimisation" detail={di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised for this page.'} note="Well-optimised images keep the site fast and reduce hosting bandwidth costs." />
-          <IR label="Colour contrast" detail={di.contrastPassed ? 'All text elements meet WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issues found.`} note="Good contrast ensures text is readable for all users, including those with visual impairments." />
-          <IR label="Spacing consistency" detail={di.inconsistentSpacing ? di.spacingDetails : 'No inline spacing styles detected (may use CSS classes).'} note="Consistent spacing contributes to a polished, professional appearance that builds user confidence." />
-        </>
-      )}
-
+        )}
+      </div>
       <PF />
     </div>
   )
@@ -353,15 +383,17 @@ function FrictionPage({ r, date, riskLabel }: { r: AuditResult; date: string; ri
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <SH badge={highCount > 0 ? `${highCount} High Risks` : undefined} badgeColor="#fef2f2">UX friction analysis</SH>
-      <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
-
-      {sections.map((s) => (
-        <IR key={s.label} label={s.label} status={s.status}
-          detail={s.bullets[0] || ''}
-          note={s.bullets[1]?.startsWith('Note:') ? s.bullets[1].replace('Note: ', '') : s.bullets[1] || ''} />
-      ))}
-
+      <div style={BODY}>
+        <div>
+          <SH badge={highCount > 0 ? `${highCount} High Risks` : undefined} badgeColor="#fef2f2">UX friction analysis</SH>
+          <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
+          {sections.map((s) => (
+            <IR key={s.label} label={s.label} status={s.status}
+              detail={s.bullets[0] || ''}
+              note={s.bullets[1]?.startsWith('Note:') ? s.bullets[1].replace('Note: ', '') : s.bullets[1] || ''} />
+          ))}
+        </div>
+      </div>
       <PF />
     </div>
   )
@@ -388,38 +420,41 @@ function A11yPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <SH badge={a.eaaIssues.length > 0 ? `${a.eaaIssues.length} Accessibility Risks` : undefined} badgeColor="#f0f9ff">Accessibility &amp; EAA compliance</SH>
-      <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
+      <div style={BODY}>
+        <div>
+          <SH badge={a.eaaIssues.length > 0 ? `${a.eaaIssues.length} Accessibility Risks` : undefined} badgeColor="#f0f9ff">Accessibility &amp; EAA compliance</SH>
+          <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
 
-      {checks.map((ch) => (
-        <div key={ch.label} style={{ padding: '4px 0', borderBottom: '1px solid #e5e5e5' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 1 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: ch.passed ? '#16a34a' : '#dc2626', flexShrink: 0 }} />
-            <span style={{ fontWeight: 600, fontSize: '8pt', color: C.black }}>{ch.label}</span>
-            {ch.wcag && <span style={{ fontSize: '6pt', color: C.light, marginLeft: 4 }}>{ch.wcag}</span>}
-          </div>
-          <p style={{ margin: '1px 0 0 13px', fontSize: '7pt', color: C.grey, lineHeight: 1.4 }}>{ch.detail}</p>
-          {ch.note && <p style={{ margin: '1px 0 0 13px', fontSize: '6.5pt', fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {ch.note}</p>}
-        </div>
-      ))}
-
-      {/* EAA Issue Summary */}
-      {a.eaaIssues.length > 0 && (
-        <div style={{ marginTop: 12, padding: '8px 10px', border: `1px solid ${C.border}`, background: '#fafafa' }}>
-          <p style={{ margin: '0 0 4px', fontSize: '8pt', fontWeight: 700, color: C.black }}>EAA / WCAG ISSUE SUMMARY</p>
-          {a.eaaIssues.map((issue, i) => (
-            <p key={i} style={{ margin: '2px 0', fontSize: '7pt', color: C.grey, lineHeight: 1.4 }}>{issue}</p>
+          {checks.map((ch) => (
+            <div key={ch.label} style={{ padding: '4px 0', borderBottom: '1px solid #e5e5e5' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 1 }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: ch.passed ? '#16a34a' : '#dc2626', flexShrink: 0 }} />
+                <span style={{ fontWeight: 600, fontSize: 10, color: C.black }}>{ch.label}</span>
+                {ch.wcag && <span style={{ fontSize: 8, color: C.light, marginLeft: 4 }}>{ch.wcag}</span>}
+              </div>
+              <p style={{ margin: '1px 0 0 13px', fontSize: 9, color: C.grey, lineHeight: 1.4 }}>{ch.detail}</p>
+              {ch.note && <p style={{ margin: '1px 0 0 13px', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {ch.note}</p>}
+            </div>
           ))}
         </div>
-      )}
 
+        {/* EAA Issue Summary */}
+        {a.eaaIssues.length > 0 && (
+          <div style={{ padding: '8px 10px', border: `1px solid ${C.border}`, background: '#fafafa' }}>
+            <p style={{ margin: '0 0 4px', fontSize: 10, fontWeight: 700, color: C.black }}>EAA / WCAG ISSUE SUMMARY</p>
+            {a.eaaIssues.map((issue, i) => (
+              <p key={i} style={{ margin: '2px 0', fontSize: 9, color: C.grey, lineHeight: 1.4 }}>{issue}</p>
+            ))}
+          </div>
+        )}
+      </div>
       <PF />
     </div>
   )
 }
 
 /* ═══ HELPERS ═══ */
-export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, PAGE, C }
+export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, PAGE, BODY, C }
 
 /* ═══ MAIN EXPORT (print-only) ═══ */
 export function PrintReport({ result }: { result: AuditResult }) {
@@ -431,7 +466,7 @@ export function PrintReport({ result }: { result: AuditResult }) {
   ].filter(Boolean).join(' | ')
 
   return (
-    <div className="hidden print:block" style={{ background: C.white }}>
+    <div className="hidden print:block print-report-wrapper" style={{ background: C.white }}>
       <CoverPage url={result.url} date={date} />
       <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} />
       <RiskPage r={result} date={date} riskLabel={riskLabel} />
