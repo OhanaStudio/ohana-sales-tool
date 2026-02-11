@@ -133,20 +133,24 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
 
 /* ═══ COVER PAGE ═══ */
 function CoverPage({ url, date }: { url: string; date: string }) {
+  /* Figma cover measurements (proportional to 595x842 frame):
+     Logo: 23px left, 21px top. Title block starts ~38px below logo.
+     URL: 9px below title. Date: tight below URL.
+     "www.ohana.studio" bottom-right. */
   return (
-    <div style={{ position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden', pageBreakAfter: 'always', background: C.white }}>
+    <div style={{ position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden', pageBreakAfter: 'always', background: C.pampas }}>
       <img src="/cover-background.svg" alt="" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-      <div style={{ position: 'absolute', top: 40, left: PAD_L, zIndex: 1 }}>
-        <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 24 }} />
+      <div style={{ position: 'absolute', top: 21, left: 23, zIndex: 1 }}>
+        <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 28 }} />
       </div>
-      <div style={{ position: 'absolute', bottom: 100, left: PAD_L, zIndex: 1 }}>
-        <h1 style={{ fontFamily: SERIF, fontSize: 54, fontWeight: 700, lineHeight: 1.05, color: C.black, margin: '0 0 14px' }}>
+      <div style={{ position: 'absolute', bottom: 90, left: 23, zIndex: 1 }}>
+        <h1 style={{ fontFamily: SERIF, fontSize: 64, fontWeight: 700, lineHeight: 1.0, color: C.black, margin: '0 0 9px' }}>
           Website<br />Health Check
         </h1>
-        <p style={{ fontFamily: FONT, fontSize: 12, color: C.grey, margin: '0 0 3px' }}>{url.replace(/^https?:\/\//, '')}</p>
-        <p style={{ fontFamily: FONT, fontSize: 12, color: C.grey, margin: 0 }}>{date}</p>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: '0 0 2px' }}>{'www.' + url.replace(/^https?:\/\/(www\.)?/, '')}</p>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: 0 }}>{date}</p>
       </div>
-      <p style={{ position: 'absolute', bottom: 30, right: PAD_R, fontFamily: FONT, fontSize: 9, color: C.light, margin: 0, zIndex: 1 }}>www.ohana.studio</p>
+      <p style={{ position: 'absolute', bottom: 24, right: 23, fontFamily: FONT, fontSize: 9, color: C.light, margin: 0, zIndex: 1 }}>www.ohana.studio</p>
     </div>
   )
 }
