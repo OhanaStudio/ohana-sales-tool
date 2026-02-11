@@ -32,7 +32,7 @@ import {
   Eye,
   ShieldCheck,
 } from "lucide-react"
-import Link from "next/link"
+
 
 function formatMs(val: number | null): string | null {
   if (val === null) return null
@@ -165,13 +165,13 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
       {/* Top bar: Back + Download -- hidden in print */}
       <div className="no-print flex items-center justify-between px-5 md:px-8 py-4">
-        <Link
+        <a
           href="/"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 py-2"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
-        </Link>
+        </a>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -183,14 +183,14 @@ export function ReportContent({ result }: { result: AuditResult }) {
           >
             <RefreshCw className={`h-4 w-4 ${rerunning ? "animate-spin" : ""}`} />
           </button>
-          <Link
+          <a
             href={`/print-preview/${result.id}`}
             aria-label="Print preview"
             title="Print preview"
             className="inline-flex items-center justify-center w-10 h-10 border border-border bg-transparent text-foreground hover:bg-muted transition-colors"
           >
             <Eye className="h-4 w-4" />
-          </Link>
+          </a>
           <button
             type="button"
             onClick={handlePrint}

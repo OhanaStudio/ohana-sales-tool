@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
 import { Search, Clock } from "lucide-react"
-import Link from "next/link"
+
 
 export default function Page() {
   const router = useRouter()
@@ -110,14 +110,13 @@ export default function Page() {
               </div>
             </form>
             <div className="flex justify-center mb-6">
-              <Link
+              <a
                 href="/history"
-
                 className="inline-flex items-center gap-1.5 text-sm font-sans text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-4 py-2"
               >
                 <Clock className="h-3.5 w-3.5" />
                 Health check history
-              </Link>
+              </a>
             </div>
           </>
         )}

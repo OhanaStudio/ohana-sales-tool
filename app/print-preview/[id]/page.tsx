@@ -15,7 +15,7 @@ import {
   A11yPage,
 } from "@/components/print-report"
 import { ArrowLeft, Loader2 } from "lucide-react"
-import Link from "next/link"
+
 
 /**
  * A4 at 72 dpi = 595 x 842 px (matches Figma frame).
@@ -135,17 +135,18 @@ export default function PrintPreviewPage() {
       <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: "40px 0" }}>
         {/* Title bar */}
         <div className="print-chrome" style={{ maxWidth: A4_W, margin: "0 auto 32px", padding: "0 0 0 0" }}>
-          <Link
+          <a
             href={`/report/${id}`}
             style={{
               display: "inline-flex", alignItems: "center", gap: 6,
               fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
               color: "#525252", textDecoration: "none", marginBottom: 16,
+              minHeight: 44,
             }}
           >
             <ArrowLeft style={{ width: 14, height: 14 }} />
             Back to report
-          </Link>
+          </a>
           <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#171717", margin: "0 0 4px" }}>
             Print Preview
           </h1>

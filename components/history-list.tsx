@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ExternalLink, RotateCcw, Trash2 } from "lucide-react"
 
@@ -107,13 +106,13 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
               </span>
             </div>
             <div className="flex gap-2">
-              <Link
+              <a
                 href={`/report/${item.id}`}
                 className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card text-card-foreground px-3 py-2 text-xs font-medium hover:bg-accent transition-colors min-h-[44px] flex-1 justify-center"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 View report
-              </Link>
+              </a>
               <button
                 type="button"
                 onClick={() => handleRerun(item.id, item.url)}
@@ -181,13 +180,13 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Link
+                      <a
                         href={`/report/${item.id}`}
                         className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px]"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                         Report
-                      </Link>
+                      </a>
                       <button
                         type="button"
                         onClick={() => handleRerun(item.id, item.url)}
