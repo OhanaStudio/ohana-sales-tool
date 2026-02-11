@@ -418,7 +418,10 @@ function A11yPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   )
 }
 
-/* ═══ MAIN EXPORT ═══ */
+/* ═══ HELPERS ═══ */
+export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, PAGE, C }
+
+/* ═══ MAIN EXPORT (print-only) ═══ */
 export function PrintReport({ result }: { result: AuditResult }) {
   const date = formatDate(result.timestamp)
   const risks = countRisks(result)

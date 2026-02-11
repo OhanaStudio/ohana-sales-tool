@@ -183,6 +183,14 @@ export function ReportContent({ result }: { result: AuditResult }) {
           >
             <RefreshCw className={`h-4 w-4 ${rerunning ? "animate-spin" : ""}`} />
           </button>
+          <Link
+            href={`/print-preview/${result.id}`}
+            aria-label="Print preview"
+            title="Print preview"
+            className="inline-flex items-center justify-center w-10 h-10 border border-border bg-transparent text-foreground hover:bg-muted transition-colors"
+          >
+            <Eye className="h-4 w-4" />
+          </Link>
           <button
             type="button"
             onClick={handlePrint}
