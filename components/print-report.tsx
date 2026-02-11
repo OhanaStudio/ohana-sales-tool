@@ -10,7 +10,7 @@ import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
    Padding: left 97.5px, right 92px, top 75px, bottom 88px (footer zone). */
 const FONT = 'neue-haas-grotesk-display, system-ui, sans-serif'
 const SERIF = '"Playfair Display", Georgia, serif'
-const C = { black: '#171717', grey: '#525252', light: '#737373', border: '#d4d4d4', faint: '#a3a3a3', white: '#ffffff', pampas: '#F8ECE5' }
+const C = { black: '#171717', grey: '#525252', light: '#737373', border: '#d4d4d4', faint: '#a3a3a3', white: '#ffffff', pampas: '#F0ECE5' }
 
 const A4_W = 595
 const A4_H = 842
