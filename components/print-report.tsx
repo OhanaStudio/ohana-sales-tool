@@ -155,6 +155,16 @@ function CoverPage({ url, date }: { url: string; date: string }) {
   )
 }
 
+/* ── Simple markdown bold (**text**) → <strong> renderer ── */
+function renderMarkdown(text: string) {
+  const parts = text.split(/\*\*([^*]+)\*\*/g)
+  return parts.map((part, i) =>
+    i % 2 === 1
+      ? <strong key={i} style={{ fontWeight: 700, color: C.black }}>{part}</strong>
+      : <span key={i}>{part}</span>
+  )
+}
+
 /* ═══ PAGE 2: Intro + Score + Recap ═══ */
 function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; date: string; riskLabel: string; risks: { high: number; moderate: number; accessibility: number }; recapText?: string }) {
   const size = 110, cx = 55, cy = 55, radius = 44, sw = 5
@@ -169,7 +179,7 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
         <div>
           <h1 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>Introduction</h1>
           <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>
-            {recapText || (r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : r.summaryText)}
+            {renderMarkdown(recapText || (r.salesTalkTrack ? `${r.salesTalkTrack.whatWeFound} ${r.salesTalkTrack.whyItMatters}` : r.summaryText))}
           </p>
         </div>
 
