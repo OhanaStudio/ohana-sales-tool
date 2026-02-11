@@ -67,10 +67,10 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <TopBar />
 
-      <main className="px-5 md:px-8 max-w-[900px] mx-auto pb-12">
+      <main className="px-5 md:px-8 max-w-[900px] mx-auto pb-12 w-full flex-1 flex flex-col">
         {/* Hero */}
         {!loading && (
           <div className="pt-12 md:pt-20 pb-8 md:pb-12 text-center">
@@ -130,7 +130,11 @@ export default function Page() {
         )}
 
         {/* Loading */}
-        {loading && <LoadingSteps onCancel={handleCancel} />}
+        {loading && (
+          <div className="flex-1 flex items-center justify-center">
+            <LoadingSteps onCancel={handleCancel} />
+          </div>
+        )}
       </main>
     </div>
   )
