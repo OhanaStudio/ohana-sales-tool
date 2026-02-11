@@ -139,7 +139,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
       })
       const data = await res.json()
       if (data.id) {
-        window.location.href = `/report/${data.id}`
+        window.location.assign(`/report/${data.id}`)
       }
     } catch {
       setRerunning(false)

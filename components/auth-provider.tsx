@@ -19,15 +19,20 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authenticated, setAuthenticated] = useState(false)
-  const [checked, setChecked] = useState(false)
+  // Optimistic hydration: check the client-readable hint cookie first so we
+  // never flash a login screen when navigating between pages on mobile.
+  const hasHint = typeof document !== "undefined" && document.cookie.includes("ohana-auth-hint=1")
+  const [authenticated, setAuthenticated] = useState(hasHint)
+  const [checked, setChecked] = useState(hasHint)
 
   useEffect(() => {
-    const token = sessionStorage.getItem("ohana-auth")
-    if (token === "true") {
-      setAuthenticated(true)
-    }
-    setChecked(true)
+    // Verify against the httpOnly cookie via the server
+    fetch("/api/auth", { credentials: "same-origin" })
+      .then((res) => {
+        setAuthenticated(res.ok)
+      })
+      .catch(() => {})
+      .finally(() => setChecked(true))
   }, [])
 
   const login = async (password: string): Promise<boolean> => {
@@ -35,18 +40,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
+      credentials: "same-origin",
     })
     if (res.ok) {
+      // Set a client-readable hint cookie (not httpOnly) so future page loads
+      // can hydrate as authenticated immediately without waiting for the API.
+      document.cookie = "ohana-auth-hint=1; path=/; max-age=" + 60 * 60 * 24 * 7
       setAuthenticated(true)
-      sessionStorage.setItem("ohana-auth", "true")
       return true
     }
     return false
   }
 
-  const logout = () => {
+  const logout = async () => {
+    document.cookie = "ohana-auth-hint=1; path=/; max-age=0"
+    await fetch("/api/auth", { method: "DELETE", credentials: "same-origin" })
     setAuthenticated(false)
-    sessionStorage.removeItem("ohana-auth")
   }
 
   if (!checked) return null
