@@ -103,64 +103,94 @@ export default function PrintPreviewPage() {
     { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
   ]
 
+  /*
+   * Scale factor: browser print at 96 dpi renders A4 as ~794px wide.
+   * Our pages are designed at 595px, so we scale them up to fill the sheet.
+   */
+  const PRINT_SCALE = 794 / A4_W // ≈ 1.3345
+
   return (
-    <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: "40px 0" }}>
-      {/* Title bar */}
-      <div style={{ maxWidth: A4_W, margin: "0 auto 32px", padding: "0 0 0 0" }}>
-        <Link
-          href={`/report/${id}`}
-          style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
-            color: "#525252", textDecoration: "none", marginBottom: 16,
-          }}
-        >
-          <ArrowLeft style={{ width: 14, height: 14 }} />
-          Back to report
-        </Link>
-        <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#171717", margin: "0 0 4px" }}>
-          Print Preview
-        </h1>
-        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: "#525252", margin: 0 }}>
-          A4 ratio ({A4_W} x {A4_H}px) — Content area {Math.round(CONTENT_W)}px wide
-        </p>
-      </div>
+    <>
+      {/* Print-specific styles: hide UI chrome, scale pages to fill A4 */}
+      <style>{`
+        @media print {
+          @page { size: A4; margin: 0; }
+          body { margin: 0; padding: 0; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .print-chrome { display: none !important; }
+          .print-page-wrapper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
+          .print-page {
+            width: ${A4_W}px !important;
+            height: ${A4_H}px !important;
+            transform: scale(${PRINT_SCALE}) !important;
+            transform-origin: top left !important;
+            page-break-after: always;
+            break-after: page;
+            overflow: hidden;
+            box-shadow: none !important;
+          }
+          .print-page:last-child { page-break-after: auto; break-after: auto; }
+        }
+      `}</style>
 
-      {/* Pages */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 40 }}>
-        {pages.map((page, i) => (
-          <div key={page.label}>
-            {/* Page label */}
-            <p style={{
-              fontFamily: "system-ui, sans-serif",
-              fontSize: 11,
-              fontWeight: 600,
-              color: "#737373",
-              margin: "0 0 8px",
-              textTransform: "uppercase" as const,
-              letterSpacing: "0.08em",
-            }}>
-              Page {i + 1} - {page.label}
-            </p>
+      <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: "40px 0" }}>
+        {/* Title bar */}
+        <div className="print-chrome" style={{ maxWidth: A4_W, margin: "0 auto 32px", padding: "0 0 0 0" }}>
+          <Link
+            href={`/report/${id}`}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+              color: "#525252", textDecoration: "none", marginBottom: 16,
+            }}
+          >
+            <ArrowLeft style={{ width: 14, height: 14 }} />
+            Back to report
+          </Link>
+          <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#171717", margin: "0 0 4px" }}>
+            Print Preview
+          </h1>
+          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: "#525252", margin: 0 }}>
+            A4 ratio ({A4_W} x {A4_H}px) — Content area {Math.round(CONTENT_W)}px wide
+          </p>
+        </div>
 
-            {/* A4 frame — 1:1 rendering */}
-            <div
-              style={{
-                width: A4_W,
-                height: A4_H,
-                boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
-                overflow: "hidden",
-                position: "relative",
-              }}
-            >
-              {page.node}
+        {/* Pages */}
+        <div className="print-page-wrapper" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 40 }}>
+          {pages.map((page, i) => (
+            <div key={page.label}>
+              {/* Page label */}
+              <p className="print-chrome" style={{
+                fontFamily: "system-ui, sans-serif",
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#737373",
+                margin: "0 0 8px",
+                textTransform: "uppercase" as const,
+                letterSpacing: "0.08em",
+              }}>
+                Page {i + 1} - {page.label}
+              </p>
+
+              {/* A4 frame — 1:1 on screen, scaled up for print */}
+              <div
+                className="print-page"
+                style={{
+                  width: A4_W,
+                  height: A4_H,
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+              >
+                {page.node}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Bottom spacing */}
-      <div style={{ height: 60 }} />
-    </div>
+        {/* Bottom spacing */}
+        <div className="print-chrome" style={{ height: 60 }} />
+      </div>
+    </>
   )
 }
