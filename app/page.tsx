@@ -7,7 +7,8 @@ import { useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
-import { Search } from "lucide-react"
+import { Search, Clock } from "lucide-react"
+import Link from "next/link"
 
 export default function Page() {
   const router = useRouter()
@@ -72,11 +73,11 @@ export default function Page() {
       <main className="px-5 md:px-8 max-w-[900px] mx-auto pb-12">
         {/* Hero */}
         {!loading && (
-          <div className="pt-12 md:pt-20 pb-8 md:pb-12">
+          <div className="pt-12 md:pt-20 pb-8 md:pb-12 text-center">
             <h1 className="font-serif text-4xl md:text-[5.25rem] md:leading-[1.1] text-foreground leading-tight text-balance mb-4">
               Website health check.
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed mx-auto">
               A high-level diagnostic using Lighthouse data and simple UX indicators.
             </p>
           </div>
@@ -108,6 +109,15 @@ export default function Page() {
               </button>
             </div>
           </form>
+          <div className="flex justify-center">
+            <Link
+              href="/history"
+              className="inline-flex items-center gap-1.5 text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Clock className="h-3.5 w-3.5" />
+              History
+            </Link>
+          </div>
         )}
 
         {/* Error */}

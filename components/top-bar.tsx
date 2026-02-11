@@ -14,12 +14,6 @@ export function TopBar() {
         <Image src="/ohaha-logo.svg" alt="Ohana" width={85} height={44} className="h-8 w-auto" />
       </Link>
       <div className="flex items-center gap-5">
-        <Link
-          href="/history"
-          className="text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
-        >
-          History
-        </Link>
         <button
           type="button"
           onClick={logout}
