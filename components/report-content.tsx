@@ -493,18 +493,14 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
       {/* PAGE 2: Introduction + Score + Screenshots + Recap */}
       <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
-        <h1 style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '26pt', fontWeight: 700, lineHeight: 1.1, margin: '0 0 10px 0', color: '#171717' }}>
+        <h1 className="print-intro-heading">
           Website Health Check
         </h1>
-        <div style={{ borderTop: '1px solid #d4d4d4', paddingTop: '12px', marginBottom: '14px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <p style={{ fontSize: '9pt', fontWeight: 600, margin: '0 0 2px' }}>Introduction</p>
-              <p style={{ fontSize: '8pt', lineHeight: 1.5, color: '#525252', margin: 0, maxWidth: '65%' }}>
-                {result.summaryText}
-              </p>
-            </div>
-          </div>
+        <div className="print-divider">
+          <p className="print-intro-label">Introduction</p>
+          <p className="print-intro-text">
+            {result.summaryText}
+          </p>
         </div>
 
         <ScoreDisplay
@@ -513,7 +509,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           pills={pills}
         />
 
-        <div style={{ marginTop: '16px' }}>
+        <div style={{ marginTop: '12px' }}>
           <SiteScreenshots
             url={result.url}
             desktopScreenshot={result.desktop.screenshot}
@@ -521,7 +517,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           />
         </div>
 
-        <div style={{ marginTop: '16px' }}>
+        <div style={{ marginTop: '12px' }}>
           <RecapSection result={result} />
         </div>
       </PrintPage>
@@ -534,12 +530,12 @@ export function ReportContent({ result }: { result: AuditResult }) {
       {/* PAGE 4: Platform + Performance */}
       <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
         {result.platformInfo && (
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '14px' }}>
             <PlatformInfoSection info={result.platformInfo} />
           </div>
         )}
-        <h2 className="print-section-heading">Performance overview</h2>
-        <p className="print-section-sub">
+        <h2 className="font-sans text-2xl font-bold text-foreground mb-2">Performance overview</h2>
+        <p className="text-sm text-muted-foreground italic mb-4">
           Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -562,7 +558,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
           />
         </div>
-        <div className="grid grid-cols-3 gap-3 mt-3">
+        <div className="grid grid-cols-3 gap-3 mt-2">
           <MetricTile compact label="Cumulative Layout Shift" icon={<Move className="h-4 w-4" />}
             mobileValue={formatCls(result.mobile.metrics.cls)} desktopValue={formatCls(result.desktop.metrics.cls)}
             mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)} desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)} />
@@ -574,7 +570,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             unit={result.mobile.metrics.speedIndex && result.mobile.metrics.speedIndex >= 1000 ? "s" : "ms"}
             mobileStatus={getMetricStatus("speedIndex", result.mobile.metrics.speedIndex)} desktopStatus={getMetricStatus("speedIndex", result.desktop.metrics.speedIndex)} />
         </div>
-        <div className="grid grid-cols-3 gap-3 mt-3">
+        <div className="grid grid-cols-3 gap-3 mt-2">
           <MetricTile compact label="Performance Score" icon={<Zap className="h-4 w-4" />}
             mobileValue={String(result.mobile.performanceScore)} desktopValue={String(result.desktop.performanceScore)} maxScore={100}
             mobileStatus={getScoreStatus(result.mobile.performanceScore)} desktopStatus={getScoreStatus(result.desktop.performanceScore)} />
@@ -591,7 +587,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
       <PrintPage url={result.url} timestamp={result.timestamp} riskLabel={riskLabel}>
         <UXIndicatorsSection indicators={result.uxIndicators} />
         {result.designIndicators && (
-          <div style={{ marginTop: '20px' }}>
+          <div style={{ marginTop: '14px' }}>
             <DesignIndicatorsSection indicators={result.designIndicators} />
           </div>
         )}

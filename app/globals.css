@@ -55,7 +55,27 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   PRINT STYLES — A4 layout with proper design tokens
+   ═══════════════════════════════════════════════════════ */
 @media print {
+
+  /* ── Reset design tokens to white-background values ── */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+  }
+
   .no-print {
     display: none !important;
   }
@@ -68,20 +88,30 @@
     print-color-adjust: exact !important;
   }
 
-  body {
-    background: white !important;
-    font-size: 10pt;
-    line-height: 1.45;
-    color: #171717 !important;
+  /* Remove all shadows and border-radius */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
 
-  /* ── A4 Page setup ── */
+  body {
+    background: white !important;
+    color: #171717 !important;
+    font-family: neue-haas-grotesk-display, system-ui, sans-serif !important;
+    font-size: 8.5pt !important;
+    line-height: 1.4 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  /* ── A4 Page setup — zero margins, we handle padding ourselves ── */
   @page {
     size: A4;
     margin: 0;
   }
 
-  /* ── Cover page ── */
+  /* ════════════════════════════════════
+     COVER PAGE
+     ════════════════════════════════════ */
   .print-cover {
     position: relative;
     width: 210mm;
@@ -104,94 +134,98 @@
 
   .print-cover-logo {
     position: absolute;
-    top: 40px;
-    left: 40px;
+    top: 15mm;
+    left: 15mm;
     z-index: 1;
   }
 
   .print-cover-logo img {
-    height: 28px;
+    height: 22px;
     width: auto;
     max-height: none !important;
   }
 
   .print-cover-content {
     position: absolute;
-    bottom: 80px;
-    left: 40px;
+    bottom: 28mm;
+    left: 15mm;
     z-index: 1;
   }
 
   .print-cover-title {
     font-family: "Playfair Display", Georgia, serif;
-    font-size: 54pt;
+    font-size: 48pt;
     font-weight: 700;
     line-height: 1.05;
     color: #171717;
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
   }
 
   .print-cover-url {
-    font-size: 11pt;
+    font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+    font-size: 10pt;
     color: #525252;
-    margin: 0 0 4px 0;
+    margin: 0 0 3px 0;
   }
 
   .print-cover-date {
-    font-size: 11pt;
+    font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+    font-size: 10pt;
     color: #525252;
     margin: 0;
   }
 
   .print-cover-studio {
     position: absolute;
-    bottom: 40px;
-    right: 40px;
-    font-size: 9pt;
-    color: #525252;
+    bottom: 12mm;
+    right: 15mm;
+    font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+    font-size: 8pt;
+    color: #737373;
     z-index: 1;
     margin: 0;
   }
 
-  /* ── Per-page print sections ── */
+  /* ════════════════════════════════════
+     PER-PAGE PRINT SECTIONS
+     ════════════════════════════════════ */
   .print-page-section {
     position: relative;
     width: 210mm;
     min-height: 297mm;
-    padding: 32px 40px 60px 40px;
+    padding: 12mm 15mm 18mm 15mm;
     box-sizing: border-box;
     page-break-after: always;
     break-after: page;
     background: white;
   }
 
-  /* Last section should not force trailing blank page */
   .print-page-section:last-child {
     page-break-after: auto;
     break-after: auto;
   }
 
-  /* ── Page header (top of every body page) ── */
+  /* ── Page header ── */
   .print-page-header {
     display: flex !important;
     justify-content: space-between;
     align-items: flex-start;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
     border-bottom: 1px solid #d4d4d4;
   }
 
   .print-header-title {
-    font-size: 9pt;
+    font-size: 8pt;
     font-weight: 600;
     color: #171717;
     margin: 0;
   }
 
   .print-header-url {
-    font-size: 8pt;
+    font-size: 7pt;
     color: #737373;
-    margin: 2px 0 0 0;
+    margin: 1px 0 0 0;
   }
 
   .print-header-right {
@@ -199,39 +233,274 @@
   }
 
   .print-header-date {
-    font-size: 8pt;
+    font-size: 7pt;
     color: #737373;
     margin: 0;
   }
 
   .print-header-risk {
-    font-size: 8pt;
+    font-size: 7pt;
     color: #737373;
-    margin: 2px 0 0 0;
+    margin: 1px 0 0 0;
   }
 
-  /* ── Page footer (bottom of every body page) ── */
+  /* ── Page footer ── */
   .print-page-footer {
     display: flex !important;
     justify-content: space-between;
     align-items: center;
     position: absolute;
-    bottom: 28px;
-    left: 40px;
-    right: 40px;
+    bottom: 10mm;
+    left: 15mm;
+    right: 15mm;
   }
 
   .print-footer-logo {
-    height: 18px;
+    height: 16px;
     width: auto;
-    opacity: 0.6;
+    opacity: 0.5;
     max-height: none !important;
   }
 
   .print-footer-url {
-    font-size: 8pt;
+    font-size: 7pt;
     color: #a3a3a3;
     margin: 0;
+  }
+
+  /* ════════════════════════════════════
+     COMPONENT OVERRIDES FOR PRINT
+     ════════════════════════════════════ */
+
+  /* ── Score display ── */
+  .print-page-section .w-\[160px\],
+  .print-page-section .md\:w-\[200px\] {
+    width: 100px !important;
+  }
+
+  /* Score number inside gauge */
+  .print-page-section [style*="font-size: 4rem"] {
+    font-size: 2.2rem !important;
+  }
+
+  /* ── Section headings ── */
+  .print-page-section h2 {
+    font-size: 14pt !important;
+    font-weight: 700 !important;
+    color: #171717 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .print-page-section h3 {
+    font-size: 12pt !important;
+    font-weight: 700 !important;
+    color: #171717 !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* ── Risk pills ── */
+  .print-page-section button[class*="border"] {
+    font-size: 7pt !important;
+    padding: 2px 8px !important;
+  }
+
+  /* ── Card containers (risk cards, indicator lists) ── */
+  .print-page-section .rounded-xl {
+    border-radius: 0 !important;
+    border-width: 1px !important;
+  }
+
+  .print-page-section .rounded-lg {
+    border-radius: 0 !important;
+  }
+
+  /* ── Metric tiles ── */
+  .print-page-section .grid {
+    gap: 6px !important;
+  }
+
+  .print-page-section [class*="border-2"] {
+    border-width: 1px !important;
+    padding: 8px !important;
+  }
+
+  .print-page-section .rounded-xl.border-2 p,
+  .print-page-section [class*="border-2"] p {
+    font-size: 7pt !important;
+  }
+
+  .print-page-section [class*="border-2"] h4 {
+    font-size: 7.5pt !important;
+    margin-bottom: 2px !important;
+  }
+
+  .print-page-section [class*="border-2"] .text-xl {
+    font-size: 11pt !important;
+  }
+
+  .print-page-section [class*="border-2"] .text-\[10px\] {
+    font-size: 6pt !important;
+  }
+
+  /* Icon containers in tiles */
+  .print-page-section [class*="border-2"] .h-9,
+  .print-page-section [class*="border-2"] .h-7 {
+    height: 20px !important;
+    width: 20px !important;
+  }
+
+  .print-page-section [class*="border-2"] svg {
+    height: 12px !important;
+    width: 12px !important;
+    max-height: none !important;
+  }
+
+  /* ── Indicator rows (UX, A11y, Advanced UX) ── */
+  .print-page-section .divide-y > div {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .print-page-section .divide-y .text-sm {
+    font-size: 8pt !important;
+  }
+
+  .print-page-section .divide-y .text-xs {
+    font-size: 7pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .print-page-section .divide-y svg {
+    height: 14px !important;
+    width: 14px !important;
+    max-height: none !important;
+  }
+
+  /* ── Badge pills on section headers ── */
+  .print-page-section span[class*="rounded-full"] {
+    font-size: 7pt !important;
+    padding: 1px 6px !important;
+    border-radius: 2px !important;
+  }
+
+  /* ── Italic subtitles ── */
+  .print-page-section p.italic,
+  .print-page-section .text-sm.italic {
+    font-size: 7.5pt !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* ── Risk group cards ── */
+  .print-page-section .space-y-10 > div {
+    margin-bottom: 14px !important;
+  }
+
+  .print-page-section .space-y-10 > div + div {
+    margin-top: 0 !important;
+  }
+
+  /* Risk card inner padding */
+  .print-page-section .p-6,
+  .print-page-section .md\:px-8 {
+    padding: 8px 10px !important;
+  }
+
+  /* Risk card heading row */
+  .print-page-section .p-6 h3,
+  .print-page-section [class*="p-6"] h3 {
+    font-size: 8.5pt !important;
+  }
+
+  /* Risk card bullet list */
+  .print-page-section .space-y-4 > li {
+    margin-bottom: 3px !important;
+    margin-top: 3px !important;
+  }
+
+  .print-page-section .space-y-4 .text-sm {
+    font-size: 7.5pt !important;
+  }
+
+  .print-page-section .space-y-4 .text-xs {
+    font-size: 6.5pt !important;
+  }
+
+  /* Risk card icon box */
+  .print-page-section .w-10.h-10 {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* ── Recap section (dark bg) ── */
+  .print-page-section .bg-foreground {
+    background: #171717 !important;
+    color: white !important;
+    padding: 12px 14px !important;
+  }
+
+  .print-page-section .bg-foreground p {
+    font-size: 7.5pt !important;
+    color: rgba(255,255,255,0.9) !important;
+  }
+
+  .print-page-section .bg-foreground h2 {
+    color: #171717 !important;
+  }
+
+  .print-page-section .bg-foreground .text-lg {
+    font-size: 9pt !important;
+    color: white !important;
+  }
+
+  .print-page-section .bg-foreground a {
+    font-size: 7.5pt !important;
+    padding: 4px 10px !important;
+  }
+
+  /* ── Screenshots ── */
+  .print-page-section img {
+    max-height: 180px !important;
+    object-fit: contain !important;
+  }
+
+  .print-page-section .max-h-\[480px\],
+  .print-page-section .max-h-\[520px\] {
+    max-height: 160px !important;
+  }
+
+  /* ── Platform info section ── */
+  .print-page-section .print-platform-section h3 {
+    font-size: 10pt !important;
+  }
+
+  /* ── Page-level intro heading ── */
+  .print-intro-heading {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 22pt;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #171717;
+    margin: 0 0 6px 0;
+  }
+
+  .print-intro-text {
+    font-size: 7.5pt;
+    line-height: 1.5;
+    color: #525252;
+    margin: 0 0 10px 0;
+  }
+
+  .print-intro-label {
+    font-size: 8pt;
+    font-weight: 600;
+    color: #171717;
+    margin: 0 0 2px 0;
+  }
+
+  .print-divider {
+    border-top: 1px solid #d4d4d4;
+    padding-top: 8px;
+    margin-bottom: 10px;
   }
 
   /* ── General print utilities ── */
@@ -255,51 +524,147 @@
     page-break-before: always;
   }
 
-  .print-compact {
-    margin-bottom: 1rem !important;
-  }
-
-  /* Remove shadows */
-  * {
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
-  /* Constrain images in body pages */
-  .print-page-section img {
-    max-height: 35vh;
-    object-fit: contain;
-  }
-
-  /* SVG gauges */
-  .print-page-section svg {
-    max-height: 120px;
-  }
-
-  /* Don't append URLs to links */
   a[href^="http"]::after {
     content: none;
   }
 
-  /* Print body section headings */
-  .print-section-heading {
-    font-size: 16pt;
-    font-weight: 700;
-    color: #171717;
-    margin: 0 0 4px 0;
+  /* SVG gauges in print pages */
+  .print-page-section svg:not([class*="lucide"]) {
+    max-height: 80px !important;
   }
 
-  .print-section-sub {
-    font-size: 8.5pt;
-    font-style: italic;
-    color: #737373;
-    margin: 0 0 14px 0;
+  /* ── Serif font mapping ── */
+  .font-serif,
+  .print-page-section .font-serif {
+    font-family: "Playfair Display", Georgia, serif !important;
   }
 
-  /* ── Override the web container to be flush for print ── */
-  .print-report-body {
-    max-width: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  /* ── Screenshot browser chrome must stay dark ── */
+  .print-page-section .bg-neutral-900 {
+    background-color: #171717 !important;
+  }
+
+  .print-page-section .bg-neutral-800 {
+    background-color: #262626 !important;
+  }
+
+  .print-page-section .border-neutral-700 {
+    border-color: #404040 !important;
+  }
+
+  .print-page-section .bg-neutral-600 {
+    background-color: #525252 !important;
+  }
+
+  /* ── Recap heading above dark box ── */
+  .print-page-section > div > h2 {
+    color: #171717 !important;
+  }
+
+  /* ── Recap dark box text overrides ── */
+  .print-page-section .bg-foreground .text-background,
+  .print-page-section .bg-foreground .text-background\/85 {
+    color: rgba(255,255,255,0.9) !important;
+  }
+
+  .print-page-section .bg-foreground strong {
+    color: white !important;
+  }
+
+  .print-page-section .bg-foreground .border-background\/20 {
+    border-color: rgba(255,255,255,0.2) !important;
+  }
+
+  .print-page-section .bg-foreground .bg-background {
+    background: white !important;
+    color: #171717 !important;
+  }
+
+  /* ── EAA Issue Summary section ── */
+  .print-page-section .text-\[10px\] {
+    font-size: 6.5pt !important;
+  }
+
+  /* ── Hide web-only elements in print pages ── */
+  .print-page-section .no-print {
+    display: none !important;
+  }
+
+  /* ── Score label text ── */
+  .print-page-section .text-xl.font-semibold {
+    font-size: 10pt !important;
+  }
+
+  .print-page-section .text-sm.leading-relaxed {
+    font-size: 7.5pt !important;
+    line-height: 1.45 !important;
+  }
+
+  /* ── Risk card badge ── */
+  .print-page-section .rounded-full {
+    border-radius: 2px !important;
+  }
+
+  /* ── Lucide icons in indicator rows — ensure they're not too big ── */
+  .print-page-section .divide-y .lucide {
+    height: 14px !important;
+    width: 14px !important;
+  }
+
+  /* ── Platform info icon box ── */
+  .print-page-section .w-10.h-10.bg-muted\/50 {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  /* ── General text size compaction ── */
+  .print-page-section .text-lg {
+    font-size: 10pt !important;
+  }
+
+  .print-page-section .text-2xl {
+    font-size: 13pt !important;
+  }
+
+  .print-page-section .text-base {
+    font-size: 8pt !important;
+  }
+
+  .print-page-section .mb-10 {
+    margin-bottom: 12px !important;
+  }
+
+  .print-page-section .mb-6 {
+    margin-bottom: 6px !important;
+  }
+
+  .print-page-section .mb-5 {
+    margin-bottom: 6px !important;
+  }
+
+  .print-page-section .mb-4 {
+    margin-bottom: 4px !important;
+  }
+
+  .print-page-section .py-4 {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .print-page-section .p-5 {
+    padding: 8px !important;
+  }
+
+  .print-page-section .px-6 {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .print-page-section .gap-6 {
+    gap: 8px !important;
+  }
+
+  .print-page-section .gap-3 {
+    gap: 4px !important;
   }
 }
