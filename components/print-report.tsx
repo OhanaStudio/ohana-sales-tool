@@ -103,7 +103,7 @@ function PF() {
 function SH({ children, badge, badgeColor }: { children: React.ReactNode; badge?: string; badgeColor?: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-      <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, fontFamily: FONT, color: C.black }}>{children}</h2>
+      <h2 style={{ margin: 0, fontSize: 12, fontWeight: 700, fontFamily: FONT, color: C.black }}>{children}</h2>
       {badge && <span style={{ fontSize: 7, fontWeight: 500, padding: '1px 7px', borderRadius: 99, background: badgeColor || '#f5f5f4', color: C.grey }}>{badge}</span>}
     </div>
   )
@@ -196,7 +196,7 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
             </div>
           </div>
           <div>
-            <p style={{ margin: '0 0 4px', fontWeight: 500, fontSize: 13, color: C.black }}>{scoreLabel(r.overallScore)}</p>
+            <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 13, color: C.black }}>{scoreLabel(r.overallScore)}</p>
             <p style={{ margin: '0 0 6px', fontSize: 9, color: C.grey, lineHeight: 1.5 }}>
               There are several areas where improvements could make a meaningful difference to how this site performs and converts.
             </p>
@@ -220,9 +220,9 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
 
         {/* Recap CTA */}
         <div style={{ background: C.black, color: C.white, padding: '14px 16px' }}>
-          <p style={{ margin: '0 0 3px', fontSize: 12, fontWeight: 500, color: C.white }}>{"Let's talk about what we found"}</p>
+          <p style={{ margin: '0 0 3px', fontSize: 12, fontWeight: 700, color: C.white }}>{"Let's talk about what we found"}</p>
           <p style={{ margin: '0 0 8px', fontSize: 10, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)' }}>Book a free 30-minute clarity call to walk through your results and discuss quick wins.</p>
-          <a href="https://www.ohana.studio/book" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, fontSize: 10, fontWeight: 500, padding: '5px 12px', textDecoration: 'none' }}>Book a meeting &rarr;</a>
+          <a href="https://calendar.notion.so/meet/ollie-ohana/ohana-30min" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, fontSize: 10, fontWeight: 500, padding: '5px 12px', textDecoration: 'none' }}>Book a meeting &rarr;</a>
         </div>
       </div>
       <PF />
@@ -310,13 +310,12 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
   /* Print tile — mirrors report MetricTile: rounded-xl, border, coloured borders,
      inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
-  function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
-    const worst = mobSt === 'good' && deskSt === 'good' ? 'good' : mobSt === 'poor' || deskSt === 'poor' ? 'poor' : 'needs-improvement'
-    const borderC = worst === 'good' ? '#34d399' : worst === 'poor' ? '#f87171' : '#fbbf24'
+  function Tile({ label, mob, desk, unit, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt?: string; deskSt?: string; wide?: boolean }) {
     const valSize = wide ? 14 : 11
     const unitSize = wide ? 9 : 7
+    const dot = <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: 1.5, background: C.black, flexShrink: 0 }} />
     return (
-      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: 'rgb(255 255 255 / 60%)' }}>
+      <div style={{ border: `1px solid ${C.border}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: 'rgb(255 255 255 / 60%)' }}>
         {/* Label */}
         <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
@@ -324,7 +323,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <div style={{ paddingRight: 8, borderRight: '1px solid rgba(0,0,0,0.08)' }}>
             <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 500 }}>MOBILE</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              {statusDot(mobSt)}
+              {dot}
               <span style={{ fontSize: valSize, fontWeight: 500, color: C.black }}>{mob}</span>
               {unit && <span style={{ fontSize: unitSize, fontWeight: 400, color: C.light }}>{unit}</span>}
             </div>
@@ -332,7 +331,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <div style={{ paddingLeft: 8 }}>
             <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 500 }}>DESKTOP</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              {statusDot(deskSt)}
+              {dot}
               <span style={{ fontSize: valSize, fontWeight: 500, color: C.black }}>{desk}</span>
               {unit && <span style={{ fontSize: unitSize, fontWeight: 400, color: C.light }}>{unit}</span>}
             </div>
