@@ -162,23 +162,25 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleRerun}
             disabled={rerunning}
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-transparent text-foreground px-5 py-3 text-sm font-medium hover:bg-muted transition-colors min-h-[44px] disabled:opacity-50"
+            aria-label="Re-run check"
+            title="Re-run check"
+            className="inline-flex items-center justify-center w-10 h-10 border border-border bg-transparent text-foreground hover:bg-muted transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${rerunning ? "animate-spin" : ""}`} />
-            {rerunning ? "Running..." : "Re-run check"}
           </button>
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-2 rounded-lg bg-foreground text-background px-5 py-3 text-sm font-medium hover:opacity-90 transition-opacity min-h-[44px]"
+            aria-label="Download PDF"
+            title="Download PDF"
+            className="inline-flex items-center justify-center w-10 h-10 bg-foreground text-background hover:opacity-90 transition-opacity"
           >
             <Download className="h-4 w-4" />
-            Download PDF
           </button>
         </div>
       </div>
