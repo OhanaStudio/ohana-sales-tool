@@ -236,28 +236,28 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 
   return (
     <div style={PAGE}>
-      <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <div style={BODY}>
+      <PH url={r.url} date={date} />
+      <div style={{ ...BODY, gap: 18 }}>
         {groups.map((g) => {
           const c = cfg[g.level]
           return (
             <div key={g.level}>
-              <h2 style={{ margin: '0 0 2px', fontSize: 17, fontWeight: 700, color: C.black, fontFamily: FONT }}>{c.heading}</h2>
-              <p style={{ margin: '0 0 8px', fontSize: 9, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
+              <h2 style={{ margin: '0 0 1px', fontSize: 13, fontWeight: 700, color: C.black, fontFamily: FONT }}>{c.heading}</h2>
+              <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
               <div style={{ border: `1px solid ${c.borderC}`, overflow: 'hidden' }}>
                 {g.cards.map((card, ci) => (
-                  <div key={card.label} style={{ padding: '8px 10px', borderBottom: ci < g.cards.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <span style={{ fontWeight: 700, fontSize: 11, color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
-                      <span style={{ fontSize: 8, fontWeight: 600, padding: '1px 6px', background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
+                  <div key={card.label} style={{ padding: '5px 8px', borderBottom: ci < g.cards.length - 1 ? `1px solid ${C.border}` : 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
+                      <span style={{ fontWeight: 700, fontSize: 9, color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
+                      <span style={{ fontSize: 7, fontWeight: 600, padding: '1px 5px', background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
                     </div>
                     {card.bullets.map((b, bi) => (
-                      <div key={bi} style={{ marginBottom: 3 }}>
-                        <p style={{ margin: 0, fontSize: 9, color: C.grey, lineHeight: 1.45 }}>-- {b}</p>
-                        {card.bulletNotes?.[bi] && <p style={{ margin: '0 0 0 10px', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>Note: {card.bulletNotes[bi]}</p>}
+                      <div key={bi} style={{ marginBottom: 2 }}>
+                        <p style={{ margin: 0, fontSize: 8, color: C.grey, lineHeight: 1.4 }}>-- {b}</p>
+                        {card.bulletNotes?.[bi] && <p style={{ margin: '0 0 0 10px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35 }}>Note: {card.bulletNotes[bi]}</p>}
                       </div>
                     ))}
-                    <p style={{ margin: '3px 0 0', fontSize: 8, fontStyle: 'italic', color: C.light, lineHeight: 1.4 }}>{card.whyItMatters}</p>
+                    <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35 }}>{card.whyItMatters}</p>
                   </div>
                 ))}
               </div>
