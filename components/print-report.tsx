@@ -212,7 +212,7 @@ function IntroPage({ r, date, riskLabel, risks }: { r: AuditResult; date: string
         <div style={{ background: C.black, color: C.white, padding: '14px 16px' }}>
           <p style={{ margin: '0 0 3px', fontSize: 12, fontWeight: 700, color: C.white }}>{"Let's talk about what we found"}</p>
           <p style={{ margin: '0 0 8px', fontSize: 10, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)' }}>Book a free 30-minute clarity call to walk through your results and discuss quick wins.</p>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, fontSize: 10, fontWeight: 600, padding: '5px 12px' }}>Book a meeting &rarr;</span>
+          <a href="https://www.ohana.studio/book" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, fontSize: 10, fontWeight: 600, padding: '5px 12px', textDecoration: 'none' }}>Book a meeting &rarr;</a>
         </div>
       </div>
       <PF />
