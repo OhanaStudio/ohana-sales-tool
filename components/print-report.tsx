@@ -68,11 +68,14 @@ function countRisks(r: AuditResult) {
   return { high, moderate, accessibility: r.accessibilityIndicators?.eaaIssues?.length ?? 0 }
 }
 
-/* ── Page header — sits at the very top of the A4 frame ── */
+/* ── Edge inset for header / footer (full-width with small margin) ── */
+const EDGE = 36
+
+/* ── Page header — sits at the very top of the A4 frame, full width ── */
 function PH({ url, date, riskLabel }: { url: string; date: string; riskLabel: string }) {
   return (
     <div style={{
-      position: 'absolute', top: 25, left: PAD_L, right: PAD_R,
+      position: 'absolute', top: 25, left: EDGE, right: EDGE,
       display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
       paddingBottom: 6, borderBottom: `1px solid ${C.border}`,
     }}>
@@ -88,11 +91,11 @@ function PH({ url, date, riskLabel }: { url: string; date: string; riskLabel: st
   )
 }
 
-/* ── Page footer — sits at bottom of A4 frame ── */
+/* ── Page footer — sits at bottom of A4 frame, full width ── */
 function PF() {
   return (
     <div style={{
-      position: 'absolute', bottom: 30, left: PAD_L, right: PAD_R,
+      position: 'absolute', bottom: 30, left: EDGE, right: EDGE,
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     }}>
       <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 16, opacity: 0.45 }} />
