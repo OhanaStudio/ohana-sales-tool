@@ -311,9 +311,9 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   /* Print tile — mirrors report MetricTile: rounded-xl, border, coloured borders,
      inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
   function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
-    const dotColors: Record<string, string> = { good: '#10b981', 'needs-improvement': '#f59e0b', poor: '#ef4444' }
-    const borderColors: Record<string, string> = { good: '#34d399', 'needs-improvement': '#fbbf24', poor: '#f87171' }
-    const worst = mobSt === 'good' && deskSt === 'good' ? 'good' : mobSt === 'poor' || deskSt === 'poor' ? 'poor' : 'needs-improvement'
+    const dotColors: Record<string, string> = { green: '#10b981', amber: '#f59e0b', red: '#ef4444' }
+    const borderColors: Record<string, string> = { green: '#34d399', amber: '#fbbf24', red: '#f87171' }
+    const worst = (['red', 'amber', 'green'] as const).find(l => mobSt === l || deskSt === l) || 'green'
     const borderC = borderColors[worst] || C.border
     const valSize = wide ? 14 : 11
     const unitSize = wide ? 9 : 7
