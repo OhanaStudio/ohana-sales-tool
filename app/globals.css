@@ -59,8 +59,14 @@
     letter-spacing: 0.04em;
   }
   /* Ensure all interactive elements respond to taps immediately */
-  a, button, [role="button"], input, select, textarea, label {
+  a, button, [role="button"], input, select, textarea, label, summary {
     touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+  a, button, [role="button"], summary {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
   }
 }
 

@@ -113,7 +113,8 @@ export default function Page() {
             <div className="flex justify-center mb-6">
               <Link
                 href="/history"
-                className="inline-flex items-center gap-1.5 text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => console.log("[v0] History link clicked")}
+                className="inline-flex items-center gap-1.5 text-sm font-sans text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-4 py-2"
               >
                 <Clock className="h-3.5 w-3.5" />
                 Health check history

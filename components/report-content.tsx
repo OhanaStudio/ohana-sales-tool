@@ -167,7 +167,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
       <div className="no-print flex items-center justify-between px-5 md:px-8 py-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors min-h-[44px]"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 py-2"
         >
           <ArrowLeft className="h-4 w-4" />
           Back

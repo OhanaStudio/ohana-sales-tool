@@ -10,14 +10,14 @@ export function TopBar() {
 
   return (
     <header className="flex items-center justify-between px-5 py-4 md:px-8 md:py-5 no-print">
-      <Link href="/" className="block">
+      <Link href="/" className="block min-h-[44px] flex items-center">
         <Image src="/ohaha-logo.svg" alt="Ohana" width={85} height={44} className="h-8 w-auto" />
       </Link>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={logout}
-          className="text-sm font-sans text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+          className="text-sm font-sans text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 min-h-[44px] px-2 py-2"
           aria-label="Sign out"
         >
           <LogOut className="h-3.5 w-3.5" />
