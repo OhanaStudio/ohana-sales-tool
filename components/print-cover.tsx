@@ -28,7 +28,7 @@ export function PrintCover({
     <div className="hidden print:block print-cover">
       {/* Background SVG */}
       <img
-        src="/cover-background.svg"
+        src="/hc-front.svg"
         alt=""
         aria-hidden="true"
         className="print-cover-bg"
