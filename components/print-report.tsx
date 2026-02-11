@@ -306,7 +306,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     const valSize = wide ? 14 : 11
     const unitSize = wide ? 9 : 7
     return (
-      <div style={{ border: `2px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: '#fff' }}>
+      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: '#fff' }}>
         {/* Label */}
         <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 700, color: C.black }}>{label}</p>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
