@@ -234,30 +234,56 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     green: { heading: 'Low Risks', sub: 'These areas are performing well.', badge: 'Low Risk', badgeBg: '#ecfdf5', badgeC: '#065f46', borderC: '#a7f3d0' },
   }
 
+  /* Card icon lookup — simple SVG icons matching the report's lucide icons */
+  const cardIcon = (label: string) => {
+    if (label.includes('Conversion')) return (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg>
+    )
+    if (label.includes('Trust')) return (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    )
+    return (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+    )
+  }
+
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} />
-      <div style={{ ...BODY, gap: 18 }}>
+      <div style={{ ...BODY, gap: 20 }}>
         {groups.map((g) => {
           const c = cfg[g.level]
           return (
             <div key={g.level}>
-              <h2 style={{ margin: '0 0 1px', fontSize: 13, fontWeight: 700, color: C.black, fontFamily: FONT }}>{c.heading}</h2>
-              <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <h2 style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>{c.heading}</h2>
+              <p style={{ margin: '0 0 8px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {g.cards.map((card) => (
-                  <div key={card.label} style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, padding: '6px 8px', background: '#fff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <span style={{ fontWeight: 700, fontSize: 9, color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
-                      <span style={{ fontSize: 7, fontWeight: 600, padding: '1px 6px', borderRadius: 99, background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
+                  <div key={card.label} style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, padding: '10px 12px', background: '#fff' }}>
+                    {/* Header: icon + title + badge */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ width: 22, height: 22, borderRadius: 6, background: '#f5f5f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {cardIcon(card.label)}
+                        </div>
+                        <span style={{ fontWeight: 700, fontSize: 10, color: C.black }}>{card.label} ({card.bullets.length} {card.bullets.length === 1 ? 'Risk' : 'Risks'})</span>
+                      </div>
+                      <span style={{ fontSize: 7, fontWeight: 600, padding: '2px 8px', borderRadius: 99, background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
                     </div>
+                    {/* Bullets + notes */}
                     {card.bullets.map((b, bi) => (
-                      <div key={bi} style={{ marginBottom: 2 }}>
-                        <p style={{ margin: 0, fontSize: 8, color: C.grey, lineHeight: 1.4 }}>-- {b}</p>
-                        {card.bulletNotes?.[bi] && <p style={{ margin: '0 0 0 10px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35 }}>Note: {card.bulletNotes[bi]}</p>}
+                      <div key={bi} style={{ marginBottom: 6 }}>
+                        <div style={{ display: 'flex', gap: 4 }}>
+                          <span style={{ fontSize: 8, color: C.grey, flexShrink: 0 }}>--</span>
+                          <span style={{ fontSize: 8, color: C.grey, lineHeight: 1.5 }}>{b}</span>
+                        </div>
+                        {card.bulletNotes?.[bi] && (
+                          <p style={{ margin: '2px 0 0 14px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>Note: {card.bulletNotes[bi]}</p>
+                        )}
                       </div>
                     ))}
-                    <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35 }}>{card.whyItMatters}</p>
+                    {/* Why it matters */}
+                    <p style={{ margin: '4px 0 0', fontSize: 7.5, fontStyle: 'italic', color: C.light, lineHeight: 1.45 }}>{card.whyItMatters}</p>
                   </div>
                 ))}
               </div>
