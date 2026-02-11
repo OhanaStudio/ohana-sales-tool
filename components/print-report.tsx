@@ -265,7 +265,7 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           const c = cfg[g.level]
           return (
             <div key={g.level}>
-              <h2 style={{ margin: '0 0 2px', fontSize: 14, color: C.black, fontFamily: SERIF }}>{c.heading}</h2>
+              <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 500, color: C.black }}>{c.heading}</h2>
               <p style={{ margin: '0 0 8px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {g.cards.map((card) => (
@@ -359,7 +359,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
         )}
 
         <div>
-          <h2 style={{ margin: '0 0 2px', fontSize: 13, fontWeight: 500, color: C.black, fontFamily: FONT }}>Performance overview</h2>
+          <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 500, color: C.black }}>Performance overview</h2>
           <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
 
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
@@ -464,7 +464,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
         {/* UX Indicators */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>UX indicators</h2>
+            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>UX indicators</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
           </div>
           <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
@@ -489,7 +489,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
         {di && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-              <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>Design & image quality</h2>
+              <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>Design & image quality</h2>
               {!di.contrastIssues && di.imageIssues.oversizedCount === 0 && (
                 <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
               )}
@@ -576,7 +576,7 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
       <div style={{ ...BODY, gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>UX friction analysis</h2>
+            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>UX friction analysis</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
           </div>
           <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
@@ -696,7 +696,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
       <div style={{ ...BODY, gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <h2 style={{ margin: 0, fontSize: 14, color: C.black, fontFamily: SERIF }}>Accessibility & EAA compliance</h2>
+            <h2 style={{ margin: 0, fontSize: 12, fontWeight: 500, color: C.black }}>Accessibility & EAA compliance</h2>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeColor}20` }}>{badgeLabel}</span>
           </div>
           <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
