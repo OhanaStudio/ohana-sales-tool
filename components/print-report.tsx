@@ -374,31 +374,135 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 }
 
 /* ═══ PAGE 5: UX Indicators + Design ═══ */
-function UXPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
+function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string }) {
   const ux = r.uxIndicators
   const di = r.designIndicators
+
+  /* Build items matching the report's UXIndicatorsSection logic exactly */
+  type Item = { found: boolean; label: string; detail?: string; note?: string }
+  const items: Item[] = []
+
+  // CTA clarity
+  items.push({
+    found: ux.ctaFound,
+    label: 'Call-to-action clarity',
+    detail: ux.ctaFound
+      ? (() => { const d = ux.ctaKeywords.filter((k: string) => !k.startsWith('(')); return d.length > 0 ? `Found: ${d.join(', ')}` : 'Interactive elements detected' })()
+      : 'No clear CTA keywords detected in buttons or links',
+    note: ux.ctaFound
+      ? 'Clear CTAs guide visitors toward taking action. Ensuring they are prominent and well-worded can further increase enquiry rates.'
+      : 'Without a clear call-to-action, visitors don\'t know what step to take next. This is one of the most common reasons websites fail to convert traffic into leads.',
+  })
+  // Trust signals
+  items.push({
+    found: ux.trustSignalsFound,
+    label: 'Trust signals',
+    detail: ux.trustSignalsFound ? `Found: ${ux.trustKeywords.join(', ')}` : 'No obvious trust indicators detected',
+    note: ux.trustSignalsFound
+      ? 'Trust signals reassure visitors the business is credible. Strengthening these can improve conversion rates further.'
+      : '88% of consumers trust online reviews as much as personal recommendations. Without visible trust indicators, visitors have no reason to choose this business over a competitor.',
+  })
+  // Social proof
+  items.push({
+    found: ux.socialProofAboveFold,
+    label: 'Social proof above the fold',
+    detail: ux.socialProofAboveFold
+      ? `Above the fold: ${ux.socialProofKeywordsAboveFold.join(', ')}`
+      : ux.trustSignalsFound ? 'Social proof was found, but appears to be below the fold' : 'No social proof detected',
+    note: ux.socialProofAboveFold
+      ? 'Having social proof visible immediately helps build trust within the first few seconds of a visit.'
+      : 'Most visitors never scroll past the fold. If reviews and testimonials are hidden below, the majority of potential customers never see them.',
+  })
+  // Third-party reviews
+  items.push({
+    found: ux.testimonialsVerified,
+    label: 'Verified third-party reviews',
+    detail: ux.testimonialsVerified
+      ? `Sources: ${ux.verifiedSources.join(', ')}`
+      : ux.trustSignalsFound ? 'Testimonials appear self-hosted, not from a verified third-party source' : 'No review sources detected',
+    note: ux.testimonialsVerified
+      ? 'Verified reviews from recognised platforms like Google or Trustpilot carry significantly more weight with consumers than self-hosted testimonials.'
+      : 'Self-hosted testimonials can be fabricated and savvy consumers know this. Integrating verified third-party reviews dramatically increases credibility.',
+  })
+  // Phone
+  items.push({
+    found: ux.phoneFound,
+    label: 'Phone number visible',
+    note: ux.phoneFound
+      ? 'A visible phone number signals the business is real and reachable, building immediate trust.'
+      : 'Many visitors want to verify a business is legitimate before engaging. A visible phone number is one of the simplest and most effective trust builders.',
+  })
+  // Email
+  items.push({
+    found: ux.emailFound,
+    label: 'Email address visible',
+    note: ux.emailFound
+      ? 'Showing an email address gives visitors an alternative way to get in touch, improving accessibility.'
+      : 'Not all visitors want to fill out a form. A visible email address provides an alternative contact method and signals openness.',
+  })
+
+  const failCount = items.filter((i) => !i.found).length
+  const badgeBg = failCount === 0 ? '#ecfdf5' : failCount <= 3 ? '#fffbeb' : '#fef2f2'
+  const badgeColor = failCount === 0 ? '#065f46' : failCount <= 3 ? '#92400e' : '#b91c1c'
+  const badgeBorder = failCount === 0 ? '#a7f3d0' : failCount <= 3 ? '#fde68a' : '#fecaca'
+  const badgeLabel = failCount === 0 ? 'All clear' : `${failCount} Moderate Risk${failCount !== 1 ? 's' : ''}`
+
   return (
     <div style={PAGE}>
-      <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <div style={BODY}>
+      <PH url={r.url} date={date} />
+      <div style={{ ...BODY, gap: 16 }}>
+        {/* UX Indicators */}
         <div>
-          <SH>UX indicators</SH>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>UX indicators</h2>
+            <span style={{ fontSize: 7, fontWeight: 600, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
+          </div>
           <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
-          <IR label="Call-to-action clarity" detail={ux.ctaFound ? `Found: ${ux.ctaKeywords.join(', ')}` : 'No clear CTA found'} note="Clear CTAs guide visitors toward taking action." />
-          <IR label="Trust signals" detail={ux.trustSignalsFound ? `Found: ${ux.trustKeywords.join(', ')}` : 'No obvious trust indicators detected'} note="Without visible trust indicators, visitors have no reason to choose this business." />
-          <IR label="Social proof above the fold" detail={ux.socialProofAboveFold ? `Found: ${ux.socialProofKeywordsAboveFold.join(', ')}` : 'No social proof detected'} note="Most visitors never scroll past the fold." />
-          <IR label="Verified third-party reviews" detail={ux.testimonialsVerified ? `Sources: ${ux.verifiedSources.join(', ')}` : 'No review sources detected'} note="Integrating verified third-party reviews dramatically increases credibility." />
-          <IR label="Phone number visible" detail={ux.phoneFound ? 'Phone number found' : 'No phone number detected'} note="A visible phone number is one of the simplest and most effective trust builders." />
-          <IR label="Email address visible" detail={ux.emailFound ? 'Email address found' : 'No email address detected'} note="A visible email address provides an alternative contact method." />
+
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+            {items.map((item, i) => (
+              <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                  <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: '0 0 1px', fontWeight: 700, fontSize: 8.5, color: C.black }}>{item.label}</p>
+                    {item.detail && <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.45 }}>{item.detail}</p>}
+                    {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>Note: {item.note}</p>}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
+        {/* Design & image quality */}
         {di && (
           <div>
-            <SH badge={!di.contrastIssues && di.imageIssues.oversizedCount === 0 ? 'All clear' : undefined} badgeColor="#ecfdf5">Design &amp; image quality</SH>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+              <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>Design & image quality</h2>
+              {!di.contrastIssues && di.imageIssues.oversizedCount === 0 && (
+                <span style={{ fontSize: 7, fontWeight: 600, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
+              )}
+            </div>
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
-            <IR label="Image optimisation" detail={di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised.'} note="Well-optimised images keep the site fast." />
-            <IR label="Colour contrast" detail={di.contrastPassed ? 'All text meets WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issues found.`} note="Good contrast ensures text is readable for all users." />
-            <IR label="Spacing consistency" detail={di.inconsistentSpacing ? di.spacingDetails : 'No inline spacing styles detected.'} note="Consistent spacing contributes to a polished appearance." />
+            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+              {[
+                { found: di.imageIssues.oversizedCount === 0, label: 'Image optimisation', detail: di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised.', note: 'Well-optimised images keep the site fast and improve both user experience and search ranking.' },
+                { found: di.contrastPassed, label: 'Colour contrast', detail: di.contrastPassed ? 'All text meets WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issue${(di.contrastIssues ?? 0) > 1 ? 's' : ''} detected.`, note: 'Good contrast ensures text is readable for all users including those with visual impairments.' },
+                { found: !di.inconsistentSpacing, label: 'Spacing consistency', detail: di.inconsistentSpacing ? di.spacingDetails : 'No inline spacing inconsistencies detected.', note: 'Consistent spacing contributes to a polished, professional appearance.' },
+              ].map((item, i) => (
+                <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                    <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: '0 0 1px', fontWeight: 700, fontSize: 8.5, color: C.black }}>{item.label}</p>
+                      {item.detail && <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.45 }}>{item.detail}</p>}
+                      {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>Note: {item.note}</p>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
