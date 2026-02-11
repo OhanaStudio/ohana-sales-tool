@@ -1,8 +1,7 @@
 "use client"
 
 import React from "react"
-import { AuditResult } from "@/types/audit-result" // Declare AuditResult here
-import { ResultsDashboard } from "@/components/results-dashboard" // Declare ResultsDashboard here
+import type { AuditResult } from "@/lib/types"
 import { useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { TopBar } from "@/components/top-bar"
@@ -113,7 +112,7 @@ export default function Page() {
             <div className="flex justify-center mb-6">
               <Link
                 href="/history"
-                onClick={() => console.log("[v0] History link clicked")}
+
                 className="inline-flex items-center gap-1.5 text-sm font-sans text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-4 py-2"
               >
                 <Clock className="h-3.5 w-3.5" />

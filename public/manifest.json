@@ -3,7 +3,7 @@
   "short_name": "Ohana Health",
   "description": "A high-level website diagnostic using Lighthouse data and simple UX indicators.",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#F2EEE6",
   "theme_color": "#F2EEE6"
 }

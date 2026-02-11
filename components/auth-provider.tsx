@@ -26,14 +26,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [checked, setChecked] = useState(hasHint)
 
   useEffect(() => {
-    // Verify against the httpOnly cookie via the server
+    // Verify against the httpOnly cookie via the server.
+    // If the hint cookie already authenticated us, only upgrade — never downgrade
+    // (avoids a race condition on slow mobile connections where the page briefly
+    // renders then gets replaced by the login screen).
     fetch("/api/auth", { credentials: "same-origin" })
       .then((res) => {
-        setAuthenticated(res.ok)
+        if (res.ok) setAuthenticated(true)
+        else if (!hasHint) setAuthenticated(false)
       })
       .catch(() => {})
       .finally(() => setChecked(true))
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = async (password: string): Promise<boolean> => {
     const res = await fetch("/api/auth", {
