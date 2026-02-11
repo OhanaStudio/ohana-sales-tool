@@ -511,36 +511,87 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
   )
 }
 
+/* ── Friction status helpers (matches report's AdvancedUXSection) ── */
+function frictionStatusColor(status: string): 'emerald' | 'amber' | 'red' {
+  const green = ['clear', 'low', 'scannable', 'clear_path', 'strong']
+  const amber = ['mixed', 'medium', 'partial', 'moderate']
+  if (green.includes(status)) return 'emerald'
+  if (amber.includes(status)) return 'amber'
+  return 'red'
+}
+function frictionIsApplicable(status: string): boolean {
+  const na = status.toLowerCase().replace(/[\s_-]/g, '')
+  return na !== 'na' && na !== 'n/a' && na !== 'notapplicable'
+}
+const frictionNotes: Record<string, { good: string; bad: string }> = {
+  firstImpression: { good: 'A clear first impression keeps visitors engaged and reduces bounce rates.', bad: 'Visitors decide in 3\u20135 seconds whether to stay. If the value proposition isn\u2019t immediately clear, they leave for a competitor.' },
+  navigationFriction: { good: 'Low decision friction means visitors can easily find what they need and take action.', bad: 'Confusing navigation overwhelms visitors with choices. Every extra click or unclear path is a chance for them to give up and leave.' },
+  scanability: { good: 'Scannable content structure helps visitors quickly find the information they need.', bad: 'Dense text walls cause visitors to bounce. Breaking content into clear, scannable sections can significantly increase time on page.' },
+  conversionPath: { good: 'A clear conversion path guides visitors smoothly from interest to action.', bad: 'A broken conversion path with dead ends or inconsistent CTAs means potential customers get lost before completing an enquiry.' },
+  formFriction: { good: 'Low form friction means more visitors will complete enquiry forms.', bad: 'Complex or lengthy forms are the number one conversion killer. Reducing fields to essentials can double form completion rates.' },
+  trustDepth: { good: 'Strong trust depth with verified credentials helps convert hesitant visitors.', bad: 'Weak trust signals mean visitors have no evidence to support choosing this business. Named testimonials and case studies are far more convincing than anonymous quotes.' },
+  mobileFriction: { good: 'Low mobile friction ensures the growing majority of mobile visitors have a smooth experience.', bad: 'Over 60% of web traffic is mobile. High mobile friction means the majority of potential customers are having a frustrating experience.' },
+}
+
 /* ═══ PAGE 6: Advanced UX ═══ */
-function FrictionPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
+function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string }) {
   const a = r.advancedUX
   if (!a) return null
 
-  const sections: { label: string; status: string; bullets: string[] }[] = [
-    { label: 'First-impression clarity', status: a.firstImpression.status, bullets: a.firstImpression.bullets },
-    { label: 'Decision friction', status: a.navigationFriction.status, bullets: a.navigationFriction.bullets },
-    { label: 'Scanability', status: a.scanability.status, bullets: a.scanability.bullets },
-    { label: 'Conversion path', status: a.conversionPath.status, bullets: a.conversionPath.bullets },
-    { label: 'Form friction', status: a.formFriction.status, bullets: a.formFriction.bullets },
-    { label: 'Trust depth', status: a.trustDepth.status, bullets: a.trustDepth.bullets },
-    { label: 'Mobile friction', status: a.mobileFriction.status, bullets: a.mobileFriction.bullets },
+  const allCats = [
+    { key: 'firstImpression', title: 'First-impression clarity', ...a.firstImpression },
+    { key: 'navigationFriction', title: 'Decision friction', ...a.navigationFriction },
+    { key: 'scanability', title: 'Scanability', ...a.scanability },
+    { key: 'conversionPath', title: 'Conversion path', ...a.conversionPath },
+    { key: 'formFriction', title: 'Form friction', ...a.formFriction },
+    { key: 'trustDepth', title: 'Trust depth', ...a.trustDepth },
+    { key: 'mobileFriction', title: 'Mobile friction', ...a.mobileFriction },
   ]
 
-  // Count high-risk items
-  const highCount = sections.filter(s => s.status === 'unclear' || s.status === 'high' || s.status === 'broken' || s.status === 'weak' || s.status === 'dense').length
+  const cats = allCats.filter((c) => frictionIsApplicable(c.status))
+  if (cats.length === 0) return null
+
+  const redCount = cats.filter((c) => frictionStatusColor(c.status) === 'red').length
+  const amberCount = cats.filter((c) => frictionStatusColor(c.status) === 'amber').length
+  const issueCount = redCount + amberCount
+
+  const badgeBg = redCount > 0 ? '#fef2f2' : amberCount > 0 ? '#fffbeb' : '#ecfdf5'
+  const badgeColor = redCount > 0 ? '#b91c1c' : amberCount > 0 ? '#92400e' : '#065f46'
+  const badgeBorder = redCount > 0 ? '#fecaca' : amberCount > 0 ? '#fde68a' : '#a7f3d0'
+  const badgeLabel = issueCount === 0 ? 'All clear' : redCount > 0 ? `${issueCount} High Risk${issueCount !== 1 ? 's' : ''}` : `${issueCount} Moderate Risk${issueCount !== 1 ? 's' : ''}`
 
   return (
     <div style={PAGE}>
-      <PH url={r.url} date={date} riskLabel={riskLabel} />
-      <div style={BODY}>
+      <PH url={r.url} date={date} />
+      <div style={{ ...BODY, gap: 10 }}>
         <div>
-          <SH badge={highCount > 0 ? `${highCount} High Risks` : undefined} badgeColor="#fef2f2">UX friction analysis</SH>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.black, fontFamily: SERIF }}>UX friction analysis</h2>
+            <span style={{ fontSize: 7, fontWeight: 600, padding: '2px 8px', borderRadius: 99, background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}>{badgeLabel}</span>
+          </div>
           <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
-          {sections.map((s) => (
-            <IR key={s.label} label={s.label} status={s.status}
-              detail={s.bullets[0] || ''}
-              note={s.bullets[1]?.startsWith('Note:') ? s.bullets[1].replace('Note: ', '') : s.bullets[1] || ''} />
-          ))}
+
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: '#fff', overflow: 'hidden' }}>
+            {cats.map((cat, i) => {
+              const color = frictionStatusColor(cat.status)
+              const isGood = color === 'emerald'
+              const detail = cat.bullets.length > 0 ? cat.bullets.join(' ') : cat.status
+              const note = frictionNotes[cat.key]?.[isGood ? 'good' : 'bad']
+              const iconStatus: 'pass' | 'warn' | 'fail' = color === 'emerald' ? 'pass' : color === 'amber' ? 'warn' : 'fail'
+              return (
+                <div key={cat.key} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                    <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={iconStatus} /></div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: '0 0 1px', fontWeight: 700, fontSize: 8.5, color: C.black }}>{cat.title}</p>
+                      <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.5 }}>{detail}</p>
+                      {note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5 }}>Note: {note}</p>}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
       <PF />
