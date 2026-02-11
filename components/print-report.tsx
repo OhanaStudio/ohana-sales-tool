@@ -310,16 +310,16 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
   /* Print tile — mirrors report MetricTile: rounded-xl, border, coloured borders,
      inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
-  function Tile({ label, mob, desk, unit, mobSt, deskSt, wide }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; wide?: boolean }) {
+  function Tile({ label, mob, desk, unit, mobSt, deskSt }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string }) {
     const dotColors: Record<string, string> = { green: '#10b981', amber: '#f59e0b', red: '#ef4444' }
     const borderColors: Record<string, string> = { green: '#34d399', amber: '#fbbf24', red: '#f87171' }
     const worst = (['red', 'amber', 'green'] as const).find(l => mobSt === l || deskSt === l) || 'green'
     const borderC = borderColors[worst] || C.border
-    const valSize = wide ? 14 : 11
-    const unitSize = wide ? 9 : 7
+    const valSize = 11
+    const unitSize = 7
     const makeDot = (st: string) => <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: dotColors[st] || C.black, flexShrink: 0 }} />
     return (
-      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', flex: wide ? '1 1 48%' : '1 1 30%', background: 'rgb(255 255 255 / 60%)' }}>
+      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', background: 'rgb(255 255 255 / 60%)' }}>
         {/* Label */}
         <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
@@ -365,16 +365,19 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Performance overview</h2>
           <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
-            <Tile wide label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} />
-            <Tile wide label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} />
+          {/* Row 1: 2 cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            <Tile label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} />
+            <Tile label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} />
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
+          {/* Row 2: 3 cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginTop: 6 }}>
             <Tile label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} />
             <Tile label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} />
             <Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} />
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6, marginTop: 6 }}>
+          {/* Row 3: 3 cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginTop: 6 }}>
             <Tile label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} />
             <Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} />
             <Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} />
