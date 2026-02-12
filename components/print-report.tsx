@@ -210,11 +210,11 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
 
         {/* Screenshots placeholder */}
         <div style={{ display: 'flex', gap: 10 }}>
-          {r.desktop.screenshot && (
-            <img src={r.desktop.screenshot} alt="Desktop" style={{ flex: '2 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} referrerPolicy="no-referrer" />
+          {r.desktop.screenshot?.data && (
+            <img src={r.desktop.screenshot.data} alt="Desktop" style={{ flex: '2 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} />
           )}
-          {r.mobile.screenshot && (
-            <img src={r.mobile.screenshot} alt="Mobile" style={{ flex: '1 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} referrerPolicy="no-referrer" />
+          {r.mobile.screenshot?.data && (
+            <img src={r.mobile.screenshot.data} alt="Mobile" style={{ flex: '1 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} />
           )}
         </div>
 
