@@ -57,14 +57,14 @@ function A11yRow({
       <StatusIcon status={status} />
       <div>
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-foreground">{label}</p>
+          <p className="text-sm font-bold text-foreground">{label}</p>
           {wcagRef && (
             <span className="text-[10px] text-muted-foreground font-semibold">{wcagRef}</span>
           )}
         </div>
         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{detail}</p>
         {note && (
-          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed pt-1 bg-transparent">Note: {note}</p>
+          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed p-2 rounded bg-[#4040400f]">Note: {note}</p>
         )}
       </div>
     </div>

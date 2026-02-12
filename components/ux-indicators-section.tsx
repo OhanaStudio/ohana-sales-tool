@@ -19,7 +19,7 @@ function Indicator({
       <div className="flex items-start gap-3 py-4">
         <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
         <div>
-        <p className="text-sm font-semibold text-foreground">{label}</p>
+          <p className="text-sm font-bold text-foreground">{label}</p>
           <p className="text-xs text-muted-foreground mt-0.5">Not available</p>
         </div>
       </div>
@@ -39,7 +39,7 @@ function Indicator({
           <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
         )}
         {note && (
-          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed pt-1 bg-transparent">Note: {note}</p>
+          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed p-2 rounded bg-[#4040400f]">Note: {note}</p>
         )}
       </div>
     </div>
