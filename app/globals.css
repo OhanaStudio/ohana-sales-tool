@@ -84,6 +84,14 @@
   .no-print,
   .print-chrome {
     display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Remove padding from outer containers during print */
+  body > div {
+    padding: 0 !important;
   }
 
   /* Force colour rendering */
