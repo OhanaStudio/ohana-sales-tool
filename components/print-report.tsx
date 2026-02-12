@@ -350,7 +350,7 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
               {/* Single bordered container for all cards in this risk group */}
               <div style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
                 {g.cards.map((card, ci) => (
-                  <div key={card.label} style={{ padding: '10px 12px', borderTop: ci > 0 ? `1px solid #e7e5e4` : 'none' }}>
+                  <div key={card.label} style={{ padding: '10px 12px', borderTop: ci > 0 ? `1px solid #e7e5e4` : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                     {/* Header: icon + title + badge */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -563,7 +563,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
 
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
             {items.map((item, i) => (
-              <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none' }}>
+              <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
                   <div style={{ flex: 1 }}>
@@ -804,7 +804,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
           {/* All checks in one unified bordered container */}
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
             {rows.map((ch, i) => (
-              <div key={`${ch.label}-${i}`} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
+              <div key={`${ch.label}-${i}`} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={ch.status} /></div>
                   <div style={{ flex: 1 }}>

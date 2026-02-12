@@ -166,6 +166,33 @@ export default function PrintPreviewPage() {
             page-break-after: auto !important;
             break-after: auto !important;
           }
+          /* Content break rules for tables and lists */
+          table {
+            break-inside: auto !important;
+            page-break-inside: auto !important;
+          }
+          tr {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+          thead {
+            display: table-header-group !important;
+          }
+          tfoot {
+            display: table-footer-group !important;
+          }
+          /* Allow divs containing lists to break across pages */
+          div[style*="border"] {
+            break-inside: auto !important;
+            page-break-inside: auto !important;
+          }
+          /* Individual check/item rows should avoid breaking but allow page breaks between them */
+          div[style*="borderTop"] {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            break-after: auto !important;
+            page-break-after: auto !important;
+          }
         }
       `}</style>
 
