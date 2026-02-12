@@ -348,8 +348,12 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
               <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>{c.heading}</h2>
               <p style={{ margin: '0 0 8px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
               {/* Single bordered container for all cards in this risk group */}
-              <div style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
-                {g.cards.map((card, ci) => (
+              <div style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, background: 'var(--card)', overflow: 'hidden' }}>
+                {g.cards.map((card, ci) => {
+                  // Sort bullets: create array with indices to maintain notes association
+                  const bulletIndices = card.bullets.map((_, i) => i)
+                  
+                  return (
                   <div key={card.label} style={{ padding: '10px 12px', borderTop: ci > 0 ? `1px solid #e7e5e4` : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                     {/* Header: icon + title + badge */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -362,11 +366,11 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
                       <span style={{ fontSize: 7, fontWeight: 600, padding: '2px 8px', borderRadius: 99, background: c.badgeBg, color: c.badgeC }}>{c.badge}</span>
                     </div>
                     {/* Bullets + notes */}
-                    {card.bullets.map((b, bi) => (
+                    {bulletIndices.map((bi) => (
                       <div key={bi} style={{ marginBottom: 6 }}>
                         <div style={{ display: 'flex', gap: 4 }}>
                           <span style={{ fontSize: 8, color: C.grey, flexShrink: 0 }}>--</span>
-                          <span style={{ fontSize: 8, fontWeight: 600, color: C.grey, lineHeight: 1.5 }}>{b}</span>
+                          <span style={{ fontSize: 8, fontWeight: 600, color: C.grey, lineHeight: 1.5 }}>{card.bullets[bi]}</span>
                         </div>
                         {card.bulletNotes?.[bi] && (
                           <p style={{ margin: '2px 0 0 14px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, background: 'transparent' }}>Note: {card.bulletNotes[bi]}</p>
@@ -376,7 +380,8 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
                     {/* Why it matters */}
                     <p style={{ margin: '4px 0 0', fontSize: 7.5, fontStyle: 'italic', color: C.light, lineHeight: 1.45 }}>{card.whyItMatters}</p>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )
@@ -400,7 +405,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     const unitSize = 7
     const makeDot = (st: string) => <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: dotColors[st] || C.black, flexShrink: 0 }} />
     return (
-      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', background: 'rgb(255 255 255 / 60%)' }}>
+      <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', background: 'var(--card)' }}>
         {/* Icon + Label */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, margin: '0 0 6px' }}>
           {icon && <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 10, height: 10, borderRadius: 2, background: '#f5f5f4', color: C.light, flexShrink: 0 }}>{icon}</span>}
@@ -438,7 +443,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <div>
             <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Platform detection</h2>
             <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', border: `1px solid ${C.border}`, borderRadius: 8, background: 'rgb(255 255 255 / 60%)' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', border: `1px solid ${C.border}`, borderRadius: 8, background: 'var(--card)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <div style={{ width: 22, height: 22, borderRadius: 4, background: '#f5f5f4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: C.black }}>
                   <PrintPlatformIcon name={r.platformInfo.platform} size={14} />
@@ -561,7 +566,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
           </div>
           <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
 
-          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'var(--card)', overflow: 'hidden' }}>
             {items.map((item, i) => (
               <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
@@ -587,7 +592,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
               )}
             </div>
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
+            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'var(--card)', overflow: 'hidden' }}>
               {[
                 { found: di.imageIssues.oversizedCount === 0, label: 'Image optimisation', detail: di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised.', note: 'Well-optimised images keep the site fast and improve both user experience and search ranking.' },
                 { found: di.contrastPassed, label: 'Colour contrast', detail: di.contrastPassed ? 'All text meets WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issue${(di.contrastIssues ?? 0) > 1 ? 's' : ''} detected.`, note: 'Good contrast ensures text is readable for all users including those with visual impairments.' },
@@ -673,7 +678,7 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
           </div>
           <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
 
-          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'var(--card)', overflow: 'hidden' }}>
             {cats.map((cat, i) => {
               const color = frictionStatusColor(cat.status)
               const isGood = color === 'emerald'
@@ -812,7 +817,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
           <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
 
           {/* All checks in one unified bordered container */}
-          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'var(--card)', overflow: 'hidden' }}>
             {displayed.map((ch, i) => (
               <div key={`${ch.label}-${i}`} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>

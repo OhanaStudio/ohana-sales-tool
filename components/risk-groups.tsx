@@ -48,6 +48,14 @@ const groupConfig: Record<RiskLevel, GroupConfig> = {
 
 function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: GroupConfig; isLast: boolean }) {
   const icon = cardIcons[card.label] ?? <Eye className="h-5 w-5" />
+  
+  // Sort bullets: prioritize by severity (fail first, then warn, then pass)
+  // This assumes bullets might have different types - if they don't, just keep original order
+  const sortedBullets = card.bullets.map((bullet, i) => ({
+    bullet,
+    note: card.bulletNotes?.[i],
+    index: i,
+  }))
 
   return (
     <div className={cn("p-6 md:px-8", !isLast && "border-b border-border")}>
@@ -70,15 +78,15 @@ function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: Gro
         </span>
       </div>
       <ul className="space-y-4 mb-4">
-        {card.bullets.map((bullet, i) => (
+        {sortedBullets.map(({ bullet, note }, i) => (
           <li key={`bullet-${card.label}-${i}`}>
             <div className="text-sm font-semibold text-muted-foreground leading-relaxed flex gap-2">
               <span className="text-muted-foreground shrink-0">{"--"}</span>
               <span>{bullet}</span>
             </div>
-            {card.bulletNotes?.[i] && (
+            {note && (
               <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed">
-                Note: {card.bulletNotes[i]}
+                Note: {note}
               </p>
             )}
           </li>
