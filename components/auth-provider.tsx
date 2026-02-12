@@ -24,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hasHint = typeof document !== "undefined" && document.cookie.includes("ohana-auth-hint=1")
   const [authenticated, setAuthenticated] = useState(hasHint)
   const [username, setUsername] = useState<string | null>(null)
-  const [checked, setChecked] = useState(hasHint)
 
   useEffect(() => {
     fetch("/api/auth", { credentials: "same-origin" })
@@ -38,7 +37,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUsername(data.username || "Ollie Brown")
       })
       .catch(() => {})
-      .finally(() => setChecked(true))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = async (password: string): Promise<boolean> => {
@@ -64,8 +62,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthenticated(false)
     setUsername(null)
   }
-
-  if (!checked) return null
 
   return (
     <AuthContext.Provider value={{ authenticated, username, login, logout }}>
