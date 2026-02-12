@@ -2,11 +2,12 @@
 
 import React, { useState } from "react"
 import { useAuth } from "./auth-provider"
-import { Lock } from "lucide-react"
+import { Lock, User } from "lucide-react"
 import Image from "next/image"
 
 export function LoginGate({ children }: { children: React.ReactNode }) {
   const { authenticated, login } = useAuth()
+  const [username, setUsername] = useState("Ollie Brown")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -38,11 +39,23 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
           />
           <h1 className="font-serif text-2xl text-foreground mb-2">Welcome back</h1>
           <p className="text-sm text-muted-foreground">
-            Enter the password to continue.<br></br> notber-8syjvi-sivnaV
+            Enter your credentials to continue.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              className="w-full rounded-lg border border-border bg-card text-foreground pl-11 pr-4 py-3.5 text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[48px]"
+              disabled={loading}
+              aria-label="Username"
+            />
+          </div>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
@@ -67,7 +80,7 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
             disabled={loading || !password.trim()}
             className="rounded-lg bg-foreground text-background px-6 py-3.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-40 min-h-[48px]"
           >
-            {loading ? "Checking..." : "Sign in"}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>
