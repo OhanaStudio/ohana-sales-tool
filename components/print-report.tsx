@@ -412,7 +412,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <p style={{ margin: 0, fontSize: 9, fontWeight: 600, color: C.black }}>{label}</p>
         </div>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
-        <div style={{ background: '#f5f5f4', borderRadius: 8, padding: '5px 8px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div style={{ background: 'hsl(var(--muted) / .4)', borderRadius: 8, padding: '5px 8px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div style={{ paddingRight: 8, borderRight: '1px solid rgba(0,0,0,0.08)' }}>
             <p style={{ margin: '0 0 2px', fontSize: 6, color: C.light, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 600 }}>MOBILE</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
