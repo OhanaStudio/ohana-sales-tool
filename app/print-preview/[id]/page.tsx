@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import type { AuditResult } from "@/lib/types"
 import {
   formatDate,
@@ -29,6 +29,7 @@ const CONTENT_W = A4_W - 97.5 - 92 // matches print-report: PAD_L + PAD_R
 
 export default function PrintPreviewPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const id = params.id as string
   const [result, setResult] = useState<AuditResult | null>(null)
   const [recapText, setRecapText] = useState<string>("")
@@ -69,6 +70,15 @@ export default function PrintPreviewPage() {
     }
     load()
   }, [id])
+
+  // Auto-trigger print dialog when arriving from the report page's "Download PDF" button
+  useEffect(() => {
+    if (!loading && result && searchParams.get('auto') === 'print') {
+      // Small delay to ensure fonts/images are loaded and paint is complete
+      const timer = setTimeout(() => window.print(), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [loading, result, searchParams])
 
   if (loading) {
     return (
@@ -115,20 +125,47 @@ export default function PrintPreviewPage() {
       <style>{`
         @media print {
           @page { size: A4; margin: 0; }
-          body { margin: 0; padding: 0; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          html, body { margin: 0; padding: 0; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .print-chrome { display: none !important; }
-          .print-page-wrapper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
+          .print-page-wrapper {
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 0 !important;
+            align-items: flex-start !important;
+          }
           .print-page {
+            /* The content is designed at ${A4_W}x${A4_H}px.
+               A4 at 96dpi = ~794x1123px.
+               We scale the 595px content to fill the full 794px page width. */
             width: ${A4_W}px !important;
             height: ${A4_H}px !important;
             transform: scale(${PRINT_SCALE}) !important;
             transform-origin: top left !important;
-            page-break-after: always;
-            break-after: page;
-            overflow: hidden;
+            /* Reserve the SCALED dimensions in flow so the browser
+               lays out each page correctly on the A4 sheet. */
+            margin-right: -${A4_W}px !important;
+            margin-bottom: -${A4_H}px !important;
+            padding: 0 !important;
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
+            break-after: page !important;
+            break-inside: avoid !important;
+            overflow: hidden !important;
             box-shadow: none !important;
           }
-          .print-page:last-child { page-break-after: auto; break-after: auto; }
+          /* Each page needs a wrapper that reserves the full A4 size in flow */
+          .print-page-flow {
+            width: ${Math.round(A4_W * PRINT_SCALE)}px !important;
+            height: ${Math.round(A4_H * PRINT_SCALE)}px !important;
+            overflow: hidden !important;
+            page-break-after: always !important;
+            break-after: page !important;
+          }
+          .print-page-flow:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
+          }
         }
       `}</style>
 
@@ -158,7 +195,7 @@ export default function PrintPreviewPage() {
         {/* Pages */}
         <div className="print-page-wrapper" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 40 }}>
           {pages.map((page, i) => (
-            <div key={page.label}>
+            <div key={page.label} className="print-page-flow">
               {/* Page label */}
               <p className="print-chrome" style={{
                 fontFamily: "system-ui, sans-serif",
@@ -172,7 +209,7 @@ export default function PrintPreviewPage() {
                 Page {i + 1} - {page.label}
               </p>
 
-              {/* A4 frame — 1:1 on screen, scaled up for print */}
+              {/* A4 frame — 1:1 on screen, scaled up to fill A4 for print */}
               <div
                 className="print-page"
                 style={{

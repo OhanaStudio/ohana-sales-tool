@@ -126,7 +126,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const [rerunning, setRerunning] = useState(false)
 
   const handlePrint = () => {
-    window.print()
+    window.open(`/print-preview/${result.id}?auto=print`, '_blank')
   }
 
   const handleRerun = async () => {
