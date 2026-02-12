@@ -134,56 +134,87 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const handlePrint = async () => {
     setIsPrintingPDF(true)
     try {
-      // Fetch the print-preview page HTML
-      const response = await fetch(`/print-preview/${result.id}`)
-      const html = await response.text()
-
-      // Create a temporary container with the HTML
-      const tempContainer = document.createElement('div')
-      tempContainer.innerHTML = html
-      tempContainer.style.position = 'absolute'
-      tempContainer.style.left = '-9999px'
-      tempContainer.style.top = '-9999px'
-      tempContainer.style.width = '595px' // Print report width
-      document.body.appendChild(tempContainer)
-
-      // Wait for images to load
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      // Generate PDF from the temp container
-      const printElement = tempContainer.querySelector('[role="document"]')
-      if (printElement) {
-        const canvas = await (await import('html2canvas')).default(printElement as HTMLElement, {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          backgroundColor: '#ffffff',
-        })
-
-        const { jsPDF } = await import('jspdf')
-        const imgWidth = canvas.width
-        const imgHeight = canvas.height
-        const pdfWidth = (imgWidth / 96) * 72
-        const pdfHeight = (imgHeight / 96) * 72
-
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'pt',
-          format: [pdfWidth, pdfHeight],
-        })
-
-        const imgData = canvas.toDataURL('image/png', 0.95)
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth / 96 * 72, imgHeight / 96 * 72)
-
-        // Force download
-        const fileName = `health-check-${result.url.replace(/[^a-z0-9]/gi, '-').slice(0, 30)}.pdf`
-        pdf.save(fileName)
+      console.log("[v0] Starting PDF generation...")
+      
+      // Create an iframe to load the print preview
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.style.position = 'absolute'
+      iframe.style.width = '595px'
+      iframe.style.height = '100vh'
+      iframe.src = `/print-preview/${result.id}`
+      document.body.appendChild(iframe)
+      
+      console.log("[v0] Created iframe, waiting for load...")
+      
+      // Wait for iframe to load
+      await new Promise<void>((resolve, reject) => {
+        iframe.onload = () => resolve()
+        iframe.onerror = () => reject(new Error('Failed to load print preview'))
+        setTimeout(() => reject(new Error('Iframe load timeout')), 10000)
+      })
+      
+      console.log("[v0] Iframe loaded, waiting for content to render...")
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      
+      const html2canvas = (await import('html2canvas')).default
+      console.log("[v0] Generating canvas from iframe...")
+      
+      // Get the content element from iframe
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+      if (!iframeDoc) {
+        throw new Error('Could not access iframe document')
       }
-
+      
+      const printWrapper = iframeDoc.querySelector('.print-page-wrapper')
+      if (!printWrapper) {
+        throw new Error('Could not find print wrapper in iframe')
+      }
+      
+      console.log("[v0] Found print wrapper, generating canvas...")
+      
+      const canvas = await html2canvas(printWrapper as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        allowTaint: true,
+        imageTimeout: 10000,
+      })
+      
+      console.log("[v0] Canvas generated, dimensions:", canvas.width, canvas.height)
+      
+      const { jsPDF } = await import('jspdf')
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      
+      // Use the actual dimensions, not A4
+      const pdfWidth = (imgWidth / 2) // Divide by scale
+      const pdfHeight = (imgHeight / 2)
+      
+      console.log("[v0] Creating PDF with dimensions:", pdfWidth, pdfHeight)
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [pdfWidth, pdfHeight],
+        compress: true,
+      })
+      
+      const imgData = canvas.toDataURL('image/png', 0.95)
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      
+      // Force download
+      const fileName = `health-check-${result.url.replace(/[^a-z0-9]/gi, '-').slice(0, 30)}.pdf`
+      console.log("[v0] Saving PDF as:", fileName)
+      pdf.save(fileName)
+      console.log("[v0] PDF download initiated successfully")
+      
       // Clean up
-      document.body.removeChild(tempContainer)
+      document.body.removeChild(iframe)
     } catch (error) {
-      console.error('Error generating PDF:', error)
+      console.error("[v0] Error generating PDF:", error)
+      alert(`Error generating PDF: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsPrintingPDF(false)
     }
