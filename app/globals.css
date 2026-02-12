@@ -80,8 +80,9 @@
     margin: 0;
   }
 
-  /* Hide the web UI */
-  .no-print {
+  /* Hide the web UI chrome during printing */
+  .no-print,
+  .print-chrome {
     display: none !important;
   }
 
