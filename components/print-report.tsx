@@ -439,7 +439,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     <div style={PAGE}>
       <PH url={r.url} date={date} riskLabel={riskLabel} />
       <div style={{ ...BODY, gap: 16 }}>
-        {r.platformInfo && (
+        {r.platformInfo?.platform && (
           <div>
             <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Platform detection</h2>
             <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>

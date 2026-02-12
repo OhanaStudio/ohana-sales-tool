@@ -271,7 +271,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         {/* ──────────────────────────────────────────────
             PLATFORM
         ────────────────────────────────────────────── */}
-        {result.platformInfo && (
+        {result.platformInfo?.platform && (
           <PrintSection
             enabled={sections.platform}
             className="mb-10 print-break-avoid print-compact"

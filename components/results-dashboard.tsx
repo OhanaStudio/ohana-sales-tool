@@ -76,7 +76,7 @@ export function ResultsDashboard({ result }: { result: AuditResult }) {
         </div>
       </div>
 
-      {result.platformInfo && (
+      {result.platformInfo?.platform && (
         <PlatformInfoSection info={result.platformInfo} />
       )}
 
