@@ -790,6 +790,16 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
   const badgeColor = failCount > 0 ? '#b91c1c' : warnCount > 0 ? '#92400e' : '#065f46'
   const badgeLabel = issueCount === 0 ? 'All clear' : `${issueCount} Accessibility Risk${issueCount !== 1 ? 's' : ''}`
 
+  // Sort: fails first, then warns, then passes
+  const sorted = [...rows].sort((a, b) => {
+    const statusOrder: Record<string, number> = { fail: 0, warn: 1, pass: 2 }
+    return (statusOrder[a.status] || 3) - (statusOrder[b.status] || 3)
+  })
+
+  const MAX_ITEMS = 12
+  const displayed = sorted.slice(0, MAX_ITEMS)
+  const hidden = sorted.length - displayed.length
+
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} />
@@ -803,7 +813,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
 
           {/* All checks in one unified bordered container */}
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
-            {rows.map((ch, i) => (
+            {displayed.map((ch, i) => (
               <div key={`${ch.label}-${i}`} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={ch.status} /></div>
@@ -818,6 +828,13 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
                 </div>
               </div>
             ))}
+            
+            {/* Show "+X more" indicator if there are hidden items */}
+            {hidden > 0 && (
+              <div style={{ padding: '6px 10px', borderTop: `1px solid #e7e5e4`, background: '#fafaf8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 7.5, fontWeight: 600, color: C.light }}>+ {hidden} more check{hidden !== 1 ? 's' : ''}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
