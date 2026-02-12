@@ -76,7 +76,7 @@ export function RiskCard({
                     <span>{bullet}</span>
                   </div>
                   {card.bulletNotes?.[i] && (
-                    <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed">
+                    <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed p-2 rounded bg-[#4040400f]">
                       Note: {card.bulletNotes[i]}
                     </p>
                   )}
@@ -128,7 +128,7 @@ export function RiskCard({
               <span>{bullet}</span>
             </div>
             {card.bulletNotes?.[i] && (
-              <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed">
+              <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed p-2 rounded bg-[#4040400f]">
                 Note: {card.bulletNotes[i]}
               </p>
             )}

@@ -97,7 +97,7 @@ function CategoryRow({
           {detail}
         </p>
         {note && (
-          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed">Note: {note}</p>
+          <p className="text-xs text-muted-foreground italic mt-1 leading-relaxed p-2 rounded bg-[#4040400f]">Note: {note}</p>
         )}
       </div>
     </div>
