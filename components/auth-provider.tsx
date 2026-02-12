@@ -23,16 +23,21 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const hasHint = typeof document !== "undefined" && document.cookie.includes("ohana-auth-hint=1")
-  const [authenticated, setAuthenticated] = useState(hasHint)
+  const [authenticated, setAuthenticated] = useState(false)
   const [email, setEmail] = useState<string | null>(null)
   const [name, setName] = useState<string | null>(null)
+  const [isHydrated, setIsHydrated] = useState(false)
 
+  // Only run on client after hydration
   useEffect(() => {
+    setIsHydrated(true)
+    
+    const hasHint = document.cookie.includes("ohana-auth-hint=1")
+    setAuthenticated(hasHint)
+
     fetch("/api/auth", { credentials: "same-origin" })
       .then((res) => {
         if (res.ok) return res.json()
-        else if (!hasHint) setAuthenticated(false)
         throw new Error("Not authenticated")
       })
       .then((data) => {
@@ -40,8 +45,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setEmail(data.email || "ollie@ohana.studio")
         setName(data.name || "Ollie Brown")
       })
-      .catch(() => {})
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+      .catch(() => {
+        setAuthenticated(false)
+      })
+  }, [])
 
   const login = async (password: string): Promise<boolean> => {
     const res = await fetch("/api/auth", {
@@ -67,6 +74,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthenticated(false)
     setEmail(null)
     setName(null)
+  }
+
+  // Don't render until hydrated to prevent mismatch
+  if (!isHydrated) {
+    return children
   }
 
   return (
