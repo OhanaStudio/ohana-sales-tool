@@ -1,11 +1,6 @@
 "use client"
 
-import dynamic from "next/dynamic"
-
-const ReportPageClient = dynamic(
-  () => import("@/components/report-page-client"),
-  { ssr: false }
-)
+import ReportPageClient from "@/components/report-page-client"
 
 export default function ReportPage() {
   return <ReportPageClient />
