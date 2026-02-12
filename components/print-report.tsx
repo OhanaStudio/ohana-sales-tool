@@ -325,9 +325,10 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
             <div key={g.level}>
               <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>{c.heading}</h2>
               <p style={{ margin: '0 0 8px', fontSize: 8, fontStyle: 'italic', color: C.light }}>{c.sub}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {g.cards.map((card) => (
-                  <div key={card.label} style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, padding: '10px 12px', background: 'rgb(255 255 255 / 60%)' }}>
+              {/* Single bordered container for all cards in this risk group */}
+              <div style={{ border: `1px solid ${c.borderC}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
+                {g.cards.map((card, ci) => (
+                  <div key={card.label} style={{ padding: '10px 12px', borderTop: ci > 0 ? `1px solid #e7e5e4` : 'none' }}>
                     {/* Header: icon + title + badge */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
