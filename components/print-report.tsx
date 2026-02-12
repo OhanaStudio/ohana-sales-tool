@@ -380,7 +380,7 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
       <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', background: 'rgb(255 255 255 / 60%)' }}>
         {/* Icon + Label */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, margin: '0 0 6px' }}>
-          {icon && <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: 4, background: '#f5f5f4', color: C.light, flexShrink: 0 }}>{icon}</span>}
+          {icon && <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 10, height: 10, borderRadius: 2, background: '#f5f5f4', color: C.light, flexShrink: 0 }}>{icon}</span>}
           <p style={{ margin: 0, fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
         </div>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
@@ -437,13 +437,13 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
             <div style={{ gridColumn: 'span 3' }}><Tile icon={<ImageIcon style={{ width: 10, height: 10 }} />} label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} /></div>
             <div style={{ gridColumn: 'span 3' }}><Tile icon={<Paintbrush style={{ width: 10, height: 10 }} />} label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} /></div>
             {/* Row 2: 3 cards, each spanning 2 cols */}
-            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Move style={{ width: 10, height: 10 }} />} label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Clock style={{ width: 10, height: 10 }} />} label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Gauge style={{ width: 10, height: 10 }} />} label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Move style={{ width: 6, height: 6 }} />} label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Clock style={{ width: 6, height: 6 }} />} label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Gauge style={{ width: 6, height: 6 }} />} label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} /></div>
             {/* Row 3: 3 cards, each spanning 2 cols */}
-            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Zap style={{ width: 10, height: 10 }} />} label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Eye style={{ width: 10, height: 10 }} />} label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile icon={<ShieldCheck style={{ width: 10, height: 10 }} />} label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Zap style={{ width: 6, height: 6 }} />} label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Eye style={{ width: 6, height: 6 }} />} label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<ShieldCheck style={{ width: 6, height: 6 }} />} label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} /></div>
           </div>
         </div>
       </div>
