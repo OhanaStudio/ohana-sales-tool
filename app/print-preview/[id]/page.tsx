@@ -135,32 +135,33 @@ export default function PrintPreviewPage() {
             align-items: flex-start !important;
           }
           .print-page {
-            /* The content is designed at ${A4_W}x${A4_H}px.
+            /* The content is designed at ${A4_W}x595px.
                A4 at 96dpi = ~794x1123px.
                We scale the 595px content to fill the full 794px page width. */
             width: ${A4_W}px !important;
-            height: ${A4_H}px !important;
+            /* Remove fixed height to allow content to flow across pages */
+            min-height: ${A4_H}px !important;
+            height: auto !important;
             transform: scale(${PRINT_SCALE}) !important;
             transform-origin: top left !important;
             /* Reserve the SCALED dimensions in flow so the browser
                lays out each page correctly on the A4 sheet. */
             margin-right: -${A4_W}px !important;
-            margin-bottom: -${A4_H}px !important;
             padding: 0 !important;
-            page-break-after: always !important;
-            page-break-inside: avoid !important;
-            break-after: page !important;
-            break-inside: avoid !important;
-            overflow: hidden !important;
+            page-break-inside: auto !important;
+            break-inside: auto !important;
+            /* Allow overflow to naturally create pages */
+            overflow: visible !important;
             box-shadow: none !important;
           }
-          /* Each page needs a wrapper that reserves the full A4 size in flow */
+          /* Each page wrapper allows natural overflow to create new pages */
           .print-page-flow {
             width: ${Math.round(A4_W * PRINT_SCALE)}px !important;
-            height: ${Math.round(A4_H * PRINT_SCALE)}px !important;
-            overflow: hidden !important;
-            page-break-after: always !important;
-            break-after: page !important;
+            height: auto !important;
+            min-height: ${Math.round(A4_H * PRINT_SCALE)}px !important;
+            overflow: visible !important;
+            page-break-inside: auto !important;
+            break-inside: auto !important;
           }
           .print-page-flow:last-child {
             page-break-after: auto !important;
