@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { useScrollReveal } from "@/hooks/use-scroll-reveal"
+import { generatePDF } from "@/lib/pdf-generator"
 
 import React from "react"
 import { useState } from "react"
@@ -128,8 +129,64 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
   const [rerunning, setRerunning] = useState(false)
 
-  const handlePrint = () => {
-    window.open(`/print-preview/${result.id}?auto=print`, '_blank')
+  const [isPrintingPDF, setIsPrintingPDF] = useState(false)
+
+  const handlePrint = async () => {
+    setIsPrintingPDF(true)
+    try {
+      // Fetch the print-preview page HTML
+      const response = await fetch(`/print-preview/${result.id}`)
+      const html = await response.text()
+
+      // Create a temporary container with the HTML
+      const tempContainer = document.createElement('div')
+      tempContainer.innerHTML = html
+      tempContainer.style.position = 'absolute'
+      tempContainer.style.left = '-9999px'
+      tempContainer.style.top = '-9999px'
+      tempContainer.style.width = '595px' // Print report width
+      document.body.appendChild(tempContainer)
+
+      // Wait for images to load
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      // Generate PDF from the temp container
+      const printElement = tempContainer.querySelector('[role="document"]')
+      if (printElement) {
+        const canvas = await (await import('html2canvas')).default(printElement as HTMLElement, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+        })
+
+        const { jsPDF } = await import('jspdf')
+        const imgWidth = canvas.width
+        const imgHeight = canvas.height
+        const pdfWidth = (imgWidth / 96) * 72
+        const pdfHeight = (imgHeight / 96) * 72
+
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'pt',
+          format: [pdfWidth, pdfHeight],
+        })
+
+        const imgData = canvas.toDataURL('image/png', 0.95)
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth / 96 * 72, imgHeight / 96 * 72)
+
+        // Force download
+        const fileName = `health-check-${result.url.replace(/[^a-z0-9]/gi, '-').slice(0, 30)}.pdf`
+        pdf.save(fileName)
+      }
+
+      // Clean up
+      document.body.removeChild(tempContainer)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+    } finally {
+      setIsPrintingPDF(false)
+    }
   }
 
   const handleRerun = async () => {
@@ -197,11 +254,12 @@ export function ReportContent({ result }: { result: AuditResult }) {
           <button
             type="button"
             onClick={handlePrint}
+            disabled={isPrintingPDF}
             aria-label="Download PDF"
             title="Download PDF"
-            className="inline-flex items-center justify-center w-10 h-10 bg-foreground text-background hover:opacity-90 transition-opacity"
+            className="inline-flex items-center justify-center w-10 h-10 bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            <Download className="h-4 w-4" />
+            <Download className={`h-4 w-4 ${isPrintingPDF ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
