@@ -116,9 +116,8 @@
     content: none;
   }
 
-  /* Scale 595px-wide pages to fill A4 paper (210mm ≈ 793.7px at 96dpi) */
+  /* Scale 595px-wide pages to fit on print area */
   .print-report-wrapper {
-    transform-origin: top left;
-    transform: scale(1.334);
+    /* Print at native size - no scaling */
   }
 }
