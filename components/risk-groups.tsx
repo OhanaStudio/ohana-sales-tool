@@ -77,7 +77,7 @@ function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: Gro
               <span>{bullet}</span>
             </div>
             {card.bulletNotes?.[i] && (
-              <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed p-2 rounded bg-[#4040400f]">
+              <p className="text-xs text-muted-foreground italic ml-5 mt-1 leading-relaxed pt-1 bg-transparent">
                 Note: {card.bulletNotes[i]}
               </p>
             )}

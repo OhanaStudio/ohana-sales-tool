@@ -182,7 +182,7 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
         <span style={{ fontWeight: 600, fontSize: 8, color: C.black }}>{label}</span>
       </div>
       {detail && <p style={{ margin: '1px 0 0 11px', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{detail}</p>}
-      {note && <p style={{ margin: '1px 0 0 11px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {note}</p>}
+      {note && <p style={{ margin: '1px 0 0 11px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35, padding: '4px 0 0 0', background: 'transparent' }}>Note: {note}</p>}
     </div>
   )
 }
@@ -369,7 +369,7 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
                           <span style={{ fontSize: 8, color: C.grey, lineHeight: 1.5 }}>{b}</span>
                         </div>
                         {card.bulletNotes?.[bi] && (
-                          <p style={{ margin: '2px 0 0 14px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {card.bulletNotes[bi]}</p>
+                          <p style={{ margin: '2px 0 0 14px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: '4px 0 0 0', background: 'transparent' }}>Note: {card.bulletNotes[bi]}</p>
                         )}
                       </div>
                     ))}
@@ -569,7 +569,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
                   <div style={{ flex: 1 }}>
                     <p style={{ margin: '0 0 1px', fontWeight: 600, fontSize: 8.5, color: C.black }}>{item.label}</p>
                     {item.detail && <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.45 }}>{item.detail}</p>}
-                    {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {item.note}</p>}
+                    {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: '4px 0 0 0', background: 'transparent' }}>Note: {item.note}</p>}
                   </div>
                 </div>
               </div>
@@ -595,7 +595,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
                     <div style={{ flex: 1 }}>
                       <p style={{ margin: '0 0 1px', fontWeight: 600, fontSize: 8.5, color: C.black }}>{item.label}</p>
                       {item.detail && <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.45 }}>{item.detail}</p>}
-                      {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {item.note}</p>}
+                      {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: '4px 0 0 0', background: 'transparent' }}>Note: {item.note}</p>}
                     </div>
                   </div>
                 </div>
@@ -683,7 +683,7 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
                     <div style={{ flex: 1 }}>
                       <p style={{ margin: '0 0 1px', fontWeight: 600, fontSize: 8.5, color: C.black }}>{cat.title}</p>
                       <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.5 }}>{detail}</p>
-                      {note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {note}</p>}
+                      {note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: '4px 0 0 0', background: 'transparent' }}>Note: {note}</p>}
                     </div>
                   </div>
                 </div>
@@ -809,7 +809,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
                       {ch.wcag && <span style={{ fontSize: 6.5, fontWeight: 500, color: C.light, background: '#f5f5f4', borderRadius: 3, padding: '0.5px 4px' }}>{ch.wcag}</span>}
                     </div>
                     <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{ch.detail}</p>
-                    {ch.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.45, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {ch.note}</p>}
+                    {ch.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.45, padding: '4px 0 0 0', background: 'transparent' }}>Note: {ch.note}</p>}
                   </div>
                 </div>
               </div>
