@@ -752,6 +752,14 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
     { label: 'Cookie consent (GDPR)', wcag: 'ePrivacy / GDPR', status: a.cookieConsentFound ? 'pass' : 'warn', detail: a.cookieConsentFound ? 'A cookie consent mechanism was detected.' : 'No cookie consent banner detected.', note: a.cookieConsentFound ? 'Having a cookie consent mechanism helps ensure compliance with EU privacy regulations.' : 'EU regulations require websites to obtain consent before setting non-essential cookies.' },
   )
 
+  // Merge EAA issues into the same rows array so everything appears in one list
+  if (a.eaaIssues.length > 0) {
+    for (const issue of a.eaaIssues) {
+      const parsed = parseEaaIssue(issue)
+      rows.push({ label: parsed.label, status: 'fail', detail: parsed.detail, wcag: parsed.wcagRef || undefined, note: parsed.note || undefined })
+    }
+  }
+
   const failCount = rows.filter((r) => r.status === 'fail').length
   const warnCount = rows.filter((r) => r.status === 'warn').length
   const issueCount = failCount + warnCount
@@ -770,10 +778,10 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
           </div>
           <Sub>Checks aligned to the European Accessibility Act (EAA) and WCAG 2.1 AA.</Sub>
 
-          {/* Main checks in a rounded bordered container */}
+          {/* All checks in one unified bordered container */}
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
             {rows.map((ch, i) => (
-              <div key={ch.label} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
+              <div key={`${ch.label}-${i}`} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={ch.status} /></div>
                   <div style={{ flex: 1 }}>
@@ -789,33 +797,6 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
             ))}
           </div>
         </div>
-
-        {/* EAA Issue Summary — matching report's parsed layout */}
-        {a.eaaIssues.length > 0 && (
-          <div>
-            <p style={{ margin: '0 0 4px', fontSize: 7, fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: C.light }}>EAA / WCAG issue summary</p>
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
-              {a.eaaIssues.map((issue, i) => {
-                const parsed = parseEaaIssue(issue)
-                return (
-                  <div key={i} style={{ padding: '5px 10px', borderTop: i > 0 ? `1px solid #e7e5e4` : 'none' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-                      <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status="fail" /></div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
-                          <span style={{ fontWeight: 500, fontSize: 8.5, color: C.black }}>{parsed.label}</span>
-                          {parsed.wcagRef && <span style={{ fontSize: 6.5, fontWeight: 500, color: C.light, background: '#f5f5f4', borderRadius: 3, padding: '0.5px 4px' }}>{parsed.wcagRef}</span>}
-                        </div>
-                        <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{parsed.detail}</p>
-                        {parsed.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.45 }}>Note: {parsed.note}</p>}
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
       </div>
       <PF />
     </div>
