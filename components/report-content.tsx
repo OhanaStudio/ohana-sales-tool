@@ -193,7 +193,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
       const width = canvas.width / 2
       const height = canvas.height / 2
       
-      console.log("[v0] Creating PDF, dimensions:', width, 'x', height)
+      console.log("[v0] Creating PDF, dimensions:", width, 'x', height)
       
       const pdf = new jsPDF({
         orientation: 'portrait',
