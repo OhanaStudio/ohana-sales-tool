@@ -14,7 +14,7 @@ import {
   FrictionPage,
   A11yPage,
 } from "@/components/print-report"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, Printer } from "lucide-react"
 
 
 /**
@@ -200,18 +200,32 @@ export default function PrintPreviewPage() {
       <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: "40px 0" }}>
         {/* Title bar */}
         <div className="print-chrome" style={{ maxWidth: A4_W, margin: "0 auto 32px", padding: "0 0 0 0" }}>
-          <a
-            href={`/report/${id}`}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
-              color: "#525252", textDecoration: "none", marginBottom: 16,
-              minHeight: 44,
-            }}
-          >
-            <ArrowLeft style={{ width: 14, height: 14 }} />
-            Back to report
-          </a>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <a
+              href={`/report/${id}`}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+                color: "#525252", textDecoration: "none",
+                minHeight: 44,
+              }}
+            >
+              <ArrowLeft style={{ width: 14, height: 14 }} />
+              Back to report
+            </a>
+            <button
+              onClick={() => window.print()}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+                color: "#fff", backgroundColor: "#171717", border: "none", padding: "8px 12px",
+                borderRadius: 4, cursor: "pointer", minHeight: 44,
+              }}
+            >
+              <Printer style={{ width: 14, height: 14 }} />
+              Print
+            </button>
+          </div>
           <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#171717", margin: "0 0 4px" }}>
             Print Preview
           </h1>

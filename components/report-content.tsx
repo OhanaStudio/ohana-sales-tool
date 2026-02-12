@@ -133,8 +133,31 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const handlePrint = () => {
     setIsPrintingPDF(true)
     try {
-      // Navigate to print preview with auto-print flag
-      window.location.href = `/print-preview/${result.id}?auto=print`
+      // Create a hidden iframe to load the print preview
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.src = `/print-preview/${result.id}`
+      document.body.appendChild(iframe)
+
+      // Wait for iframe to load, then trigger print
+      iframe.onload = () => {
+        setTimeout(() => {
+          iframe.contentWindow?.print()
+          // Clean up after printing
+          setTimeout(() => {
+            document.body.removeChild(iframe)
+            setIsPrintingPDF(false)
+          }, 500)
+        }, 500)
+      }
+
+      // Timeout fallback
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe)
+          setIsPrintingPDF(false)
+        }
+      }, 10000)
     } catch (error) {
       console.error("[v0] Print error:", error)
       alert(`Error: ${error instanceof Error ? error.message : 'Print failed'}`)
