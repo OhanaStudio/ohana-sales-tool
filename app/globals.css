@@ -116,8 +116,9 @@
     content: none;
   }
 
-  /* Scale 595px-wide pages to fit on print area */
+  /* Scale 595px-wide pages to fit on A4 paper printable area */
   .print-report-wrapper {
-    /* Print at native size - no scaling */
+    transform-origin: top center;
+    transform: scaleX(1.33);
   }
 }
