@@ -580,8 +580,8 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
         {allClear && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '5px 0' }}>
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
-              )}
-            </div>
+          </div>
+        )}
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
             <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
               {[
