@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils"
 import { useScrollReveal } from "@/hooks/use-scroll-reveal"
-import { generatePDF } from "@/lib/pdf-generator"
 
 import React from "react"
 import { useState } from "react"
@@ -134,87 +133,25 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const handlePrint = async () => {
     setIsPrintingPDF(true)
     try {
-      console.log("[v0] Starting PDF generation...")
-      
-      // Fetch the print preview page HTML
-      const response = await fetch(`/print-preview/${result.id}`)
-      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`)
-      
-      const html = await response.text()
-      console.log("[v0] Fetched HTML, parsing...")
-      
-      // Parse HTML to extract pages
-      const parser = new DOMParser()
-      const doc = parser.parseFromString(html, 'text/html')
-      const pagesContainer = doc.querySelector('.print-page-wrapper')
-      
-      if (!pagesContainer) {
-        throw new Error('Could not find pages in print preview')
+      // Open print preview in a new window and trigger print dialog
+      const printWindow = window.open(`/print-preview/${result.id}`, 'print-preview')
+      if (!printWindow) {
+        throw new Error('Could not open print preview. Check your popup blocker.')
       }
-      
-      // Create temporary DOM container
-      const tempDiv = document.createElement('div')
-      tempDiv.style.position = 'fixed'
-      tempDiv.style.left = '-10000px'
-      tempDiv.style.top = '-10000px'
-      tempDiv.style.width = '595px'
-      tempDiv.style.visibility = 'hidden'
-      tempDiv.style.zIndex = '-9999'
-      tempDiv.style.pointerEvents = 'none'
-      
-      // Clone and append
-      const cloned = pagesContainer.cloneNode(true) as HTMLElement
-      tempDiv.appendChild(cloned)
-      document.body.appendChild(tempDiv)
-      
-      console.log("[v0] Temp container created, waiting for render...")
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      
-      // Capture with html2canvas
-      const html2canvas = (await import('html2canvas')).default
-      console.log("[v0] Capturing canvas...")
-      
-      const canvas = await html2canvas(tempDiv, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        allowTaint: true,
-        imageTimeout: 15000,
-      })
-      
-      console.log("[v0] Canvas ready, size:", canvas.width, 'x', canvas.height)
-      
-      // Create PDF
-      const { jsPDF } = await import('jspdf')
-      const imgData = canvas.toDataURL('image/png', 0.95)
-      
-      // Account for the 2x scale
-      const width = canvas.width / 2
-      const height = canvas.height / 2
-      
-      console.log("[v0] Creating PDF, dimensions:", width, 'x', height)
-      
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [width, height],
-      })
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height)
-      
-      // Download
-      const fileName = `health-check-${result.url.replace(/[^a-z0-9]/gi, '-').slice(0, 30)}.pdf`
-      console.log("[v0] Saving:", fileName)
-      pdf.save(fileName)
-      
-      // Cleanup
-      document.body.removeChild(tempDiv)
-      console.log("[v0] PDF complete!")
-      
+
+      // Wait for page to load, then open print dialog
+      printWindow.addEventListener('load', () => {
+        setTimeout(() => {
+          printWindow.print()
+          // Optionally close the window after printing
+          printWindow.addEventListener('afterprint', () => {
+            printWindow.close()
+          })
+        }, 1500)
+      }, { once: true })
     } catch (error) {
-      console.error("[v0] PDF failed:", error)
-      alert(`Error: ${error instanceof Error ? error.message : 'PDF generation failed'}`)
+      console.error("[v0] Print error:", error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Print failed'}`)
     } finally {
       setIsPrintingPDF(false)
     }
