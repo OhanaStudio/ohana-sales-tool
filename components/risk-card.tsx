@@ -52,22 +52,24 @@ export function RiskCard({
       >
         <div className="flex flex-col md:flex-row">
           <div className="flex-1 p-6 md:p-8">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground">
-                {icon}
+            <div className="mb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground shrink-0">
+                  {icon}
+                </div>
+                <h3 className="font-sans text-xl font-bold text-card-foreground">
+                  {card.label}
+                </h3>
               </div>
               <span
                 className={cn(
-                  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium mt-2 ml-[52px]",
                   config.badge
                 )}
               >
                 {config.label}
               </span>
             </div>
-            <h3 className="font-sans text-xl font-bold text-card-foreground mb-3">
-              {card.label}
-            </h3>
             <ul className="space-y-4 mb-4">
               {card.bullets.map((bullet, i) => (
                 <li key={`bullet-${card.label}-${i}`}>
@@ -104,22 +106,24 @@ export function RiskCard({
         config.border
       )}
     >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground">
-          {icon}
+      <div className="mb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground shrink-0">
+            {icon}
+          </div>
+          <h3 className="font-sans text-lg font-bold text-card-foreground">
+            {card.label}
+          </h3>
         </div>
         <span
           className={cn(
-            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium mt-2 ml-[52px]",
             config.badge
           )}
         >
           {config.label}
         </span>
       </div>
-      <h3 className="font-sans text-lg font-bold text-card-foreground mb-3">
-        {card.label}
-      </h3>
       <ul className="space-y-4 mb-4 flex-1">
         {card.bullets.map((bullet, i) => (
           <li key={`bullet-${card.label}-${i}`}>

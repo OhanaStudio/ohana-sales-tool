@@ -51,9 +51,9 @@ function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: Gro
 
   return (
     <div className={cn("p-6 md:px-8", !isLast && "border-b border-border")}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted/50 text-muted-foreground shrink-0">
             {icon}
           </div>
           <h3 className="font-sans text-lg font-bold text-card-foreground">
@@ -62,7 +62,7 @@ function GroupedCard({ card, config, isLast }: { card: RiskCardType; config: Gro
         </div>
         <span
           className={cn(
-            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium shrink-0",
+            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium mt-2 ml-[52px]",
             config.badgeClass
           )}
         >
