@@ -113,7 +113,7 @@ function PrintSection({
 
 export function ReportContent({ result }: { result: AuditResult }) {
   useScrollReveal()
-  
+
   const [sections, setSections] = useState({
     platform: true,
     performance: true,
@@ -135,7 +135,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
     try {
       // Store the result in sessionStorage so the print preview iframe can access it
       sessionStorage.setItem(`ohana-report-${result.id}`, JSON.stringify(result))
-      
+
       // Create a hidden iframe to load the print preview
       const iframe = document.createElement('iframe')
       iframe.style.display = 'none'
@@ -230,16 +230,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           >
             <Eye className="h-4 w-4" />
           </a>
-          <button
-            type="button"
-            onClick={handlePrint}
-            disabled={isPrintingPDF}
-            aria-label="Download PDF"
-            title="Download PDF"
-            className="inline-flex items-center justify-center w-10 h-10 bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            <Download className={`h-4 w-4 ${isPrintingPDF ? "animate-spin" : ""}`} />
-          </button>
+
         </div>
       </div>
 
@@ -396,59 +387,59 @@ export function ReportContent({ result }: { result: AuditResult }) {
                 mobileValue={formatMs(result.mobile.metrics.speedIndex)}
                 desktopValue={formatMs(result.desktop.metrics.speedIndex)}
                 unit={
-                result.mobile.metrics.speedIndex &&
-                result.mobile.metrics.speedIndex >= 1000
-                  ? "s"
-                  : "ms"
-              }
-              mobileStatus={getMetricStatus(
-                "speedIndex",
-                result.mobile.metrics.speedIndex
-              )}
-              desktopStatus={getMetricStatus(
-                "speedIndex",
-                result.desktop.metrics.speedIndex
-              )}
-            />
-          </div>
-          {/* Row 3: 3 cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-            <MetricTile
-              compact
-              label="Performance Score"
-              icon={<Zap className="h-4 w-4" />}
-              mobileValue={String(result.mobile.performanceScore)}
-              desktopValue={String(result.desktop.performanceScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.performanceScore)}
-              desktopStatus={getScoreStatus(result.desktop.performanceScore)}
-            />
-            <MetricTile
-              compact
-              label="Accessibility"
-              icon={<Eye className="h-4 w-4" />}
-              mobileValue={String(result.mobile.accessibilityScore)}
-              desktopValue={String(result.desktop.accessibilityScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
-              desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
-            />
-            <MetricTile
-              compact
-              label="Best Practices"
-              icon={<ShieldCheck className="h-4 w-4" />}
-              mobileValue={String(result.mobile.bestPracticesScore)}
-              desktopValue={String(result.desktop.bestPracticesScore)}
-              maxScore={100}
-              mobileStatus={getScoreStatus(result.mobile.bestPracticesScore)}
-              desktopStatus={getScoreStatus(result.desktop.bestPracticesScore)}
-            />
-          </div>
-          {result.mobile.notes.length > 0 && (
-            <p className="text-xs text-muted-foreground mt-3 italic">
-              {result.mobile.notes[0]}
-            </p>
-          )}
+                  result.mobile.metrics.speedIndex &&
+                    result.mobile.metrics.speedIndex >= 1000
+                    ? "s"
+                    : "ms"
+                }
+                mobileStatus={getMetricStatus(
+                  "speedIndex",
+                  result.mobile.metrics.speedIndex
+                )}
+                desktopStatus={getMetricStatus(
+                  "speedIndex",
+                  result.desktop.metrics.speedIndex
+                )}
+              />
+            </div>
+            {/* Row 3: 3 cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+              <MetricTile
+                compact
+                label="Performance Score"
+                icon={<Zap className="h-4 w-4" />}
+                mobileValue={String(result.mobile.performanceScore)}
+                desktopValue={String(result.desktop.performanceScore)}
+                maxScore={100}
+                mobileStatus={getScoreStatus(result.mobile.performanceScore)}
+                desktopStatus={getScoreStatus(result.desktop.performanceScore)}
+              />
+              <MetricTile
+                compact
+                label="Accessibility"
+                icon={<Eye className="h-4 w-4" />}
+                mobileValue={String(result.mobile.accessibilityScore)}
+                desktopValue={String(result.desktop.accessibilityScore)}
+                maxScore={100}
+                mobileStatus={getScoreStatus(result.mobile.accessibilityScore)}
+                desktopStatus={getScoreStatus(result.desktop.accessibilityScore)}
+              />
+              <MetricTile
+                compact
+                label="Best Practices"
+                icon={<ShieldCheck className="h-4 w-4" />}
+                mobileValue={String(result.mobile.bestPracticesScore)}
+                desktopValue={String(result.desktop.bestPracticesScore)}
+                maxScore={100}
+                mobileStatus={getScoreStatus(result.mobile.bestPracticesScore)}
+                desktopStatus={getScoreStatus(result.desktop.bestPracticesScore)}
+              />
+            </div>
+            {result.mobile.notes.length > 0 && (
+              <p className="text-xs text-muted-foreground mt-3 italic">
+                {result.mobile.notes[0]}
+              </p>
+            )}
           </div>
         </PrintSection>
 
@@ -525,7 +516,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
         </div>
       </div>
 
-      
+
     </div>
   )
 }
