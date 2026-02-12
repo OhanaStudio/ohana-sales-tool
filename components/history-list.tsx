@@ -222,6 +222,22 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
                 >
                   <ExternalLink className="h-4 w-4" />
                 </a>
+                <button
+                  type="button"
+                  onClick={() => handleRerun(latest.id, latest.url)}
+                  disabled={rerunningId === latest.id}
+                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 bg-transparent"
+                >
+                  <RotateCcw className={`h-4 w-4 ${rerunningId === latest.id ? "animate-spin" : ""}`} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(latest.id)}
+                  disabled={deletingId === latest.id}
+                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-red-600 transition-colors disabled:opacity-50 bg-transparent"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
             </div>
 
