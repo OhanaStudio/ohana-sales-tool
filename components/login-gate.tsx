@@ -2,12 +2,12 @@
 
 import React, { useState } from "react"
 import { useAuth } from "./auth-provider"
-import { Lock, User } from "lucide-react"
+import { Lock, Mail } from "lucide-react"
 import Image from "next/image"
 
 export function LoginGate({ children }: { children: React.ReactNode }) {
   const { authenticated, login } = useAuth()
-  const [username, setUsername] = useState("Ollie Brown")
+  const [email, setEmail] = useState("ollie@ohana.studio")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -45,15 +45,15 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
               className="w-full rounded-lg border border-border bg-card text-foreground pl-11 pr-4 py-3.5 text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[48px]"
               disabled={loading}
-              aria-label="Username"
+              aria-label="Email"
             />
           </div>
           <div className="relative">

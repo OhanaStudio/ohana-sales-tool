@@ -4,14 +4,16 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 
 interface AuthContextValue {
   authenticated: boolean
-  username: string | null
+  email: string | null
+  name: string | null
   login: (password: string) => Promise<boolean>
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextValue>({
   authenticated: false,
-  username: null,
+  email: null,
+  name: null,
   login: async () => false,
   logout: () => {},
 })
@@ -23,7 +25,8 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hasHint = typeof document !== "undefined" && document.cookie.includes("ohana-auth-hint=1")
   const [authenticated, setAuthenticated] = useState(hasHint)
-  const [username, setUsername] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null)
+  const [name, setName] = useState<string | null>(null)
 
   useEffect(() => {
     fetch("/api/auth", { credentials: "same-origin" })
@@ -34,7 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .then((data) => {
         setAuthenticated(true)
-        setUsername(data.username || "Ollie Brown")
+        setEmail(data.email || "ollie@ohana.studio")
+        setName(data.name || "Ollie Brown")
       })
       .catch(() => {})
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -50,7 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json()
       document.cookie = "ohana-auth-hint=1; path=/; max-age=" + 60 * 60 * 24 * 7
       setAuthenticated(true)
-      setUsername(data.username || "Ollie Brown")
+      setEmail(data.email || "ollie@ohana.studio")
+      setName(data.name || "Ollie Brown")
       return true
     }
     return false
@@ -60,11 +65,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     document.cookie = "ohana-auth-hint=1; path=/; max-age=0"
     await fetch("/api/auth", { method: "DELETE", credentials: "same-origin" })
     setAuthenticated(false)
-    setUsername(null)
+    setEmail(null)
+    setName(null)
   }
 
   return (
-    <AuthContext.Provider value={{ authenticated, username, login, logout }}>
+    <AuthContext.Provider value={{ authenticated, email, name, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
