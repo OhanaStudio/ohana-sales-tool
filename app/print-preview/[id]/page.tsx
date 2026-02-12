@@ -134,37 +134,30 @@ export default function PrintPreviewPage() {
             gap: 0 !important;
             align-items: flex-start !important;
           }
-          .print-page {
-            /* The content is designed at ${A4_W}x${A4_H}px.
-               A4 at 96dpi = ~794x1123px.
-               We scale the 595px content to fill the full 794px page width. */
-            width: ${A4_W}px !important;
-            height: ${A4_H}px !important;
-            transform: scale(${PRINT_SCALE}) !important;
-            transform-origin: top left !important;
-            /* Reserve the SCALED dimensions in flow so the browser
-               lays out each page correctly on the A4 sheet. */
-            margin-right: -${A4_W}px !important;
-            margin-bottom: -${A4_H}px !important;
-            padding: 0 !important;
-            page-break-after: always !important;
-            page-break-inside: avoid !important;
-            break-after: page !important;
-            break-inside: avoid !important;
-            overflow: hidden !important;
-            box-shadow: none !important;
-          }
-          /* Each page needs a wrapper that reserves the full A4 size in flow */
           .print-page-flow {
-            width: ${Math.round(A4_W * PRINT_SCALE)}px !important;
-            height: ${Math.round(A4_H * PRINT_SCALE)}px !important;
+            /* Each flow wrapper is exactly one A4 page */
+            width: 100vw !important;
+            height: 100vh !important;
             overflow: hidden !important;
             page-break-after: always !important;
             break-after: page !important;
+            position: relative !important;
           }
           .print-page-flow:last-child {
             page-break-after: auto !important;
             break-after: auto !important;
+          }
+          .print-page {
+            /* Scale the 595px design to fill the full A4 width */
+            width: ${A4_W}px !important;
+            height: ${A4_H}px !important;
+            transform: scale(${PRINT_SCALE}) !important;
+            transform-origin: top left !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            overflow: hidden !important;
+            box-shadow: none !important;
           }
         }
       `}</style>
