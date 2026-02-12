@@ -130,24 +130,14 @@ export function ReportContent({ result }: { result: AuditResult }) {
 
   const [isPrintingPDF, setIsPrintingPDF] = useState(false)
 
-  const handlePrint = async () => {
+  const handlePrint = () => {
     setIsPrintingPDF(true)
     try {
-      // Navigate to print preview page
-      window.location.href = `/print-preview/${result.id}`
-      
-      // After a delay, trigger print when the page loads
-      setTimeout(() => {
-        window.print()
-        // After printing, go back
-        setTimeout(() => {
-          window.history.back()
-        }, 500)
-      }, 1500)
+      // Navigate to print preview with auto-print flag
+      window.location.href = `/print-preview/${result.id}?auto=print`
     } catch (error) {
       console.error("[v0] Print error:", error)
       alert(`Error: ${error instanceof Error ? error.message : 'Print failed'}`)
-    } finally {
       setIsPrintingPDF(false)
     }
   }
