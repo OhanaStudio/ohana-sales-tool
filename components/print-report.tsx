@@ -365,22 +365,19 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Performance overview</h2>
           <Sub>Key metrics from Google Lighthouse, measured for both mobile and desktop experiences.</Sub>
 
-          {/* Row 1: 2 cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-            <Tile label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} />
-            <Tile label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} />
-          </div>
-          {/* Row 2: 3 cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginTop: 6 }}>
-            <Tile label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} />
-            <Tile label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} />
-            <Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} />
-          </div>
-          {/* Row 3: 3 cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginTop: 6 }}>
-            <Tile label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} />
-            <Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} />
-            <Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} />
+          {/* Single 6-col grid so all rows share the same column tracks */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
+            {/* Row 1: 2 cards, each spanning 3 cols */}
+            <div style={{ gridColumn: 'span 3' }}><Tile label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} /></div>
+            <div style={{ gridColumn: 'span 3' }}><Tile label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} /></div>
+            {/* Row 2: 3 cards, each spanning 2 cols */}
+            <div style={{ gridColumn: 'span 2' }}><Tile label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} /></div>
+            {/* Row 3: 3 cards, each spanning 2 cols */}
+            <div style={{ gridColumn: 'span 2' }}><Tile label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} /></div>
           </div>
         </div>
       </div>
