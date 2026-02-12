@@ -220,8 +220,8 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#525252' }} />
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#525252' }} />
               </div>
-              <div style={{ overflow: 'hidden', maxHeight: 155 }}>
-                <img src={r.desktop.screenshot.data} alt="Desktop" style={{ width: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+              <div style={{ overflow: 'hidden', maxHeight: 204 }}>
+                <img src={r.desktop.screenshot.data} alt="Desktop" style={{ width: '100%', objectFit: 'contain', objectPosition: 'top', display: 'block' }} />
               </div>
             </div>
           )}
@@ -232,8 +232,8 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
               <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0' }}>
                 <span style={{ width: 30, height: 3, borderRadius: 2, background: '#525252' }} />
               </div>
-              <div style={{ overflow: 'hidden', maxHeight: 155 }}>
-                <img src={r.mobile.screenshot.data} alt="Mobile" style={{ width: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+              <div style={{ overflow: 'hidden', maxHeight: 195 }}>
+                <img src={r.mobile.screenshot.data} alt="Mobile" style={{ width: '100%', objectFit: 'contain', objectPosition: 'top', display: 'block' }} />
               </div>
               {/* Home button */}
               <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0' }}>
