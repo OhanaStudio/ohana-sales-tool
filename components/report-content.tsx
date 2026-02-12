@@ -133,6 +133,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const handlePrint = () => {
     setIsPrintingPDF(true)
     try {
+      // Store the result in sessionStorage so the print preview iframe can access it
+      sessionStorage.setItem(`ohana-report-${result.id}`, JSON.stringify(result))
+      
       // Create a hidden iframe to load the print preview
       const iframe = document.createElement('iframe')
       iframe.style.display = 'none'
@@ -148,7 +151,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
             document.body.removeChild(iframe)
             setIsPrintingPDF(false)
           }, 500)
-        }, 500)
+        }, 1000)
       }
 
       // Timeout fallback
@@ -157,7 +160,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
           document.body.removeChild(iframe)
           setIsPrintingPDF(false)
         }
-      }, 10000)
+      }, 15000)
     } catch (error) {
       console.error("[v0] Print error:", error)
       alert(`Error: ${error instanceof Error ? error.message : 'Print failed'}`)
