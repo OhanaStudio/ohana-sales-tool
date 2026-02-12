@@ -23,18 +23,15 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authenticated, setAuthenticated] = useState(false)
+  // Read the hint cookie on first render to set initial state
+  const hasHint = typeof document !== "undefined" && document.cookie.includes("ohana-auth-hint=1")
+  
+  const [authenticated, setAuthenticated] = useState(hasHint)
   const [email, setEmail] = useState<string | null>(null)
   const [name, setName] = useState<string | null>(null)
-  const [isHydrated, setIsHydrated] = useState(false)
 
-  // Only run on client after hydration
+  // Fetch auth status on mount
   useEffect(() => {
-    setIsHydrated(true)
-    
-    const hasHint = document.cookie.includes("ohana-auth-hint=1")
-    setAuthenticated(hasHint)
-
     fetch("/api/auth", { credentials: "same-origin" })
       .then((res) => {
         if (res.ok) return res.json()
@@ -74,11 +71,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthenticated(false)
     setEmail(null)
     setName(null)
-  }
-
-  // Don't render until hydrated to prevent mismatch
-  if (!isHydrated) {
-    return children
   }
 
   return (

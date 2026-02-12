@@ -24,12 +24,14 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {/* Always render children to prevent hydration mismatch */}
-      {children}
+      {/* Always render children - this is shown to all users */}
+      <div suppressHydrationWarning>
+        {children}
+      </div>
 
       {/* Overlay login modal - shown when not authenticated */}
       {!authenticated && (
-        <div className="fixed inset-0 bg-background flex items-center justify-center px-5 z-50">
+        <div className="fixed inset-0 bg-background flex items-center justify-center px-5 z-50" suppressHydrationWarning>
           <div className="w-full max-w-sm">
             <div className="text-center mb-8">
               <Image
