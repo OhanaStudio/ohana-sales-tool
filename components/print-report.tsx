@@ -209,13 +209,37 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
           </div>
         </div>
 
-        {/* Screenshots placeholder */}
-        <div style={{ display: 'flex', gap: 10 }}>
+        {/* Screenshots with device frames */}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+          {/* Desktop browser frame */}
           {r.desktop.screenshot?.data && (
-            <img src={r.desktop.screenshot.data} alt="Desktop" style={{ flex: '2 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} />
+            <div style={{ flex: '3 1 0%', border: '1px solid #404040', background: '#171717', overflow: 'hidden' }}>
+              {/* Browser chrome bar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 8px', borderBottom: '1px solid #404040', background: '#262626' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#525252' }} />
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#525252' }} />
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#525252' }} />
+              </div>
+              <div style={{ overflow: 'hidden', maxHeight: 155 }}>
+                <img src={r.desktop.screenshot.data} alt="Desktop" style={{ width: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+              </div>
+            </div>
           )}
+          {/* Mobile phone frame */}
           {r.mobile.screenshot?.data && (
-            <img src={r.mobile.screenshot.data} alt="Mobile" style={{ flex: '1 1 0%', height: 160, objectFit: 'cover', objectPosition: 'top', borderRadius: 0, border: `1px solid ${C.border}` }} />
+            <div style={{ flex: '1 1 0%', maxWidth: 110, border: '1px solid #404040', background: '#171717', overflow: 'hidden' }}>
+              {/* Notch */}
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0' }}>
+                <span style={{ width: 30, height: 3, borderRadius: 2, background: '#525252' }} />
+              </div>
+              <div style={{ overflow: 'hidden', maxHeight: 155 }}>
+                <img src={r.mobile.screenshot.data} alt="Mobile" style={{ width: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+              </div>
+              {/* Home button */}
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0' }}>
+                <span style={{ width: 16, height: 16, borderRadius: '50%', border: '1px solid #525252' }} />
+              </div>
+            </div>
           )}
         </div>
 
