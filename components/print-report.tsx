@@ -4,7 +4,7 @@ import React from "react"
 
 import type { AuditResult, RiskCard, RiskLevel } from "@/lib/types"
 import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
-import { ImageIcon, Paintbrush, Move, Clock, Gauge, Zap, Eye, ShieldCheck } from "lucide-react"
+import { ImageIcon, Paintbrush, Move, Clock, Gauge, Zap, Eye, ShieldCheck, Globe, HelpCircle } from "lucide-react"
 
 /* ── shared inline-style constants ── */
 /* Figma A4 frame: 595 x 842 px. Content area: 405.5px wide.
@@ -358,8 +358,13 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           <div>
             <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: C.black }}>Platform detection</h2>
             <p style={{ margin: '0 0 5px', fontSize: 8, fontStyle: 'italic', color: C.light }}>Detected from page source signatures.</p>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '5px 8px', border: `1px solid ${C.border}`, borderRadius: 8, background: 'rgb(255 255 255 / 60%)' }}>
-              <span style={{ fontSize: 10, fontWeight: 500, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', border: `1px solid ${C.border}`, borderRadius: 8, background: 'rgb(255 255 255 / 60%)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <div style={{ width: 22, height: 22, borderRadius: 4, background: '#f5f5f4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: C.light }}>
+                  {r.platformInfo.platform ? <Globe style={{ width: 12, height: 12 }} /> : <HelpCircle style={{ width: 12, height: 12 }} />}
+                </div>
+                <span style={{ fontSize: 10, fontWeight: 500, color: C.black }}>{r.platformInfo.platform || 'Unknown'}</span>
+              </div>
               <span style={{ fontSize: 8, color: C.light, background: '#f5f5f4', borderRadius: 4, padding: '1px 6px' }}>{r.platformInfo.confidence} confidence</span>
             </div>
           </div>
