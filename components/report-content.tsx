@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useScrollReveal } from "@/hooks/use-scroll-reveal"
 
 import React from "react"
 import { useState } from "react"
@@ -111,6 +112,8 @@ function PrintSection({
 }
 
 export function ReportContent({ result }: { result: AuditResult }) {
+  useScrollReveal()
+  
   const [sections, setSections] = useState({
     platform: true,
     performance: true,
@@ -249,19 +252,21 @@ export function ReportContent({ result }: { result: AuditResult }) {
         {/* ──────────────────────────────────────────────
             RISK CARDS -- grouped by severity
         ────────────────────────────────────────────── */}
-        <div className="mb-10 print-break-before print-compact">
+        <div className="mb-10 print-break-before print-compact" data-reveal-group>
           <RiskGroups result={result} />
         </div>
 
         {/* ──────────────────────────────────────────────
             RECOMMENDED NEXT STEPS (AI-generated)
         ────────────────────────────────────────────── */}
-        <RecapSection result={result} />
+        <div data-reveal-group>
+          <RecapSection result={result} />
+        </div>
 
         {/* ──────────────────────────────────────────────
             FULL HEALTH CHECK DETAILS DIVIDER
         ────────────────────────────────────────────── */}
-        <div className="mt-4 mb-10 print-break-before">
+        <div className="mt-4 mb-10 print-break-before" data-reveal-group>
           <h2 className="font-serif text-5xl md:text-6xl text-foreground mb-4 print:text-4xl">
             Full Health Check Details
           </h2>
@@ -289,70 +294,71 @@ export function ReportContent({ result }: { result: AuditResult }) {
           className="mb-10 print-break-before print-compact"
           toggle={<SectionToggle label="Performance" enabled={sections.performance} onToggle={() => toggle("performance")} />}
         >
-          <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
-            Performance overview
-          </h2>
-          <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed">
-            Key metrics from Google Lighthouse, measured for both mobile and
-            desktop experiences.
-          </p>
-          {/* Row 1: 2 cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <MetricTile
-              label="Largest Contentful Paint"
-              icon={<ImageIcon className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.lcp)}
-              desktopValue={formatMs(result.desktop.metrics.lcp)}
-              unit={
-                result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000
-                  ? "s"
-                  : "ms"
-              }
-              mobileStatus={getMetricStatus("lcp", result.mobile.metrics.lcp)}
-              desktopStatus={getMetricStatus("lcp", result.desktop.metrics.lcp)}
-            />
-            <MetricTile
-              label="First Contentful Paint"
-              icon={<Paintbrush className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.fcp)}
-              desktopValue={formatMs(result.desktop.metrics.fcp)}
-              unit={
-                result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000
-                  ? "s"
-                  : "ms"
-              }
-              mobileStatus={getMetricStatus("fcp", result.mobile.metrics.fcp)}
-              desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
-            />
-          </div>
-          {/* Row 2: 3 cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-            <MetricTile
-              compact
-              label="Cumulative Layout Shift"
-              icon={<Move className="h-4 w-4" />}
-              mobileValue={formatCls(result.mobile.metrics.cls)}
-              desktopValue={formatCls(result.desktop.metrics.cls)}
-              mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
-              desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
-            />
-            <MetricTile
-              compact
-              label="Total Blocking Time"
-              icon={<Clock className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.tbt)}
-              desktopValue={formatMs(result.desktop.metrics.tbt)}
-              unit="ms"
-              mobileStatus={getMetricStatus("tbt", result.mobile.metrics.tbt)}
-              desktopStatus={getMetricStatus("tbt", result.desktop.metrics.tbt)}
-            />
-            <MetricTile
-              compact
-              label="Speed Index"
-              icon={<Gauge className="h-4 w-4" />}
-              mobileValue={formatMs(result.mobile.metrics.speedIndex)}
-              desktopValue={formatMs(result.desktop.metrics.speedIndex)}
-              unit={
+          <div data-reveal-group data-stagger="150">
+            <h2 className="font-sans text-2xl font-bold text-foreground mb-2 print:text-xl">
+              Performance overview
+            </h2>
+            <p className="text-sm text-muted-foreground italic mb-6 leading-relaxed">
+              Key metrics from Google Lighthouse, measured for both mobile and
+              desktop experiences.
+            </p>
+            {/* Row 1: 2 cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <MetricTile
+                label="Largest Contentful Paint"
+                icon={<ImageIcon className="h-4 w-4" />}
+                mobileValue={formatMs(result.mobile.metrics.lcp)}
+                desktopValue={formatMs(result.desktop.metrics.lcp)}
+                unit={
+                  result.mobile.metrics.lcp && result.mobile.metrics.lcp >= 1000
+                    ? "s"
+                    : "ms"
+                }
+                mobileStatus={getMetricStatus("lcp", result.mobile.metrics.lcp)}
+                desktopStatus={getMetricStatus("lcp", result.desktop.metrics.lcp)}
+              />
+              <MetricTile
+                label="First Contentful Paint"
+                icon={<Paintbrush className="h-4 w-4" />}
+                mobileValue={formatMs(result.mobile.metrics.fcp)}
+                desktopValue={formatMs(result.desktop.metrics.fcp)}
+                unit={
+                  result.mobile.metrics.fcp && result.mobile.metrics.fcp >= 1000
+                    ? "s"
+                    : "ms"
+                }
+                mobileStatus={getMetricStatus("fcp", result.mobile.metrics.fcp)}
+                desktopStatus={getMetricStatus("fcp", result.desktop.metrics.fcp)}
+              />
+            </div>
+            {/* Row 2: 3 cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+              <MetricTile
+                compact
+                label="Cumulative Layout Shift"
+                icon={<Move className="h-4 w-4" />}
+                mobileValue={formatCls(result.mobile.metrics.cls)}
+                desktopValue={formatCls(result.desktop.metrics.cls)}
+                mobileStatus={getMetricStatus("cls", result.mobile.metrics.cls)}
+                desktopStatus={getMetricStatus("cls", result.desktop.metrics.cls)}
+              />
+              <MetricTile
+                compact
+                label="Total Blocking Time"
+                icon={<Clock className="h-4 w-4" />}
+                mobileValue={formatMs(result.mobile.metrics.tbt)}
+                desktopValue={formatMs(result.desktop.metrics.tbt)}
+                unit="ms"
+                mobileStatus={getMetricStatus("tbt", result.mobile.metrics.tbt)}
+                desktopStatus={getMetricStatus("tbt", result.desktop.metrics.tbt)}
+              />
+              <MetricTile
+                compact
+                label="Speed Index"
+                icon={<Gauge className="h-4 w-4" />}
+                mobileValue={formatMs(result.mobile.metrics.speedIndex)}
+                desktopValue={formatMs(result.desktop.metrics.speedIndex)}
+                unit={
                 result.mobile.metrics.speedIndex &&
                 result.mobile.metrics.speedIndex >= 1000
                   ? "s"
@@ -406,6 +412,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
               {result.mobile.notes[0]}
             </p>
           )}
+          </div>
         </PrintSection>
 
         {/* ──────────────────────────────────────────────
@@ -416,7 +423,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
           className="mb-10 print-break-before print-compact"
           toggle={<SectionToggle label="UX Indicators" enabled={sections.ux} onToggle={() => toggle("ux")} />}
         >
-          <UXIndicatorsSection indicators={result.uxIndicators} />
+          <div data-reveal-group>
+            <UXIndicatorsSection indicators={result.uxIndicators} />
+          </div>
         </PrintSection>
 
         {/* ──────────────────────────────────────────────
@@ -428,7 +437,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
             className="mb-10 print-break-before print-compact"
             toggle={<SectionToggle label="Design" enabled={sections.design} onToggle={() => toggle("design")} />}
           >
-            <DesignIndicatorsSection indicators={result.designIndicators} />
+            <div data-reveal-group>
+              <DesignIndicatorsSection indicators={result.designIndicators} />
+            </div>
           </PrintSection>
         )}
 
@@ -441,7 +452,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
             className="mb-10 print-break-before print-compact"
             toggle={<SectionToggle label="UX Friction" enabled={sections.advancedUx} onToggle={() => toggle("advancedUx")} />}
           >
-            <AdvancedUXSection indicators={result.advancedUX} />
+            <div data-reveal-group>
+              <AdvancedUXSection indicators={result.advancedUX} />
+            </div>
           </PrintSection>
         )}
 
@@ -455,7 +468,9 @@ export function ReportContent({ result }: { result: AuditResult }) {
               className="mb-10 print-break-before print-compact"
               toggle={<SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />}
             >
-              <AccessibilitySection indicators={result.accessibilityIndicators} />
+              <div data-reveal-group>
+                <AccessibilitySection indicators={result.accessibilityIndicators} />
+              </div>
             </PrintSection>
           </div>
         )}
