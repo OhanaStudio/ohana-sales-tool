@@ -70,12 +70,12 @@ const C = { black: '#171717', grey: '#525252', light: '#737373', border: '#d4d4d
 
 const A4_W = 595
 const A4_H = 842
-const PAD_L = 30
-const PAD_R = 30
-const PAD_T = 35
-const PAD_B = 45 // space reserved for footer
-const CONTENT_W = A4_W - PAD_L - PAD_R // ~535
-const CONTENT_GAP = 12
+const PAD_L = 70
+const PAD_R = 65
+const PAD_T = 55
+const PAD_B = 65 // space reserved for footer
+const CONTENT_W = A4_W - PAD_L - PAD_R // ~405.5
+const CONTENT_GAP = 16
 
 const PAGE: React.CSSProperties = {
   position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden',
