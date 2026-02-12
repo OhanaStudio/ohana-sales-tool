@@ -174,7 +174,7 @@ function CoverPage({ url, date }: { url: string; date: string }) {
   return (
     <div style={{ position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden', pageBreakAfter: 'always', background: C.pampas }}>
       <img src="/hc-front.svg" alt="" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-      <div style={{ position: 'absolute', top: 21, left: 23, zIndex: 1 }}>
+      <div style={{ position: 'absolute', top: 80, left: 23, zIndex: 1 }}>
         <img src="/ohaha-logo.svg" alt="Ohana" style={{ height: 28 }} />
       </div>
       <div style={{ position: 'absolute', top: 120, left: 23, zIndex: 1 }}>
