@@ -582,6 +582,11 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
             <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
           </div>
         )}
+
+        {/* Design Indicators */}
+        {di && (
+          <div>
+            <h2 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 500, color: C.black }}>Design indicators</h2>
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
             <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'rgb(255 255 255 / 60%)', overflow: 'hidden' }}>
               {[
