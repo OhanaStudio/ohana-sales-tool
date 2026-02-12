@@ -12,8 +12,14 @@ export default function ReportPage() {
   const [result, setResult] = useState<AuditResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     async function fetchReport() {
       try {
         const res = await fetch(`/api/report/${id}`)
@@ -41,11 +47,11 @@ export default function ReportPage() {
       setLoading(false)
     }
     fetchReport().finally(() => setLoading(false))
-  }, [id])
+  }, [id, mounted])
 
-  if (loading) {
+  if (!mounted || loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center" suppressHydrationWarning>
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     )
