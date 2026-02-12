@@ -12,9 +12,11 @@ function formatDate(iso: string): string {
 export function PrintCover({
   url,
   timestamp,
+  preparedBy,
 }: {
   url: string
   timestamp: string
+  preparedBy?: string
 }) {
   const hostname = (() => {
     try {
@@ -46,6 +48,11 @@ export function PrintCover({
         </p>
         <p className="print-cover-url">{hostname}</p>
         <p className="print-cover-date">{formatDate(timestamp)}</p>
+        {preparedBy && (
+          <p style={{ fontSize: '12px', color: '#525252', marginTop: '16px' }}>
+            Prepared by {preparedBy}
+          </p>
+        )}
       </div>
 
       {/* Studio URL bottom-right */}

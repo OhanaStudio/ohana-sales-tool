@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useSearchParams } from "next/navigation"
+import { useAuth } from "@/components/auth-provider"
 import type { AuditResult } from "@/lib/types"
 import {
   formatDate,
@@ -30,6 +31,7 @@ const CONTENT_W = A4_W - 97.5 - 92 // matches print-report: PAD_L + PAD_R
 export default function PrintPreviewPage() {
   const params = useParams()
   const searchParams = useSearchParams()
+  const { name } = useAuth()
   const id = params.id as string
   const [result, setResult] = useState<AuditResult | null>(null)
   const [recapText, setRecapText] = useState<string>("")
@@ -104,7 +106,7 @@ export default function PrintPreviewPage() {
   ].filter(Boolean).join(" | ")
 
   const pages = [
-    { label: "Cover", node: <CoverPage url={result.url} date={date} /> },
+    { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy={name || undefined} /> },
     { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
     { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },
