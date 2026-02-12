@@ -179,7 +179,7 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
     <div style={{ padding: '4px 0', borderBottom: '1px solid #e7e5e4' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
         <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
-        <span style={{ fontWeight: 500, fontSize: 8, color: C.black }}>{label}</span>
+        <span style={{ fontWeight: 600, fontSize: 8, color: C.black }}>{label}</span>
       </div>
       {detail && <p style={{ margin: '1px 0 0 11px', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{detail}</p>}
       {note && <p style={{ margin: '1px 0 0 11px', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.35, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {note}</p>}
@@ -567,7 +567,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ margin: '0 0 1px', fontWeight: 500, fontSize: 8.5, color: C.black }}>{item.label}</p>
+                    <p style={{ margin: '0 0 1px', fontWeight: 600, fontSize: 8.5, color: C.black }}>{item.label}</p>
                     {item.detail && <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.45 }}>{item.detail}</p>}
                     {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {item.note}</p>}
                   </div>
@@ -577,13 +577,9 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
           </div>
         </div>
 
-        {/* Design & image quality */}
-        {di && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-              <h2 style={{ margin: 0, fontSize: 12, fontWeight: 700, color: C.black }}>Design & image quality</h2>
-              {!di.contrastIssues && di.imageIssues.oversizedCount === 0 && (
-                <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
+        {allClear && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '5px 0' }}>
+            <span style={{ fontSize: 7, fontWeight: 500, padding: '2px 8px', borderRadius: 99, background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}>All clear</span>
               )}
             </div>
             <Sub>Checks based on Lighthouse audits and page analysis.</Sub>
@@ -597,7 +593,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                     <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ margin: '0 0 1px', fontWeight: 500, fontSize: 8.5, color: C.black }}>{item.label}</p>
+                      <p style={{ margin: '0 0 1px', fontWeight: 600, fontSize: 8.5, color: C.black }}>{item.label}</p>
                       {item.detail && <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.45 }}>{item.detail}</p>}
                       {item.note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {item.note}</p>}
                     </div>
@@ -685,7 +681,7 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                     <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={iconStatus} /></div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ margin: '0 0 1px', fontWeight: 500, fontSize: 8.5, color: C.black }}>{cat.title}</p>
+                      <p style={{ margin: '0 0 1px', fontWeight: 600, fontSize: 8.5, color: C.black }}>{cat.title}</p>
                       <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.5 }}>{detail}</p>
                       {note && <p style={{ margin: '2px 0 0', fontSize: 7, fontStyle: 'italic', color: C.light, lineHeight: 1.5, padding: 8, background: '#4040400f', borderRadius: 4 }}>Note: {note}</p>}
                     </div>
@@ -809,7 +805,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={ch.status} /></div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 1 }}>
-                      <span style={{ fontWeight: 500, fontSize: 8.5, color: C.black }}>{ch.label}</span>
+                      <span style={{ fontWeight: 600, fontSize: 8.5, color: C.black }}>{ch.label}</span>
                       {ch.wcag && <span style={{ fontSize: 6.5, fontWeight: 500, color: C.light, background: '#f5f5f4', borderRadius: 3, padding: '0.5px 4px' }}>{ch.wcag}</span>}
                     </div>
                     <p style={{ margin: '1px 0 0', fontSize: 7.5, color: C.grey, lineHeight: 1.4 }}>{ch.detail}</p>
