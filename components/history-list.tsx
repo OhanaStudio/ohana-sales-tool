@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { ExternalLink, RotateCcw, Trash2 } from "lucide-react"
+import { ExternalLink, RotateCcw, Trash2, ChevronDown, ChevronRight } from "lucide-react"
 
 interface HistoryItem {
   id: string
@@ -13,10 +13,24 @@ interface HistoryItem {
   overallScore: number
 }
 
+interface GroupedUrl {
+  url: string
+  displayUrl: string
+  items: HistoryItem[]
+  latestScore: number
+  latestDate: string
+}
+
 function scoreColor(score: number): string {
   if (score >= 75) return "text-emerald-700"
   if (score >= 50) return "text-amber-700"
   return "text-red-700"
+}
+
+function scoreBg(score: number): string {
+  if (score >= 75) return "bg-emerald-50 border-emerald-200"
+  if (score >= 50) return "bg-amber-50 border-amber-200"
+  return "bg-red-50 border-red-200"
 }
 
 function formatDate(iso: string): string {
@@ -45,10 +59,49 @@ function truncateUrl(url: string): string {
   }
 }
 
+function groupByUrl(items: HistoryItem[]): GroupedUrl[] {
+  const map = new Map<string, HistoryItem[]>()
+
+  for (const item of items) {
+    const key = truncateUrl(item.url)
+    if (!map.has(key)) map.set(key, [])
+    map.get(key)!.push(item)
+  }
+
+  const groups: GroupedUrl[] = []
+  for (const [displayUrl, groupItems] of map) {
+    // Sort versions descending by date (newest first)
+    groupItems.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    groups.push({
+      url: groupItems[0].url,
+      displayUrl,
+      items: groupItems,
+      latestScore: groupItems[0].overallScore,
+      latestDate: groupItems[0].timestamp,
+    })
+  }
+
+  // Sort groups by latest date descending
+  groups.sort((a, b) => new Date(b.latestDate).getTime() - new Date(a.latestDate).getTime())
+  return groups
+}
+
 export function HistoryList({ items }: { items: HistoryItem[] }) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [rerunningId, setRerunningId] = useState<string | null>(null)
+  const [expandedUrls, setExpandedUrls] = useState<Set<string>>(new Set())
+
+  const groups = groupByUrl(items)
+
+  const toggleExpand = (url: string) => {
+    setExpandedUrls((prev) => {
+      const next = new Set(prev)
+      if (next.has(url)) next.delete(url)
+      else next.add(url)
+      return next
+    })
+  }
 
   const handleRerun = async (id: string, url: string) => {
     setRerunningId(id)
@@ -60,7 +113,7 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
       })
       const data = await res.json()
       if (data.id) {
-        router.push(`/report/${data.id}`)
+        window.location.href = `/report/${data.id}`
       }
     } catch {
       setRerunningId(null)
@@ -73,146 +126,165 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
     try {
       await fetch(`/api/reports?id=${id}`, { method: "DELETE" })
       router.refresh()
+      window.location.reload()
     } finally {
       setDeletingId(null)
     }
   }
 
   return (
-    <>
-      {/* Mobile: stacked cards */}
-      <div className="md:hidden space-y-3">
-        {items.map((item) => (
+    <div className="space-y-3">
+      {groups.map((group) => {
+        const isExpanded = expandedUrls.has(group.displayUrl)
+        const hasMultiple = group.items.length > 1
+        const latest = group.items[0]
+
+        return (
           <div
-            key={item.id}
-            className="rounded-lg border border-border bg-card p-4"
+            key={group.displayUrl}
+            className="border border-border bg-card overflow-hidden"
           >
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="min-w-0">
-                <p className="text-sm text-card-foreground font-medium truncate">
-                  {truncateUrl(item.url)}
+            {/* Group header — always shows latest version */}
+            <div className="flex items-center gap-3 px-4 py-3">
+              {/* Expand toggle */}
+              {hasMultiple ? (
+                <button
+                  type="button"
+                  onClick={() => toggleExpand(group.displayUrl)}
+                  className="flex items-center justify-center w-6 h-6 shrink-0 text-muted-foreground hover:text-foreground transition-colors bg-transparent min-h-[44px] min-w-[44px] -m-2"
+                  aria-label={isExpanded ? "Collapse versions" : "Expand versions"}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </button>
+              ) : (
+                <div className="w-6 shrink-0" />
+              )}
+
+              {/* URL and meta */}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-foreground font-medium truncate">
+                  {group.displayUrl}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  v{item.version} -- {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
+                  {hasMultiple
+                    ? `${group.items.length} versions -- latest: ${formatDate(latest.timestamp)}, ${formatTime(latest.timestamp)}`
+                    : `v${latest.version} -- ${formatDate(latest.timestamp)}, ${formatTime(latest.timestamp)}`}
                 </p>
               </div>
+
+              {/* Latest score */}
               <span
                 className={cn(
-                  "text-2xl font-sans tabular-nums shrink-0",
-                  scoreColor(item.overallScore)
+                  "text-xl font-sans tabular-nums shrink-0 font-medium",
+                  scoreColor(latest.overallScore)
                 )}
               >
-                {item.overallScore}
+                {latest.overallScore}
               </span>
-            </div>
-            <div className="flex gap-2">
-              <a
-                href={`/report/${item.id}`}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card text-card-foreground px-3 py-2 text-xs font-medium hover:bg-accent transition-colors min-h-[44px] flex-1 justify-center"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                View report
-              </a>
-              <button
-                type="button"
-                onClick={() => handleRerun(item.id, item.url)}
-                disabled={rerunningId === item.id}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-transparent text-card-foreground px-3 py-2 text-xs font-medium hover:bg-accent transition-colors min-h-[44px] flex-1 justify-center disabled:opacity-50"
-              >
-                <RotateCcw className={`h-3.5 w-3.5 ${rerunningId === item.id ? "animate-spin" : ""}`} />
-                {rerunningId === item.id ? "Running..." : "Rerun"}
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDelete(item.id)}
-                disabled={deletingId === item.id}
-                className="inline-flex items-center gap-1.5 rounded-md border border-red-200 bg-card text-red-600 px-3 py-2 text-xs font-medium hover:bg-red-50 transition-colors min-h-[44px] disabled:opacity-50"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Desktop: table */}
-      <div className="hidden md:block">
-        <div className="rounded-lg border border-border overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                  URL
-                </th>
-                <th className="text-center px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                  Version
-                </th>
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                  Date
-                </th>
-                <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                  Score
-                </th>
-                <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {items.map((item) => (
-                <tr key={item.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 text-sm text-foreground">
-                    {truncateUrl(item.url)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground text-center tabular-nums">
-                    v{item.version}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
-                  </td>
-                  <td
+              {/* Actions for latest */}
+              <div className="hidden md:flex items-center gap-1 shrink-0">
+                <a
+                  href={`/report/${latest.id}`}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Report
+                </a>
+                <button
+                  type="button"
+                  onClick={() => handleRerun(latest.id, latest.url)}
+                  disabled={rerunningId === latest.id}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent"
+                >
+                  <RotateCcw className={`h-3.5 w-3.5 ${rerunningId === latest.id ? "animate-spin" : ""}`} />
+                  {rerunningId === latest.id ? "Running..." : "Rerun"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(latest.id)}
+                  disabled={deletingId === latest.id}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              {/* Mobile actions for latest */}
+              <div className="flex md:hidden items-center gap-1 shrink-0">
+                <a
+                  href={`/report/${latest.id}`}
+                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Expanded version history */}
+            {isExpanded && hasMultiple && (
+              <div className="border-t border-border bg-muted/30">
+                {group.items.map((item, idx) => (
+                  <div
+                    key={item.id}
                     className={cn(
-                      "px-4 py-3 text-right font-sans text-lg tabular-nums",
-                      scoreColor(item.overallScore)
+                      "flex items-center gap-3 px-4 py-2.5 pl-14",
+                      idx !== group.items.length - 1 && "border-b border-border/50"
                     )}
                   >
-                    {item.overallScore}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    {/* Version badge */}
+                    <span className={cn(
+                      "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 border shrink-0",
+                      scoreBg(item.overallScore),
+                      scoreColor(item.overallScore)
+                    )}>
+                      v{item.version}
+                    </span>
+
+                    {/* Date */}
+                    <span className="text-xs text-muted-foreground flex-1">
+                      {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
+                    </span>
+
+                    {/* Score */}
+                    <span
+                      className={cn(
+                        "text-sm font-sans tabular-nums font-medium",
+                        scoreColor(item.overallScore)
+                      )}
+                    >
+                      {item.overallScore}
+                    </span>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1">
                       <a
                         href={`/report/${item.id}`}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px]"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2"
                       >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        Report
+                        <ExternalLink className="h-3 w-3" />
+                        <span className="hidden md:inline">Report</span>
                       </a>
-                      <button
-                        type="button"
-                        onClick={() => handleRerun(item.id, item.url)}
-                        disabled={rerunningId === item.id}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] disabled:opacity-50 bg-transparent"
-                      >
-                        <RotateCcw className={`h-3.5 w-3.5 ${rerunningId === item.id ? "animate-spin" : ""}`} />
-                        {rerunningId === item.id ? "Running..." : "Rerun"}
-                      </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(item.id)}
                         disabled={deletingId === item.id}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] disabled:opacity-50"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Delete
+                        <Trash2 className="h-3 w-3" />
                       </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
   )
 }
