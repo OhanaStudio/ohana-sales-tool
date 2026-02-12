@@ -133,22 +133,17 @@ export function ReportContent({ result }: { result: AuditResult }) {
   const handlePrint = async () => {
     setIsPrintingPDF(true)
     try {
-      // Open print preview in a new window and trigger print dialog
-      const printWindow = window.open(`/print-preview/${result.id}`, 'print-preview')
-      if (!printWindow) {
-        throw new Error('Could not open print preview. Check your popup blocker.')
-      }
-
-      // Wait for page to load, then open print dialog
-      printWindow.addEventListener('load', () => {
+      // Navigate to print preview page
+      window.location.href = `/print-preview/${result.id}`
+      
+      // After a delay, trigger print when the page loads
+      setTimeout(() => {
+        window.print()
+        // After printing, go back
         setTimeout(() => {
-          printWindow.print()
-          // Optionally close the window after printing
-          printWindow.addEventListener('afterprint', () => {
-            printWindow.close()
-          })
-        }, 1500)
-      }, { once: true })
+          window.history.back()
+        }, 500)
+      }, 1500)
     } catch (error) {
       console.error("[v0] Print error:", error)
       alert(`Error: ${error instanceof Error ? error.message : 'Print failed'}`)
