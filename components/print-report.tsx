@@ -4,6 +4,7 @@ import React from "react"
 
 import type { AuditResult, RiskCard, RiskLevel } from "@/lib/types"
 import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
+import { ImageIcon, Paintbrush, Move, Clock, Gauge, Zap, Eye, ShieldCheck } from "lucide-react"
 
 /* ── shared inline-style constants ── */
 /* Figma A4 frame: 595 x 842 px. Content area: 405.5px wide.
@@ -310,7 +311,7 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
 function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLabel: string }) {
   /* Print tile — mirrors report MetricTile: rounded-xl, border, coloured borders,
      inner rounded-lg muted bg with mobile|desktop grid split + divider, square dots */
-  function Tile({ label, mob, desk, unit, mobSt, deskSt }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string }) {
+  function Tile({ label, mob, desk, unit, mobSt, deskSt, icon }: { label: string; mob: string; desk: string; unit?: string; mobSt: string; deskSt: string; icon?: React.ReactNode }) {
     const dotColors: Record<string, string> = { green: '#10b981', amber: '#f59e0b', red: '#ef4444' }
     const borderColors: Record<string, string> = { green: '#34d399', amber: '#fbbf24', red: '#f87171' }
     const worst = (['red', 'amber', 'green'] as const).find(l => mobSt === l || deskSt === l) || 'green'
@@ -320,8 +321,11 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
     const makeDot = (st: string) => <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: dotColors[st] || C.black, flexShrink: 0 }} />
     return (
       <div style={{ border: `1px solid ${borderC}`, borderRadius: 12, padding: '8px 10px', background: 'rgb(255 255 255 / 60%)' }}>
-        {/* Label */}
-        <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
+        {/* Icon + Label */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, margin: '0 0 6px' }}>
+          {icon && <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: 4, background: '#f5f5f4', color: C.light, flexShrink: 0 }}>{icon}</span>}
+          <p style={{ margin: 0, fontSize: 9, fontWeight: 500, color: C.black }}>{label}</p>
+        </div>
         {/* Inner muted split — matches report's rounded-lg bg-muted/40 */}
         <div style={{ background: '#f5f5f4', borderRadius: 8, padding: '5px 8px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div style={{ paddingRight: 8, borderRight: '1px solid rgba(0,0,0,0.08)' }}>
@@ -368,16 +372,16 @@ function PerfPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
           {/* Single 6-col grid so all rows share the same column tracks */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
             {/* Row 1: 2 cards, each spanning 3 cols */}
-            <div style={{ gridColumn: 'span 3' }}><Tile label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} /></div>
-            <div style={{ gridColumn: 'span 3' }}><Tile label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} /></div>
+            <div style={{ gridColumn: 'span 3' }}><Tile icon={<ImageIcon style={{ width: 10, height: 10 }} />} label="Largest Contentful Paint" mob={formatMs(m.lcp)} desk={formatMs(d.lcp)} unit={formatMsUnit(m.lcp)} mobSt={getMetricStatus('lcp', m.lcp)} deskSt={getMetricStatus('lcp', d.lcp)} /></div>
+            <div style={{ gridColumn: 'span 3' }}><Tile icon={<Paintbrush style={{ width: 10, height: 10 }} />} label="First Contentful Paint" mob={formatMs(m.fcp)} desk={formatMs(d.fcp)} unit={formatMsUnit(m.fcp)} mobSt={getMetricStatus('fcp', m.fcp)} deskSt={getMetricStatus('fcp', d.fcp)} /></div>
             {/* Row 2: 3 cards, each spanning 2 cols */}
-            <div style={{ gridColumn: 'span 2' }}><Tile label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Move style={{ width: 10, height: 10 }} />} label="Cumulative Layout Shift" mob={formatCls(m.cls)} desk={formatCls(d.cls)} mobSt={getMetricStatus('cls', m.cls)} deskSt={getMetricStatus('cls', d.cls)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Clock style={{ width: 10, height: 10 }} />} label="Total Blocking Time" mob={formatMs(m.tbt)} desk={formatMs(d.tbt)} unit="ms" mobSt={getMetricStatus('tbt', m.tbt)} deskSt={getMetricStatus('tbt', d.tbt)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Gauge style={{ width: 10, height: 10 }} />} label="Speed Index" mob={formatMs(m.speedIndex)} desk={formatMs(d.speedIndex)} unit={formatMsUnit(m.speedIndex)} mobSt={getMetricStatus('speedIndex', m.speedIndex)} deskSt={getMetricStatus('speedIndex', d.speedIndex)} /></div>
             {/* Row 3: 3 cards, each spanning 2 cols */}
-            <div style={{ gridColumn: 'span 2' }}><Tile label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} /></div>
-            <div style={{ gridColumn: 'span 2' }}><Tile label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Zap style={{ width: 10, height: 10 }} />} label="Performance Score" mob={`${r.mobile.performanceScore}`} desk={`${r.desktop.performanceScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.performanceScore)} deskSt={getScoreStatus(r.desktop.performanceScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<Eye style={{ width: 10, height: 10 }} />} label="Accessibility" mob={`${r.mobile.accessibilityScore}`} desk={`${r.desktop.accessibilityScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.accessibilityScore)} deskSt={getScoreStatus(r.desktop.accessibilityScore)} /></div>
+            <div style={{ gridColumn: 'span 2' }}><Tile icon={<ShieldCheck style={{ width: 10, height: 10 }} />} label="Best Practices" mob={`${r.mobile.bestPracticesScore}`} desk={`${r.desktop.bestPracticesScore}`} unit="/100" mobSt={getScoreStatus(r.mobile.bestPracticesScore)} deskSt={getScoreStatus(r.desktop.bestPracticesScore)} /></div>
           </div>
         </div>
       </div>
