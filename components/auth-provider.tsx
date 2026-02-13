@@ -2,7 +2,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react"
 
+type AuthStatus = "checking" | "authenticated" | "unauthenticated"
+
 interface AuthContextValue {
+  status: AuthStatus
   authenticated: boolean
   email: string | null
   name: string | null
@@ -11,6 +14,7 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue>({
+  status: "checking",
   authenticated: false,
   email: null,
   name: null,
@@ -23,14 +27,10 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Read the hint cookie on first render to set initial state
-  const hasHint = typeof document !== "undefined" && document.cookie.includes("ohana-auth-hint=1")
-  
-  const [authenticated, setAuthenticated] = useState(hasHint)
+  const [status, setStatus] = useState<AuthStatus>("checking")
   const [email, setEmail] = useState<string | null>(null)
   const [name, setName] = useState<string | null>(null)
 
-  // Fetch auth status on mount
   useEffect(() => {
     fetch("/api/auth", { credentials: "same-origin" })
       .then((res) => {
@@ -38,12 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Not authenticated")
       })
       .then((data) => {
-        setAuthenticated(true)
+        setStatus("authenticated")
         setEmail(data.email || "ollie@ohana.studio")
         setName(data.name || "Ollie Brown")
       })
       .catch(() => {
-        setAuthenticated(false)
+        setStatus("unauthenticated")
       })
   }, [])
 
@@ -56,8 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     if (res.ok) {
       const data = await res.json()
-      document.cookie = "ohana-auth-hint=1; path=/; max-age=" + 60 * 60 * 24 * 7
-      setAuthenticated(true)
+      setStatus("authenticated")
       setEmail(data.email || "ollie@ohana.studio")
       setName(data.name || "Ollie Brown")
       return true
@@ -66,15 +65,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    document.cookie = "ohana-auth-hint=1; path=/; max-age=0"
     await fetch("/api/auth", { method: "DELETE", credentials: "same-origin" })
-    setAuthenticated(false)
+    setStatus("unauthenticated")
     setEmail(null)
     setName(null)
   }
 
   return (
-    <AuthContext.Provider value={{ authenticated, email, name, login, logout }}>
+    <AuthContext.Provider value={{ status, authenticated: status === "authenticated", email, name, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

@@ -6,7 +6,7 @@ import { Lock, Mail } from "lucide-react"
 import Image from "next/image"
 
 export function LoginGate({ children }: { children: React.ReactNode }) {
-  const { authenticated, login } = useAuth()
+  const { status, login } = useAuth()
   const [email, setEmail] = useState("ollie@ohana.studio")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(false)
@@ -22,16 +22,16 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }
 
+  // Only show login when we KNOW the user is not authenticated.
+  // "checking" = still verifying cookie, show nothing extra (just children).
+  const showLogin = status === "unauthenticated"
+
   return (
     <>
-      {/* Always render children - this is shown to all users */}
-      <div suppressHydrationWarning>
-        {children}
-      </div>
+      {children}
 
-      {/* Overlay login modal - shown when not authenticated */}
-      {!authenticated && (
-        <div className="fixed inset-0 bg-background flex items-center justify-center px-5 z-50" suppressHydrationWarning>
+      {showLogin && (
+        <div className="fixed inset-0 bg-background flex items-center justify-center px-5 z-50">
           <div className="w-full max-w-sm">
             <div className="text-center mb-8">
               <Image
