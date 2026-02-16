@@ -35,11 +35,10 @@ export function TopBar() {
         <button
           type="button"
           onClick={handleLogout}
-          className="text-sm font-sans text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5 min-h-[44px] px-2 py-2"
+          className="text-zinc-400 hover:text-white transition-colors flex items-center min-h-[44px] px-2"
           aria-label="Sign out"
         >
-          <LogOut className="h-3.5 w-3.5" />
-          Sign out
+          <LogOut className="h-5 w-5" />
         </button>
       </div>
     </header>
