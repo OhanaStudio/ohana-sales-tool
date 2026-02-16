@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import type { AuditResult } from "@/lib/types"
 import { ReportContent } from "@/components/report-content"
+import { TopBar } from "@/components/top-bar"
 import { useAuth } from "@/hooks/use-auth"
 import { Loader2 } from "lucide-react"
 
@@ -78,5 +79,10 @@ export default function ReportPage() {
     )
   }
 
-  return <ReportContent result={result} userName={user?.name} />
+  return (
+    <>
+      <TopBar />
+      <ReportContent result={result} userName={user?.name} />
+    </>
+  )
 }

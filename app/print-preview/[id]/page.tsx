@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useSearchParams } from "next/navigation"
 import { useAuth } from "@/hooks/use-auth"
+import { TopBar } from "@/components/top-bar"
 import type { AuditResult } from "@/lib/types"
 import {
   formatDate,
@@ -125,6 +126,7 @@ export default function PrintPreviewPage() {
 
   return (
     <>
+      <TopBar />
       {/* Print-specific styles: hide UI chrome, scale pages to fill A4 */}
       <style>{`
         @media print {
