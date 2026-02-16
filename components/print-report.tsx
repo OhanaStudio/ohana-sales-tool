@@ -188,7 +188,7 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
 }
 
 /* ═══ COVER PAGE ═══ */
-function CoverPage({ url, date }: { url: string; date: string }) {
+function CoverPage({ url, date, preparedBy }: { url: string; date: string; preparedBy?: string }) {
   /* Figma cover measurements (proportional to 595x842 frame):
      Logo: 23px left, 21px top. Title block starts ~38px below logo.
      URL: 9px below title. Date: tight below URL.
@@ -204,7 +204,10 @@ function CoverPage({ url, date }: { url: string; date: string }) {
           Website<br />Health Check
         </h1>
         <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: '0 0 2px' }}>{'www.' + url.replace(/^https?:\/\/(www\.)?/, '')}</p>
-        <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: 0 }}>{date}</p>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: preparedBy ? '0 0 2px' : 0 }}>{date}</p>
+        {preparedBy && (
+          <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: 0 }}>Prepared by {preparedBy}</p>
+        )}
       </div>
       <p style={{ position: 'absolute', bottom: 24, right: 23, fontFamily: FONT, fontSize: 9, color: C.light, margin: 0, zIndex: 1 }}>www.ohana.studio</p>
     </div>
@@ -942,7 +945,7 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
 export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, CTAPage, PAGE, BODY, C }
 
 /* ═══ MAIN EXPORT (print-only) ═══ */
-export function PrintReport({ result }: { result: AuditResult }) {
+export function PrintReport({ result, preparedBy }: { result: AuditResult; preparedBy?: string }) {
   const date = formatDate(result.timestamp)
   const risks = countRisks(result)
   const riskLabel = [
@@ -952,7 +955,7 @@ export function PrintReport({ result }: { result: AuditResult }) {
 
   return (
     <div className="hidden print:block print-report-wrapper" style={{ background: C.white }}>
-      <CoverPage url={result.url} date={date} />
+      <CoverPage url={result.url} date={date} preparedBy={preparedBy} />
       <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} />
       <RiskPage r={result} date={date} riskLabel={riskLabel} />
       <PerfPage r={result} date={date} riskLabel={riskLabel} />
