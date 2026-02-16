@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
-import { useAuth } from "./auth-provider"
+import { useAuth } from "@/hooks/use-auth"
 import { Lock, User } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
 
-export function LoginGate({ children }: { children: React.ReactNode }) {
-  const { username: authUsername, login } = useAuth()
+export function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { user, login } = useAuth()
   const [username, setUsername] = useState("ollie")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -22,11 +22,12 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }
 
-  // If we have a username from auth context, user is logged in
-  if (authUsername) {
+  // Show children if user is logged in
+  if (user) {
     return <>{children}</>
   }
 
+  // Show login form while loading or not authenticated
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-5">
       <div className="w-full max-w-sm">
@@ -76,9 +77,7 @@ export function LoginGate({ children }: { children: React.ReactNode }) {
               aria-label="Password"
             />
           </div>
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={loading || !username.trim() || !password.trim()}

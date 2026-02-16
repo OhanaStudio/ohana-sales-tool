@@ -1,6 +1,6 @@
+import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
-// User database - username: password
 const VALID_USERS: Record<string, { password: string; name: string }> = {
   ollie: {
     password: "notber-8syjvi-sivnaV",
@@ -8,19 +8,7 @@ const VALID_USERS: Record<string, { password: string; name: string }> = {
   },
 }
 
-export async function GET(request: NextRequest) {
-  const username = request.cookies.get("ohana-auth")?.value
-  if (username && VALID_USERS[username]) {
-    return NextResponse.json({
-      authenticated: true,
-      username,
-      name: VALID_USERS[username].name,
-    })
-  }
-  return NextResponse.json({ authenticated: false }, { status: 401 })
-}
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { username, password } = await request.json()
 
   if (!username || !password) {
@@ -38,13 +26,8 @@ export async function POST(request: Request) {
     )
   }
 
-  const res = NextResponse.json({
-    ok: true,
-    username,
-    name: user.name,
-  })
-
-  res.cookies.set("ohana-auth", username, {
+  const cookieStore = await cookies()
+  cookieStore.set("auth", username, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -52,11 +35,30 @@ export async function POST(request: Request) {
     maxAge: 60 * 60 * 24 * 7,
   })
 
-  return res
+  return NextResponse.json({
+    ok: true,
+    username,
+    name: user.name,
+  })
+}
+
+export async function GET() {
+  const cookieStore = await cookies()
+  const username = cookieStore.get("auth")?.value
+
+  if (username && VALID_USERS[username]) {
+    return NextResponse.json({
+      authenticated: true,
+      username,
+      name: VALID_USERS[username].name,
+    })
+  }
+
+  return NextResponse.json({ authenticated: false }, { status: 401 })
 }
 
 export async function DELETE() {
-  const res = NextResponse.json({ ok: true })
-  res.cookies.set("ohana-auth", "", { path: "/", maxAge: 0 })
-  return res
+  const cookieStore = await cookies()
+  cookieStore.delete("auth")
+  return NextResponse.json({ ok: true })
 }

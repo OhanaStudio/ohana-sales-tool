@@ -1,11 +1,8 @@
 import React from "react"
 import type { Metadata, Viewport } from "next"
-import { AuthProvider } from "@/components/auth-provider"
-import { LoginGate } from "@/components/login-gate"
 
 import "./globals.css"
 
-// Force rebuild - no middleware
 export const metadata: Metadata = {
   title: "Ohana Website Health Check",
   description:
@@ -32,10 +29,9 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://use.typekit.net/igp4zgi.css" />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <AuthProvider>
-          <LoginGate>{children}</LoginGate>
-        </AuthProvider>
+        {children}
       </body>
     </html>
   )
 }
+

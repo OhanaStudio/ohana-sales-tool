@@ -6,6 +6,7 @@ import { useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { TopBar } from "@/components/top-bar"
 import { LoadingSteps } from "@/components/loading-steps"
+import { AuthGuard } from "@/components/auth-guard"
 import { Search, Clock } from "lucide-react"
 
 
@@ -66,10 +67,11 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <TopBar />
+    <AuthGuard>
+      <div className="min-h-screen bg-background flex flex-col">
+        <TopBar />
 
-      <main className="px-5 md:px-8 max-w-[900px] mx-auto pb-12 w-full flex-1 flex flex-col">
+        <main className="px-5 md:px-8 max-w-[900px] mx-auto pb-12 w-full flex-1 flex flex-col">
         {/* Hero */}
         {!loading && (
           <div className="pt-12 md:pt-20 pb-8 md:pb-12 text-center">
@@ -136,5 +138,6 @@ export default function Page() {
         )}
       </main>
     </div>
+    </AuthGuard>
   )
 }

@@ -2,7 +2,7 @@
 
 
 import Image from "next/image"
-import { useAuth } from "@/components/auth-provider"
+import { useAuth } from "@/hooks/use-auth"
 import { LogOut } from "lucide-react"
 
 export function TopBar() {
