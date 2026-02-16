@@ -14,6 +14,7 @@ import {
   UXPage,
   FrictionPage,
   A11yPage,
+  CTAPage,
 } from "@/components/print-report"
 import { ArrowLeft, Loader2, Printer } from "lucide-react"
 
@@ -113,6 +114,7 @@ export default function PrintPreviewPage() {
     { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
   ]
 
   /*

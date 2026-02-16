@@ -850,8 +850,90 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
   )
 }
 
+/* ═══ CTA PAGE ═══ */
+export function CTAPage({ url, date }: { url: string; date: string }) {
+  return (
+    <PAGE>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: 8, borderBottom: `1px solid ${C.border}`, marginBottom: 20 }}>
+        <h3 style={{ margin: 0, fontSize: 10, fontWeight: 600, fontFamily: 'freight-display-pro, serif', color: C.black }}>Website Health Check</h3>
+        <span style={{ fontSize: 8, color: C.mutedForeground }}>{url}</span>
+        <span style={{ fontSize: 8, color: C.mutedForeground }}>{date}</span>
+      </div>
+
+      <BODY>
+        {/* Headline */}
+        <h1 style={{ margin: '0 0 16px 0', fontSize: 32, fontWeight: 400, fontFamily: 'freight-display-pro, serif', color: C.black, lineHeight: 1.2 }}>
+          Creative agency quality.{' '}
+          <br />
+          Without the agency overhead.
+        </h1>
+
+        {/* Intro paragraph */}
+        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.foreground }}>
+          We're Ohana Studio, a full-service creative agency based in Somerset.
+        </p>
+
+        <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.foreground }}>
+          We help businesses across the globe get clear on their brand, improve their marketing, and deliver websites that convert. Whether you need a full rebrand, better marketing, or a website that actually delivers results, we make it happen. If you want an agency-level, moves-your-brand-forward, you're in the right place.
+        </p>
+
+        {/* Portfolio grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 20 }}>
+          <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images-GRFZadawL4jMlTjsUF4bhtch3o35p7.png" alt="Portfolio showcase" style={{ width: '100%', height: 'auto', borderRadius: 4 }} />
+        </div>
+
+        {/* Body text */}
+        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.foreground }}>
+          We're a small team of creatives who actually know what we're doing. We've worked with Fortune 500 companies, global teams, launched campaigns for household names, and helped ambitious brands grow. We've led strategy, UX, content, and design at agency level, and we've seen both sides of the fence. The ones taking it, and the ones overcharging for their rooftop views. So we believe that everyone deserves amazing work at a realistic price.
+        </p>
+
+        {/* Team section */}
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-t9nMieFj9sWPtCTVJdVBSiAF7fESYY.png" alt="Ollie Brown" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+            <div>
+              <div style={{ fontSize: 8, fontWeight: 600, color: C.black }}>Ollie Brown</div>
+              <div style={{ fontSize: 7, color: C.mutedForeground }}>Creative Designer & Developer</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-1-OtsLrQxNq9xwHzckQcmygboEUoeDEW.png" alt="Mark Holliwell" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+            <div>
+              <div style={{ fontSize: 8, fontWeight: 600, color: C.black }}>Mark Holliwell</div>
+              <div style={{ fontSize: 7, color: C.mutedForeground }}>Creative Designer</div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Box */}
+        <div style={{ background: C.black, padding: 20, borderRadius: 4 }}>
+          <h2 style={{ margin: '0 0 8px 0', fontSize: 12, fontWeight: 600, color: C.white }}>
+            Let's talk about what we found
+          </h2>
+          <p style={{ margin: '0 0 12px 0', fontSize: 9, color: C.white, opacity: 0.9 }}>
+            Book a free 30-minute clarity call to walk through your results and discuss quick wins.
+          </p>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, padding: '6px 12px', borderRadius: 4, fontSize: 8, fontWeight: 600 }}>
+            <span>📅</span>
+            <span>Book a meeting →</span>
+          </div>
+        </div>
+      </BODY>
+
+      {/* Footer */}
+      <div style={{ position: 'absolute', bottom: 30, left: 30, right: 30, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <svg width="60" height="31" viewBox="0 0 60 31" fill="none" style={{ opacity: 0.6 }}>
+          <text x="0" y="20" fontSize="24" fontFamily="freight-display-pro, serif" fill={C.black}>Ohana</text>
+        </svg>
+        <span style={{ fontSize: 7, color: C.mutedForeground }}>www.ohana.studio</span>
+      </div>
+    </PAGE>
+  )
+}
+
 /* ═══ HELPERS ═══ */
-export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, PAGE, BODY, C }
+export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, CTAPage, PAGE, BODY, C }
 
 /* ═══ MAIN EXPORT (print-only) ═══ */
 export function PrintReport({ result }: { result: AuditResult }) {
@@ -871,6 +953,7 @@ export function PrintReport({ result }: { result: AuditResult }) {
       <UXPage r={result} date={date} riskLabel={riskLabel} />
       <FrictionPage r={result} date={date} riskLabel={riskLabel} />
       <A11yPage r={result} date={date} riskLabel={riskLabel} />
+      <CTAPage url={result.url} date={date} />
     </div>
   )
 }
