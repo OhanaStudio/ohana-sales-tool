@@ -1,6 +1,7 @@
 import React from "react"
 import type { Metadata, Viewport } from "next"
 import { AuthProvider } from "@/components/auth-provider"
+import { LoginGate } from "@/components/login-gate"
 
 import "./globals.css"
 
@@ -31,7 +32,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <AuthProvider>
-          {children}
+          <LoginGate>{children}</LoginGate>
         </AuthProvider>
       </body>
     </html>

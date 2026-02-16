@@ -8,6 +8,10 @@ import { LogOut } from "lucide-react"
 export function TopBar() {
   const { logout } = useAuth()
 
+  const handleLogout = async () => {
+    await logout()
+  }
+
   return (
     <header className="flex items-center justify-between px-5 py-4 md:px-8 md:py-5 no-print">
       <a href="/" className="block min-h-[44px] flex items-center">
@@ -16,7 +20,7 @@ export function TopBar() {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={logout}
+          onClick={handleLogout}
           className="text-sm font-sans text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 min-h-[44px] px-2 py-2"
           aria-label="Sign out"
         >
