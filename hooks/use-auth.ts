@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 interface AuthUser {
   username: string
@@ -9,25 +9,25 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch("/api/auth", { credentials: "include" })
-        if (res.ok) {
-          const data = await res.json()
-          setUser({ username: data.username, name: data.name })
-        } else {
-          setUser(null)
-        }
-      } catch {
+  const checkAuth = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth", { credentials: "include" })
+      if (res.ok) {
+        const data = await res.json()
+        setUser({ username: data.username, name: data.name })
+      } else {
         setUser(null)
-      } finally {
-        setLoading(false)
       }
+    } catch {
+      setUser(null)
+    } finally {
+      setLoading(false)
     }
-
-    checkAuth()
   }, [])
+
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
 
   const login = async (username: string, password: string) => {
     const res = await fetch("/api/auth", {
@@ -46,9 +46,14 @@ export function useAuth() {
   }
 
   const logout = async () => {
-    await fetch("/api/auth", { method: "DELETE", credentials: "include" })
-    setUser(null)
+    const res = await fetch("/api/auth", { method: "DELETE", credentials: "include" })
+    if (res.ok) {
+      setUser(null)
+      // Force a refetch to ensure other components see the logout
+      await checkAuth()
+    }
   }
 
   return { user, loading, login, logout }
 }
+
