@@ -38,12 +38,8 @@ export default function PrintPreviewPage() {
   const [recapText, setRecapText] = useState<string>("")
   const [loading, setLoading] = useState(true)
   
-  console.log("[v0] PrintPreviewPage user:", user)
-  console.log("[v0] PrintPreviewPage user?.name:", user?.name)
-  
-  // Use hardcoded name if auth fails
+  // Use hardcoded name if auth fails - TODO: Fix auth to dynamically use logged-in user
   const preparedBy = user?.name || "Ollie Brown"
-  console.log("[v0] PrintPreviewPage preparedBy:", preparedBy)
 
   useEffect(() => {
     async function load() {
