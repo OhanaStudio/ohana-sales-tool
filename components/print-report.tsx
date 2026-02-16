@@ -558,6 +558,13 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
   const badgeBorder = failCount === 0 ? '#a7f3d0' : '#fde68a'
   const badgeLabel = failCount === 0 ? 'All clear' : `${failCount} Moderate Risk${failCount !== 1 ? 's' : ''}`
 
+  // Sort: crosses first (not found), then ticks (found)
+  const sortedItems = [...items].sort((a, b) => {
+    if (!a.found && b.found) return -1
+    if (a.found && !b.found) return 1
+    return 0
+  })
+
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} />
@@ -571,7 +578,7 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
           <Sub>These indicators are based on an AI analysis of the page screenshots.</Sub>
 
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'hsl(var(--card))', overflow: 'hidden' }}>
-            {items.map((item, i) => (
+            {sortedItems.map((item, i) => (
               <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                   <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
@@ -601,7 +608,11 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
                 { found: di.imageIssues.oversizedCount === 0, label: 'Image optimisation', detail: di.imageIssues.oversizedCount > 0 ? `${di.imageIssues.oversizedCount} oversized images found` : 'Images appear well-optimised.', note: 'Well-optimised images keep the site fast and improve both user experience and search ranking.' },
                 { found: di.contrastPassed, label: 'Colour contrast', detail: di.contrastPassed ? 'All text meets WCAG colour contrast guidelines.' : `${di.contrastIssues} contrast issue${(di.contrastIssues ?? 0) > 1 ? 's' : ''} detected.`, note: 'Good contrast ensures text is readable for all users including those with visual impairments.' },
                 { found: !di.inconsistentSpacing, label: 'Spacing consistency', detail: di.inconsistentSpacing ? di.spacingDetails : 'No inline spacing inconsistencies detected.', note: 'Consistent spacing contributes to a polished, professional appearance.' },
-              ].map((item, i) => (
+              ].sort((a, b) => {
+                if (!a.found && b.found) return -1
+                if (a.found && !b.found) return 1
+                return 0
+              }).map((item, i) => (
                 <div key={item.label} style={{ padding: '6px 10px', borderTop: i > 0 ? '1px solid #e7e5e4' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                     <div style={{ marginTop: 1, flexShrink: 0 }}><A11yIcon status={item.found ? 'pass' : 'fail'} /></div>
@@ -671,6 +682,14 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
   const badgeBorder = redCount > 0 ? '#fecaca' : amberCount > 0 ? '#fde68a' : '#6ee7b7'
   const badgeLabel = issueCount === 0 ? 'All clear' : redCount > 0 ? `${redCount} High Risk${redCount !== 1 ? 's' : ''}` : `${amberCount} Moderate Risk${amberCount !== 1 ? 's' : ''}`
 
+  // Sort: red (crosses) first, then amber (warnings), then emerald (ticks)
+  const sortedCats = [...cats].sort((a, b) => {
+    const colorOrder: Record<string, number> = { red: 0, amber: 1, emerald: 2 }
+    const colorA = frictionStatusColor(a.status)
+    const colorB = frictionStatusColor(b.status)
+    return (colorOrder[colorA] || 3) - (colorOrder[colorB] || 3)
+  })
+
   return (
     <div style={PAGE}>
       <PH url={r.url} date={date} />
@@ -683,7 +702,7 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
           <Sub>AI-powered analysis of visual friction patterns based on page screenshots.</Sub>
 
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, background: 'hsl(var(--card))', overflow: 'hidden' }}>
-            {cats.map((cat, i) => {
+            {sortedCats.map((cat, i) => {
               const color = frictionStatusColor(cat.status)
               const isGood = color === 'emerald'
               const detail = cat.bullets.length > 0 ? cat.bullets.join(' ') : cat.status
