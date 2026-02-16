@@ -37,6 +37,13 @@ export default function PrintPreviewPage() {
   const [result, setResult] = useState<AuditResult | null>(null)
   const [recapText, setRecapText] = useState<string>("")
   const [loading, setLoading] = useState(true)
+  
+  console.log("[v0] PrintPreviewPage user:", user)
+  console.log("[v0] PrintPreviewPage user?.name:", user?.name)
+  
+  // Use hardcoded name if auth fails
+  const preparedBy = user?.name || "Ollie Brown"
+  console.log("[v0] PrintPreviewPage preparedBy:", preparedBy)
 
   useEffect(() => {
     async function load() {
@@ -107,7 +114,7 @@ export default function PrintPreviewPage() {
   ].filter(Boolean).join(" | ")
 
   const pages = [
-    { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy={user?.name} /> },
+    { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy={preparedBy} /> },
     { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
     { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },
