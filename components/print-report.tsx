@@ -257,8 +257,8 @@ function IntroPage({ r, date, riskLabel, risks, recapText }: { r: AuditResult; d
               There are several areas where improvements could make a meaningful difference to how this site performs and converts.
             </p>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
-              {risks.high > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #fecaca', background: '#fef2f2', color: '#991b1b' }}>{risks.high} High Risks</span>}
-              {risks.moderate > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #fde68a', background: '#fffbeb', color: '#78350f' }}>{risks.moderate} Moderate Risks</span>}
+              {risks.high > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #fecaca', background: '#fee2e2', color: '#991b1b' }}>{risks.high} High Risks</span>}
+              {risks.moderate > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #fde68a', background: '#fef3c7', color: '#92400e' }}>{risks.moderate} Moderate Risks</span>}
               {risks.accessibility > 0 && <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', border: '1px solid #bae6fd', background: '#f0f9ff', color: '#0369a1' }}>{risks.accessibility} Accessibility Risks</span>}
             </div>
           </div>
@@ -319,8 +319,8 @@ function RiskPage({ r, date, riskLabel }: { r: AuditResult; date: string; riskLa
   for (const lvl of ['red', 'amber', 'green'] as RiskLevel[]) { const cs = seen.get(lvl); if (cs?.length) groups.push({ level: lvl, cards: cs }) }
 
   const cfg: Record<RiskLevel, { heading: string; sub: string; badge: string; badgeBg: string; badgeC: string; borderC: string }> = {
-    red: { heading: 'High Risks', sub: 'These issues are likely reducing conversions and trust.', badge: 'High Risk', badgeBg: '#fef2f2', badgeC: '#991b1b', borderC: '#fecaca' },
-    amber: { heading: 'Moderate Risks', sub: 'Areas with room for improvement that could affect performance.', badge: 'Moderate', badgeBg: '#fffbeb', badgeC: '#78350f', borderC: '#fde68a' },
+    red: { heading: 'High Risks', sub: 'These issues are likely reducing conversions and trust.', badge: 'High Risk', badgeBg: '#fee2e2', badgeC: '#991b1b', borderC: '#fecaca' },
+    amber: { heading: 'Moderate Risks', sub: 'Areas with room for improvement that could affect performance.', badge: 'Moderate', badgeBg: '#fef3c7', badgeC: '#92400e', borderC: '#fde68a' },
     green: { heading: 'Low Risks', sub: 'These areas are performing well.', badge: 'Low Risk', badgeBg: '#ecfdf5', badgeC: '#065f46', borderC: '#a7f3d0' },
   }
 
@@ -662,8 +662,8 @@ function FrictionPage({ r, date }: { r: AuditResult; date: string; riskLabel?: s
   const amberCount = cats.filter((c) => frictionStatusColor(c.status) === 'amber').length
   const issueCount = redCount + amberCount
 
-  const badgeBg = redCount > 0 ? '#fef2f2' : amberCount > 0 ? '#fffbeb' : '#ecfdf5'
-  const badgeColor = redCount > 0 ? '#991b1b' : amberCount > 0 ? '#78350f' : '#047857'
+  const badgeBg = redCount > 0 ? '#fee2e2' : amberCount > 0 ? '#fef3c7' : '#ecfdf5'
+  const badgeColor = redCount > 0 ? '#991b1b' : amberCount > 0 ? '#92400e' : '#047857'
   const badgeBorder = redCount > 0 ? '#fecaca' : amberCount > 0 ? '#fde68a' : '#6ee7b7'
   const badgeLabel = issueCount === 0 ? 'All clear' : redCount > 0 ? `${redCount} High Risk${redCount !== 1 ? 's' : ''}` : `${amberCount} Moderate Risk${amberCount !== 1 ? 's' : ''}`
 

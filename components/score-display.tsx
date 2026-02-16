@@ -108,8 +108,8 @@ export function ScoreDisplay({
                     pill.variant === "blue"
                       ? "bg-sky-50 text-sky-700 border-sky-200"
                       : pill.variant === "red"
-                        ? "bg-red-50 text-red-700 border-red-200"
-                        : "bg-amber-50 text-amber-700 border-amber-200"
+                        ? "bg-red-100 text-red-800 border-red-200"
+                        : "bg-amber-100 text-amber-800 border-amber-200"
               const handleClick = pill.scrollTo
                 ? () => {
                     const el = document.getElementById(pill.scrollTo!)
