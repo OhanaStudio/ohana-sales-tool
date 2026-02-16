@@ -549,9 +549,10 @@ function UXPage({ r, date }: { r: AuditResult; date: string; riskLabel?: string 
   })
 
   const failCount = items.filter((i) => !i.found).length
-  const badgeBg = failCount === 0 ? '#ecfdf5' : failCount <= 3 ? '#fef3c7' : '#fee2e2'
-  const badgeColor = failCount === 0 ? '#065f46' : failCount <= 3 ? '#92400e' : '#991b1b'
-  const badgeBorder = failCount === 0 ? '#a7f3d0' : failCount <= 3 ? '#fde68a' : '#fecaca'
+  // UX indicators are always moderate risks, never high
+  const badgeBg = failCount === 0 ? '#ecfdf5' : '#fef3c7'
+  const badgeColor = failCount === 0 ? '#065f46' : '#92400e'
+  const badgeBorder = failCount === 0 ? '#a7f3d0' : '#fde68a'
   const badgeLabel = failCount === 0 ? 'All clear' : `${failCount} Moderate Risk${failCount !== 1 ? 's' : ''}`
 
   return (
