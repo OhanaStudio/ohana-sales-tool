@@ -872,12 +872,14 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
         <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We help businesses across the globe get clear on their brand, improve their marketing, and deliver websites that convert. Whether you need a full rebrand, better marketing, or a website that actually delivers results, we make it happen. If you want an agency-level, moves-your-brand-forward, you're in the right place.
         </p>
+      </div>
 
-        {/* Portfolio grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 20 }}>
-          <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images-GRFZadawL4jMlTjsUF4bhtch3o35p7.png" alt="Portfolio showcase" style={{ width: '100%', height: 'auto', borderRadius: 4 }} />
-        </div>
+      {/* Portfolio grid - Full width outside BODY container */}
+      <div style={{ margin: '20px 0', padding: '0 30px' }}>
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images-GRFZadawL4jMlTjsUF4bhtch3o35p7.png" alt="Portfolio showcase" style={{ width: '100%', height: 'auto' }} />
+      </div>
 
+      <div style={BODY}>
         {/* Body text */}
         <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We're a small team of creatives who actually know what we're doing. We've worked with Fortune 500 companies, global teams, launched campaigns for household names, and helped ambitious brands grow. We've led strategy, UX, content, and design at agency level, and we've seen both sides of the fence. The ones taking it, and the ones overcharging for their rooftop views. So we believe that everyone deserves amazing work at a realistic price.
