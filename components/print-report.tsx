@@ -856,8 +856,9 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
     <div style={PAGE}>
       <PH url={url} date={date} />
 
-      {/* Headline and intro */}
-      <div style={{ ...BODY, paddingBottom: 0 }}>
+      {/* Content container with controlled flow */}
+      <div style={{ padding: '0 120px', position: 'relative' }}>
+        {/* Headline and intro */}
         <h1 style={{ margin: '0 0 12px 0', fontSize: 30, fontWeight: 400, fontFamily: SERIF, color: C.black, lineHeight: 1.25 }}>
           Creative agency quality.{' '}
           <br />
@@ -868,20 +869,20 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
           We're Ohana Studio, a full-service creative agency based in Somerset.
         </p>
 
-        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We help businesses across the globe get clear on their brand, improve their marketing, and deliver websites that convert. Whether you need a full rebrand, better marketing, or a website that actually delivers results, we make it happen. If you want an agency-level, moves-your-brand-forward, you're in the right place.
         </p>
       </div>
 
       {/* Portfolio grid - Full width */}
-      <div style={{ margin: '0 0 16px 0', padding: '0 30px' }}>
+      <div style={{ margin: '0 0 20px 0', padding: '0 30px' }}>
         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images-GRFZadawL4jMlTjsUF4bhtch3o35p7.png" alt="Portfolio showcase" style={{ width: '100%', height: 'auto', display: 'block' }} />
       </div>
 
       {/* Body content */}
-      <div style={BODY}>
+      <div style={{ padding: '0 120px', position: 'relative' }}>
         {/* Body text */}
-        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We're a small team of creatives who actually know what we're doing. We've worked with Fortune 500 companies, global teams, launched campaigns for household names, and helped ambitious brands grow. We've led strategy, UX, content, and design at agency level, and we've seen both sides of the fence. The ones taking it, and the ones overcharging for their rooftop views. So we believe that everyone deserves amazing work at a realistic price.
         </p>
 
@@ -904,17 +905,31 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
         </div>
 
         {/* CTA Box */}
-        <div style={{ background: C.black, padding: '20px 24px', borderRadius: 4 }}>
-          <h2 style={{ margin: '0 0 6px 0', fontSize: 13, fontWeight: 600, color: C.white }}>
+        <div style={{ background: '#171717', padding: '14px 16px', borderRadius: 0 }}>
+          <p style={{ margin: '0 0 3px 0', fontSize: 12, fontWeight: 700, color: '#ffffff' }}>
             Let's talk about what we found
-          </h2>
-          <p style={{ margin: '0 0 14px 0', fontSize: 9, lineHeight: 1.5, color: C.white, opacity: 0.9 }}>
+          </p>
+          <p style={{ margin: '0 0 8px 0', fontSize: 10, lineHeight: 1.5, color: 'rgba(255, 255, 255, 0.85)' }}>
             Book a free 30-minute clarity call to walk through your results and discuss quick wins.
           </p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, padding: '8px 14px', borderRadius: 4, fontSize: 8, fontWeight: 600 }}>
-            <span>📅</span>
-            <span>Book a meeting →</span>
-          </div>
+          <a 
+            href="https://calendar.notion.so/meet/ollie-ohana/ohana-30min" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: 6, 
+              background: '#ffffff', 
+              color: '#171717', 
+              fontSize: 10, 
+              fontWeight: 600, 
+              padding: '5px 12px', 
+              textDecoration: 'none' 
+            }}
+          >
+            Book a meeting →
+          </a>
         </div>
       </div>
 
