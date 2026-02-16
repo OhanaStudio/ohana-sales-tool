@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { LogOut } from "lucide-react"
 
 export function TopBar() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
 
   const handleLogout = async () => {
     await logout()
@@ -19,7 +19,12 @@ export function TopBar() {
       <a href="/" className="block min-h-[44px] flex items-center">
         <Image src="/ohaha-logo.svg" alt="Ohana" width={85} height={44} className="h-8 w-auto" />
       </a>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
+        {user?.name && (
+          <div className="text-sm font-sans text-foreground">
+            {user.name}
+          </div>
+        )}
         <button
           type="button"
           onClick={handleLogout}
