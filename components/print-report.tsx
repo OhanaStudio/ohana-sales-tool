@@ -857,7 +857,7 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
       <PH url={url} date={date} />
 
       {/* Content container with controlled flow */}
-      <div style={{ padding: '0 120px', position: 'relative' }}>
+      <div style={{ paddingTop: 75, paddingLeft: 120, paddingRight: 120, position: 'relative' }}>
         {/* Headline and intro */}
         <h1 style={{ margin: '0 0 12px 0', fontSize: 30, fontWeight: 400, fontFamily: SERIF, color: C.black, lineHeight: 1.25 }}>
           Creative agency quality.{' '}
