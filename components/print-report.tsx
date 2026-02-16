@@ -189,6 +189,7 @@ function IR({ label, detail, note, status }: { label: string; detail?: string; n
 
 /* ═══ COVER PAGE ═══ */
 function CoverPage({ url, date, preparedBy }: { url: string; date: string; preparedBy?: string }) {
+  console.log("[v0] CoverPage preparedBy:", preparedBy)
   /* Figma cover measurements (proportional to 595x842 frame):
      Logo: 23px left, 21px top. Title block starts ~38px below logo.
      URL: 9px below title. Date: tight below URL.

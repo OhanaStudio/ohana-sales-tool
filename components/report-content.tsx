@@ -115,6 +115,9 @@ function PrintSection({
 export function ReportContent({ result }: { result: AuditResult }) {
   useScrollReveal()
   const { user } = useAuth()
+  
+  console.log("[v0] ReportContent user:", user)
+  console.log("[v0] user?.name:", user?.name)
 
   const [sections, setSections] = useState({
     platform: true,
