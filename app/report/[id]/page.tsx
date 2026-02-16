@@ -16,6 +16,10 @@ export default function ReportPage() {
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
 
+  console.log("[v0] ReportPage user:", user)
+  console.log("[v0] ReportPage authLoading:", authLoading)
+  console.log("[v0] ReportPage user?.name:", user?.name)
+
   useEffect(() => {
     setMounted(true)
   }, [])
