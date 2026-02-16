@@ -10,6 +10,8 @@ export function TopBar() {
 
   const handleLogout = async () => {
     await logout()
+    // Force page reload to show login screen
+    window.location.href = "/"
   }
 
   return (
