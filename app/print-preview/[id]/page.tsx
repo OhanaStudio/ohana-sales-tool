@@ -37,9 +37,6 @@ export default function PrintPreviewPage() {
   const [result, setResult] = useState<AuditResult | null>(null)
   const [recapText, setRecapText] = useState<string>("")
   const [loading, setLoading] = useState(true)
-  
-  // Use hardcoded name if auth fails - TODO: Fix auth to dynamically use logged-in user
-  const preparedBy = user?.name || "Ollie Brown"
 
   useEffect(() => {
     async function load() {
@@ -110,7 +107,7 @@ export default function PrintPreviewPage() {
   ].filter(Boolean).join(" | ")
 
   const pages = [
-    { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy={preparedBy} /> },
+    { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy={user?.name} /> },
     { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
     { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },

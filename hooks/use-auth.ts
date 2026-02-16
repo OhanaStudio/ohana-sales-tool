@@ -18,11 +18,28 @@ export function useAuth() {
       if (res.ok) {
         const data = await res.json()
         console.log("[v0] useAuth: Received data:", data)
+        // Store in localStorage as backup
+        if (typeof window !== "undefined" && data.name) {
+          localStorage.setItem("auth_user_name", data.name)
+          localStorage.setItem("auth_username", data.username)
+        }
         setUser({ username: data.username, name: data.name })
         console.log("[v0] useAuth: Set user to:", { username: data.username, name: data.name })
       } else {
-        console.log("[v0] useAuth: Response not ok, setting user to null")
-        setUser(null)
+        console.log("[v0] useAuth: Response not ok, checking localStorage")
+        // Fallback to localStorage if API fails
+        if (typeof window !== "undefined") {
+          const storedName = localStorage.getItem("auth_user_name")
+          const storedUsername = localStorage.getItem("auth_username")
+          if (storedName && storedUsername) {
+            console.log("[v0] useAuth: Using localStorage fallback:", storedName)
+            setUser({ username: storedUsername, name: storedName })
+          } else {
+            setUser(null)
+          }
+        } else {
+          setUser(null)
+        }
       }
     } catch (error) {
       console.error("[v0] useAuth: Error during auth check:", error)
@@ -47,6 +64,11 @@ export function useAuth() {
 
     if (res.ok) {
       const data = await res.json()
+      // Store in localStorage for reliable access
+      if (typeof window !== "undefined" && data.name) {
+        localStorage.setItem("auth_user_name", data.name)
+        localStorage.setItem("auth_username", data.username)
+      }
       setUser({ username: data.username, name: data.name })
       return true
     }
@@ -56,6 +78,11 @@ export function useAuth() {
   const logout = async () => {
     const res = await fetch("/api/auth", { method: "DELETE", credentials: "include" })
     if (res.ok) {
+      // Clear localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("auth_user_name")
+        localStorage.removeItem("auth_username")
+      }
       setUser(null)
       // Force a refetch to ensure other components see the logout
       await checkAuth()
