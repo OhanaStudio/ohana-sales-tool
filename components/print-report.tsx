@@ -856,29 +856,29 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
     <div style={PAGE}>
       <PH url={url} date={date} />
 
-      <div style={BODY}>
-        {/* Headline */}
-        <h1 style={{ margin: '0 0 16px 0', fontSize: 32, fontWeight: 400, fontFamily: SERIF, color: C.black, lineHeight: 1.2 }}>
+      {/* Headline and intro */}
+      <div style={{ ...BODY, paddingBottom: 0 }}>
+        <h1 style={{ margin: '0 0 12px 0', fontSize: 30, fontWeight: 400, fontFamily: SERIF, color: C.black, lineHeight: 1.25 }}>
           Creative agency quality.{' '}
           <br />
           Without the agency overhead.
         </h1>
 
-        {/* Intro paragraph */}
-        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
+        <p style={{ margin: '0 0 12px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We're Ohana Studio, a full-service creative agency based in Somerset.
         </p>
 
-        <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
+        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We help businesses across the globe get clear on their brand, improve their marketing, and deliver websites that convert. Whether you need a full rebrand, better marketing, or a website that actually delivers results, we make it happen. If you want an agency-level, moves-your-brand-forward, you're in the right place.
         </p>
       </div>
 
-      {/* Portfolio grid - Full width outside BODY container */}
-      <div style={{ margin: '20px 0', padding: '0 30px' }}>
-        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images-GRFZadawL4jMlTjsUF4bhtch3o35p7.png" alt="Portfolio showcase" style={{ width: '100%', height: 'auto' }} />
+      {/* Portfolio grid - Full width */}
+      <div style={{ margin: '0 0 16px 0', padding: '0 30px' }}>
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images-GRFZadawL4jMlTjsUF4bhtch3o35p7.png" alt="Portfolio showcase" style={{ width: '100%', height: 'auto', display: 'block' }} />
       </div>
 
+      {/* Body content */}
       <div style={BODY}>
         {/* Body text */}
         <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
@@ -886,32 +886,32 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
         </p>
 
         {/* Team section */}
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-t9nMieFj9sWPtCTVJdVBSiAF7fESYY.png" alt="Ollie Brown" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+        <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-t9nMieFj9sWPtCTVJdVBSiAF7fESYY.png" alt="Ollie Brown" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
             <div>
-              <div style={{ fontSize: 8, fontWeight: 600, color: C.black }}>Ollie Brown</div>
+              <div style={{ fontSize: 9, fontWeight: 600, color: C.black, marginBottom: 2 }}>Ollie Brown</div>
               <div style={{ fontSize: 7, color: C.light }}>Creative Designer & Developer</div>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-1-OtsLrQxNq9xwHzckQcmygboEUoeDEW.png" alt="Mark Holliwell" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-1-OtsLrQxNq9xwHzckQcmygboEUoeDEW.png" alt="Mark Holliwell" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
             <div>
-              <div style={{ fontSize: 8, fontWeight: 600, color: C.black }}>Mark Holliwell</div>
+              <div style={{ fontSize: 9, fontWeight: 600, color: C.black, marginBottom: 2 }}>Mark Holliwell</div>
               <div style={{ fontSize: 7, color: C.light }}>Creative Designer</div>
             </div>
           </div>
         </div>
 
         {/* CTA Box */}
-        <div style={{ background: C.black, padding: 20, borderRadius: 4 }}>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: 12, fontWeight: 600, color: C.white }}>
+        <div style={{ background: C.black, padding: '20px 24px', borderRadius: 4 }}>
+          <h2 style={{ margin: '0 0 6px 0', fontSize: 13, fontWeight: 600, color: C.white }}>
             Let's talk about what we found
           </h2>
-          <p style={{ margin: '0 0 12px 0', fontSize: 9, color: C.white, opacity: 0.9 }}>
+          <p style={{ margin: '0 0 14px 0', fontSize: 9, lineHeight: 1.5, color: C.white, opacity: 0.9 }}>
             Book a free 30-minute clarity call to walk through your results and discuss quick wins.
           </p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, padding: '6px 12px', borderRadius: 4, fontSize: 8, fontWeight: 600 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.white, color: C.black, padding: '8px 14px', borderRadius: 4, fontSize: 8, fontWeight: 600 }}>
             <span>📅</span>
             <span>Book a meeting →</span>
           </div>
