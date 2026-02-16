@@ -5,6 +5,7 @@ import { LoginGate } from "@/components/login-gate"
 
 import "./globals.css"
 
+// Force rebuild - no middleware
 export const metadata: Metadata = {
   title: "Ohana Website Health Check",
   description:

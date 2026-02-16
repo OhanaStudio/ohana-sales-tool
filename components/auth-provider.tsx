@@ -23,8 +23,10 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string | null>(null)
   const [name, setName] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
+    // Check auth status on mount
     fetch("/api/auth", { credentials: "same-origin" })
       .then((res) => {
         if (res.ok) return res.json()
@@ -34,7 +36,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUsername(data.username)
         setName(data.name)
       })
-      .catch(() => {})
+      .catch(() => {
+        setUsername(null)
+        setName(null)
+      })
+      .finally(() => setIsInitialized(true))
   }, [])
 
   const login = async (username: string, password: string): Promise<boolean> => {
@@ -59,6 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setName(null)
   }
 
+  // Provide a temporary context while initializing to prevent hydration mismatch
   return (
     <AuthContext.Provider value={{ username, name, login, logout }}>
       {children}
