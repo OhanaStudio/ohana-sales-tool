@@ -853,28 +853,23 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
 /* ═══ CTA PAGE ═══ */
 export function CTAPage({ url, date }: { url: string; date: string }) {
   return (
-    <PAGE>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: 8, borderBottom: `1px solid ${C.border}`, marginBottom: 20 }}>
-        <h3 style={{ margin: 0, fontSize: 10, fontWeight: 600, fontFamily: 'freight-display-pro, serif', color: C.black }}>Website Health Check</h3>
-        <span style={{ fontSize: 8, color: C.mutedForeground }}>{url}</span>
-        <span style={{ fontSize: 8, color: C.mutedForeground }}>{date}</span>
-      </div>
+    <div style={PAGE}>
+      <PH url={url} date={date} />
 
-      <BODY>
+      <div style={BODY}>
         {/* Headline */}
-        <h1 style={{ margin: '0 0 16px 0', fontSize: 32, fontWeight: 400, fontFamily: 'freight-display-pro, serif', color: C.black, lineHeight: 1.2 }}>
+        <h1 style={{ margin: '0 0 16px 0', fontSize: 32, fontWeight: 400, fontFamily: SERIF, color: C.black, lineHeight: 1.2 }}>
           Creative agency quality.{' '}
           <br />
           Without the agency overhead.
         </h1>
 
         {/* Intro paragraph */}
-        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.foreground }}>
+        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We're Ohana Studio, a full-service creative agency based in Somerset.
         </p>
 
-        <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.foreground }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We help businesses across the globe get clear on their brand, improve their marketing, and deliver websites that convert. Whether you need a full rebrand, better marketing, or a website that actually delivers results, we make it happen. If you want an agency-level, moves-your-brand-forward, you're in the right place.
         </p>
 
@@ -884,7 +879,7 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
         </div>
 
         {/* Body text */}
-        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.foreground }}>
+        <p style={{ margin: '0 0 16px 0', fontSize: 9, lineHeight: 1.6, color: C.black }}>
           We're a small team of creatives who actually know what we're doing. We've worked with Fortune 500 companies, global teams, launched campaigns for household names, and helped ambitious brands grow. We've led strategy, UX, content, and design at agency level, and we've seen both sides of the fence. The ones taking it, and the ones overcharging for their rooftop views. So we believe that everyone deserves amazing work at a realistic price.
         </p>
 
@@ -894,14 +889,14 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
             <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-t9nMieFj9sWPtCTVJdVBSiAF7fESYY.png" alt="Ollie Brown" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
             <div>
               <div style={{ fontSize: 8, fontWeight: 600, color: C.black }}>Ollie Brown</div>
-              <div style={{ fontSize: 7, color: C.mutedForeground }}>Creative Designer & Developer</div>
+              <div style={{ fontSize: 7, color: C.light }}>Creative Designer & Developer</div>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%2044-1-OtsLrQxNq9xwHzckQcmygboEUoeDEW.png" alt="Mark Holliwell" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
             <div>
               <div style={{ fontSize: 8, fontWeight: 600, color: C.black }}>Mark Holliwell</div>
-              <div style={{ fontSize: 7, color: C.mutedForeground }}>Creative Designer</div>
+              <div style={{ fontSize: 7, color: C.light }}>Creative Designer</div>
             </div>
           </div>
         </div>
@@ -919,16 +914,10 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
             <span>Book a meeting →</span>
           </div>
         </div>
-      </BODY>
-
-      {/* Footer */}
-      <div style={{ position: 'absolute', bottom: 30, left: 30, right: 30, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <svg width="60" height="31" viewBox="0 0 60 31" fill="none" style={{ opacity: 0.6 }}>
-          <text x="0" y="20" fontSize="24" fontFamily="freight-display-pro, serif" fill={C.black}>Ohana</text>
-        </svg>
-        <span style={{ fontSize: 7, color: C.mutedForeground }}>www.ohana.studio</span>
       </div>
-    </PAGE>
+
+      <PF />
+    </div>
   )
 }
 
