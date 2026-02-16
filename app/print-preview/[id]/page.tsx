@@ -228,12 +228,6 @@ export default function PrintPreviewPage() {
               Print
             </button>
           </div>
-          <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#171717", margin: "0 0 4px" }}>
-            Print Preview
-          </h1>
-          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: "#525252", margin: 0 }}>
-            A4 ratio ({A4_W} x {A4_H}px) — Content area {Math.round(CONTENT_W)}px wide
-          </p>
         </div>
 
         {/* Pages */}
