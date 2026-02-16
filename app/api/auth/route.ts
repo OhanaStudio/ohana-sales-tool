@@ -53,15 +53,21 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   const cookieStore = await cookies()
   const username = cookieStore.get("auth")?.value
+  
+  console.log("[v0] Auth GET called")
+  console.log("[v0] Auth cookie username:", username)
 
   if (username && VALID_USERS[username]) {
-    return NextResponse.json({
+    const userData = {
       authenticated: true,
       username,
       name: VALID_USERS[username].name,
-    })
+    }
+    console.log("[v0] Returning user data:", userData)
+    return NextResponse.json(userData)
   }
 
+  console.log("[v0] No valid user, returning 401")
   return NextResponse.json({ authenticated: false }, { status: 401 })
 }
 
