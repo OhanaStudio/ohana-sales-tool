@@ -2,21 +2,15 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react"
 
-type AuthStatus = "checking" | "authenticated" | "unauthenticated"
-
 interface AuthContextValue {
-  status: AuthStatus
-  authenticated: boolean
-  email: string | null
+  username: string | null
   name: string | null
-  login: (password: string) => Promise<boolean>
+  login: (username: string, password: string) => Promise<boolean>
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextValue>({
-  status: "checking",
-  authenticated: false,
-  email: null,
+  username: null,
   name: null,
   login: async () => false,
   logout: () => {},
@@ -27,8 +21,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [status, setStatus] = useState<AuthStatus>("checking")
-  const [email, setEmail] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | null>(null)
   const [name, setName] = useState<string | null>(null)
 
   useEffect(() => {
@@ -38,27 +31,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Not authenticated")
       })
       .then((data) => {
-        setStatus("authenticated")
-        setEmail(data.email || "ollie@ohana.studio")
-        setName(data.name || "Ollie Brown")
+        setUsername(data.username)
+        setName(data.name)
       })
-      .catch(() => {
-        setStatus("unauthenticated")
-      })
+      .catch(() => {})
   }, [])
 
-  const login = async (password: string): Promise<boolean> => {
+  const login = async (username: string, password: string): Promise<boolean> => {
     const res = await fetch("/api/auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password }),
       credentials: "same-origin",
     })
     if (res.ok) {
       const data = await res.json()
-      setStatus("authenticated")
-      setEmail(data.email || "ollie@ohana.studio")
-      setName(data.name || "Ollie Brown")
+      setUsername(data.username)
+      setName(data.name)
       return true
     }
     return false
@@ -66,14 +55,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     await fetch("/api/auth", { method: "DELETE", credentials: "same-origin" })
-    setStatus("unauthenticated")
-    setEmail(null)
+    setUsername(null)
     setName(null)
   }
 
   return (
-    <AuthContext.Provider value={{ status, authenticated: status === "authenticated", email, name, login, logout }}>
+    <AuthContext.Provider value={{ username, name, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
+
