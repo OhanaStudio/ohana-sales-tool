@@ -6,6 +6,14 @@ const VALID_USERS: Record<string, { password: string; name: string }> = {
     password: "notber-8syjvi-sivnaV",
     name: "Ollie Brown",
   },
+  mark: {
+    password: "xelpar-4tyrwi-huvQax",
+    name: "Mark Halliwell",
+  },
+  james: {
+    password: "qonzev-3bemki-xyNfur",
+    name: "James Brown-Clarke",
+  },
 }
 
 export async function POST(request: NextRequest) {
