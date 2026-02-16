@@ -91,6 +91,32 @@ const BODY: React.CSSProperties = {
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 }
+
+/* Truncate long URLs in the middle to keep domain and end path visible */
+function truncateUrl(url: string, maxLength: number = 40): string {
+  // Remove protocol
+  const cleanUrl = url.replace(/^https?:\/\/(www\.)?/, '')
+  
+  if (cleanUrl.length <= maxLength) return cleanUrl
+  
+  // Split by slashes to preserve domain and last path segment
+  const parts = cleanUrl.split('/')
+  if (parts.length <= 2) return cleanUrl
+  
+  const domain = parts[0]
+  const lastSegment = parts[parts.length - 1]
+  const truncated = `${domain}/.../${lastSegment}`
+  
+  // If still too long, truncate the last segment
+  if (truncated.length > maxLength && lastSegment.length > 15) {
+    const availableForEnd = maxLength - domain.length - 5 // domain + "/.../"
+    const truncatedEnd = lastSegment.slice(0, Math.max(10, availableForEnd))
+    return `${domain}/.../${truncatedEnd}`
+  }
+  
+  return truncated
+}
+
 function formatMs(v: number | null) {
   if (v === null) return '—'
   return v < 1000 ? `${Math.round(v)}` : `${(v / 1000).toFixed(1)}`
@@ -129,6 +155,7 @@ const EDGE = 36
 
 /* ── Page header — single row: Title (left) · URL (centre) · Date (right) ── */
 function PH({ url, date }: { url: string; date: string; riskLabel?: string }) {
+  const displayUrl = truncateUrl(url.startsWith('http') ? url : `https://${url}`, 45)
   return (
     <div style={{
       position: 'absolute', top: 25, left: EDGE, right: EDGE,
@@ -136,7 +163,7 @@ function PH({ url, date }: { url: string; date: string; riskLabel?: string }) {
       paddingTop: 1, paddingBottom: 3, borderBottom: `1px solid ${C.border}`,
     }}>
       <p style={{ margin: 0, fontSize: 11, fontFamily: SERIF, color: C.black, flexShrink: 0 }}>Website Health Check</p>
-      <p style={{ margin: 0, fontSize: 9, color: C.light, textAlign: 'center', flex: '1 1 auto' }}>{url.startsWith('http') ? url : `https://${url}`}</p>
+      <p style={{ margin: 0, fontSize: 9, color: C.light, textAlign: 'center', flex: '1 1 auto' }}>{displayUrl}</p>
       <p style={{ margin: 0, fontSize: 9, color: C.light, flexShrink: 0, textAlign: 'right' }}>{date}</p>
     </div>
   )
@@ -193,6 +220,7 @@ function CoverPage({ url, date, preparedBy }: { url: string; date: string; prepa
      Logo: 23px left, 21px top. Title block starts ~38px below logo.
      URL: 9px below title. Date: tight below URL.
      "www.ohana.studio" bottom-right. */
+  const displayUrl = 'www.' + truncateUrl(url, 50)
   return (
     <div style={{ position: 'relative', width: A4_W, height: A4_H, overflow: 'hidden', pageBreakAfter: 'always', background: C.pampas }}>
       <img src="/hc-front.svg" alt="" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -203,7 +231,7 @@ function CoverPage({ url, date, preparedBy }: { url: string; date: string; prepa
         <h1 style={{ fontFamily: SERIF, fontSize: 84, lineHeight: 1.0, color: C.black, margin: '0 0 9px' }}>
           Website<br />Health Check
         </h1>
-        <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: '0 0 2px' }}>{'www.' + url.replace(/^https?:\/\/(www\.)?/, '')}</p>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: '0 0 2px' }}>{displayUrl}</p>
         <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: preparedBy ? '0 0 2px' : 0 }}>{date}</p>
         {preparedBy && (
           <p style={{ fontFamily: FONT, fontSize: 13, color: C.grey, margin: 0 }}>Prepared by {preparedBy}</p>
