@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils"
 import { useScrollReveal } from "@/hooks/use-scroll-reveal"
-import { useAuth } from "@/hooks/use-auth"
 
 import React from "react"
 import { useState } from "react"
@@ -112,12 +111,8 @@ function PrintSection({
   )
 }
 
-export function ReportContent({ result }: { result: AuditResult }) {
+export function ReportContent({ result, userName }: { result: AuditResult; userName?: string }) {
   useScrollReveal()
-  const { user } = useAuth()
-  
-  console.log("[v0] ReportContent user:", user)
-  console.log("[v0] user?.name:", user?.name)
 
   const [sections, setSections] = useState({
     platform: true,
@@ -205,7 +200,7 @@ export function ReportContent({ result }: { result: AuditResult }) {
   return (
     <div className="min-h-screen bg-background">
       {/* ══════════════ PRINT REPORT (self-contained A4 pages) ══════════════ */}
-      <PrintReport result={result} preparedBy={user?.name} />
+      <PrintReport result={result} preparedBy={userName} />
 
       {/* Top bar: Back + Download -- hidden in print */}
       <div className="no-print flex items-center justify-between px-5 md:px-8 py-4">

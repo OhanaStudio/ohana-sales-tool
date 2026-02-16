@@ -4,11 +4,13 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import type { AuditResult } from "@/lib/types"
 import { ReportContent } from "@/components/report-content"
+import { useAuth } from "@/hooks/use-auth"
 import { Loader2 } from "lucide-react"
 
 export default function ReportPage() {
   const params = useParams()
   const id = params.id as string
+  const { user, loading: authLoading } = useAuth()
   const [result, setResult] = useState<AuditResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -49,7 +51,7 @@ export default function ReportPage() {
     fetchReport().finally(() => setLoading(false))
   }, [id, mounted])
 
-  if (!mounted || loading) {
+  if (!mounted || loading || authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -76,5 +78,5 @@ export default function ReportPage() {
     )
   }
 
-  return <ReportContent result={result} />
+  return <ReportContent result={result} userName={user?.name} />
 }
