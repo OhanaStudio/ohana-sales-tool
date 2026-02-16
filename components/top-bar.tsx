@@ -3,7 +3,7 @@
 
 import Image from "next/image"
 import { useAuth } from "@/hooks/use-auth"
-import { LogOut } from "lucide-react"
+import { LogOut, History } from "lucide-react"
 
 export function TopBar() {
   const { user, logout } = useAuth()
@@ -16,9 +16,18 @@ export function TopBar() {
 
   return (
     <header className="flex items-center justify-between px-5 py-4 md:px-8 md:py-5 no-print bg-black border-b border-zinc-800">
-      <a href="/" className="block min-h-[44px] flex items-center">
-        <Image src="/ohaha-logo.svg" alt="Ohana" width={85} height={44} className="h-8 w-auto brightness-0 invert" />
-      </a>
+      <div className="flex items-center gap-6">
+        <a href="/" className="block min-h-[44px] flex items-center">
+          <Image src="/ohaha-logo.svg" alt="Ohana" width={85} height={44} className="h-8 w-auto brightness-0 invert" />
+        </a>
+        <a 
+          href="/history" 
+          className="text-zinc-400 hover:text-white transition-colors flex items-center min-h-[44px] px-2"
+          aria-label="View history"
+        >
+          <History className="h-5 w-5" />
+        </a>
+      </div>
       <div className="flex items-center gap-4">
         {user?.name && (
           <div className="text-sm font-sans text-white">
