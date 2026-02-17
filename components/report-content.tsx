@@ -20,10 +20,12 @@ import { SectionToggle } from "./section-toggle"
 import { RiskGroups } from "./risk-groups"
 import { RecapSection } from "./recap-section"
 import { PrintReport } from "./print-report"
+import { SendToMakeDialog } from "./send-to-make-dialog"
 import {
   Download,
   ArrowLeft,
   RefreshCw,
+  Send,
   ImageIcon,
   Paintbrush,
   Move,
@@ -130,6 +132,8 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
 
   const [isPrintingPDF, setIsPrintingPDF] = useState(false)
 
+  const [sendDialogOpen, setSendDialogOpen] = useState(false)
+
   const handlePrint = () => {
     setIsPrintingPDF(true)
     try {
@@ -230,7 +234,15 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
           >
             <Eye className="h-4 w-4" />
           </a>
-
+          <button
+            type="button"
+            onClick={() => setSendDialogOpen(true)}
+            aria-label="Send to Drive & Notion"
+            title="Send to Drive & Notion"
+            className="inline-flex items-center justify-center w-10 h-10 border border-border bg-transparent text-foreground hover:bg-muted transition-colors"
+          >
+            <Send className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
@@ -516,6 +528,14 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
         </div>
       </div>
 
+      <SendToMakeDialog
+        open={sendDialogOpen}
+        onOpenChange={setSendDialogOpen}
+        reportId={result.id}
+        reportUrl={result.url}
+        reportScore={result.overallScore}
+        reportDate={result.timestamp}
+      />
 
     </div>
   )
