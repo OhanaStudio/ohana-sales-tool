@@ -1,4 +1,4 @@
-import { generateText } from "ai"
+import { generateText, Output } from "ai"
 import { z } from "zod"
 
 const recapSchema = z.object({
@@ -42,10 +42,9 @@ export async function POST(req: Request) {
       `EAA/WCAG issues: ${a11y.eaaIssues?.length ?? 0}`,
     ]
 
-    const { object } = await generateText({
+    const { output } = await generateText({
       model: "openai/gpt-4o-mini",
-      output: "object",
-      schema: recapSchema,
+      output: Output.object({ schema: recapSchema }),
       messages: [
         {
           role: "system",
@@ -68,7 +67,7 @@ Rules:
       ],
     })
 
-    return Response.json({ recap: object?.recap ?? "" })
+    return Response.json({ recap: output?.recap ?? "" })
   } catch (error) {
     console.error("Recap generation failed:", error)
     return Response.json(
