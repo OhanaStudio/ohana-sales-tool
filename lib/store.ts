@@ -2,7 +2,13 @@ import { neon } from "@neondatabase/serverless"
 import type { StoredReport } from "./types"
 
 function getDb() {
-  return neon(process.env.DATABASE_URL!)
+  const databaseUrl = process.env.DATABASE_URL
+  if (!databaseUrl) {
+    throw new Error(
+      "DATABASE_URL environment variable is not set. Please add it to your environment variables."
+    )
+  }
+  return neon(databaseUrl)
 }
 
 /** Strip www., trailing slashes, lowercase hostname so variants match */
