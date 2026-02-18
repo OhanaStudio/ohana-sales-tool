@@ -102,22 +102,33 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
 
   // 3. Infer from Lighthouse score: heading-order passes = headings exist in correct order
+  // IMPORTANT: Lighthouse heading-order audit only returns detail items when there's an ERROR.
+  // If the audit passes (score === 1), it means headings ARE present and in correct order,
+  // but the detail items array will be EMPTY. We need to infer H1 exists in this case.
   let h1Texts: string[]
   let h1Inferred = false
   if (lhH1s.length > 0) {
+    // Lighthouse explicitly shows us H1s (usually only when there's a heading order problem)
     h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
   } else if (htmlH1Texts.length > 0) {
+    // We found H1s in the HTML
     h1Texts = htmlH1Texts
-  } else if (headingOrderPasses && htmlIsEmpty) {
-    // Lighthouse confirmed headings are fine but we can't see the HTML
-    h1Texts = ["(detected by Lighthouse - heading structure valid)"]
+  } else if (headingOrderPasses) {
+    // Lighthouse confirms heading structure is valid (score=1), but we can't see the H1
+    // This means H1 DOES exist, we just can't access it
+    h1Texts = ["(H1 detected by Lighthouse - heading structure valid)"]
     h1Inferred = true
   } else {
+    // No H1 found anywhere
     h1Texts = []
   }
 
   const h1Count = h1Texts.length
   const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
+  // H1 above fold detection:
+  // - If Lighthouse gave us heading data and first heading is H1, it's above fold
+  // - If we inferred H1 exists from passing audit, assume it's above fold (best practice)
+  // - Otherwise check HTML (which may be empty if blocked)
   const h1AboveFold = lhH1s.length > 0
     ? (lhHeadings.length > 0 && lhHeadings[0].level === 1)
     : h1Inferred ? true : aboveFold.includes("<h1")
