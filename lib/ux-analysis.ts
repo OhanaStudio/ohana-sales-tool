@@ -92,14 +92,21 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
   // --- H1 detection ---
+  console.log("[v0] === H1 DETECTION START ===")
+  console.log("[v0] htmlIsEmpty:", htmlIsEmpty, "| html.length:", html.length)
+  
   // 1. Try Lighthouse heading-order detail items (present when audit fails, sometimes when passes)
   const lhHeadings = mobileAudits ? extractLighthouseHeadings(mobileAudits) : []
   const lhH1s = lhHeadings.filter((h) => h.level === 1)
+  console.log("[v0] Lighthouse headings:", lhHeadings.length, "| H1s:", lhH1s.length)
+  if (lhH1s.length > 0) console.log("[v0] Lighthouse H1 texts:", lhH1s.map(h => h.text))
 
   // 2. Try HTML regex
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
+  console.log("[v0] HTML H1 matches:", htmlH1Matches.length)
+  if (htmlH1Texts.length > 0) console.log("[v0] HTML H1 texts:", htmlH1Texts)
 
   // 3. Check if we found an H1
   // NOTE: We cannot infer H1 presence from Lighthouse heading-order audit passing.
@@ -110,19 +117,26 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   if (lhH1s.length > 0) {
     // Lighthouse explicitly shows us H1s in the detail items
     h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
+    console.log("[v0] ✓ Using Lighthouse H1s")
   } else if (htmlH1Texts.length > 0) {
     // We found H1s in the HTML
     h1Texts = htmlH1Texts
+    console.log("[v0] ✓ Using HTML H1s")
   } else if (htmlIsEmpty && lhHeadings.length === 0) {
     // We can't access HTML AND Lighthouse didn't give us heading data
     // This often happens when sites block scrapers
     // We can't definitively say if H1 exists or not - don't flag as an error
     h1Texts = ["(Unable to verify - site may block automated access)"]
     h1Inferred = true
+    console.log("[v0] ✓ Cannot verify H1 - marking as inferred")
   } else {
     // No H1 found anywhere - this is legitimately a missing H1
     h1Texts = []
+    console.log("[v0] ✗ No H1 found - htmlIsEmpty:", htmlIsEmpty, "lhHeadings:", lhHeadings.length)
   }
+  
+  console.log("[v0] Final: h1Count:", h1Texts.length, "| h1Inferred:", h1Inferred)
+  console.log("[v0] === H1 DETECTION END ===")
 
   const h1Count = h1Texts.length
   const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
