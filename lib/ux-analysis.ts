@@ -92,64 +92,37 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
   // --- H1 detection ---
-  console.log("[v0] H1 Detection Debug:", {
-    headingOrderPasses,
-    headingOrderScore: mobileAudits?.["heading-order"]?.score,
-    htmlLength: html.length,
-    htmlIsEmpty,
-  })
-
   // 1. Try Lighthouse heading-order detail items (present when audit fails, sometimes when passes)
   const lhHeadings = mobileAudits ? extractLighthouseHeadings(mobileAudits) : []
   const lhH1s = lhHeadings.filter((h) => h.level === 1)
-
-  console.log("[v0] Lighthouse Headings:", {
-    totalHeadings: lhHeadings.length,
-    h1Count: lhH1s.length,
-    h1s: lhH1s,
-  })
 
   // 2. Try HTML regex
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
 
-  console.log("[v0] HTML H1s:", {
-    matchCount: htmlH1Matches.length,
-    h1Texts: htmlH1Texts,
-  })
-
-  // 3. Infer from Lighthouse score: heading-order passes = headings exist in correct order
-  // IMPORTANT: Lighthouse heading-order audit only returns detail items when there's an ERROR.
-  // If the audit passes (score === 1), it means headings ARE present and in correct order,
-  // but the detail items array will be EMPTY. We need to infer H1 exists in this case.
+  // 3. Check if we found an H1
+  // NOTE: We cannot infer H1 presence from Lighthouse heading-order audit passing.
+  // That audit only checks sequential order (H1→H2→H3), not H1 presence.
+  // A site with H2→H3 (no H1) would still pass heading-order.
   let h1Texts: string[]
   let h1Inferred = false
   if (lhH1s.length > 0) {
-    // Lighthouse explicitly shows us H1s (usually only when there's a heading order problem)
+    // Lighthouse explicitly shows us H1s in the detail items
     h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
-    console.log("[v0] H1 Detection: Using Lighthouse H1s")
   } else if (htmlH1Texts.length > 0) {
     // We found H1s in the HTML
     h1Texts = htmlH1Texts
-    console.log("[v0] H1 Detection: Using HTML H1s")
-  } else if (headingOrderPasses) {
-    // Lighthouse confirms heading structure is valid (score=1), but we can't see the H1
-    // This means H1 DOES exist, we just can't access it
-    h1Texts = ["(H1 detected by Lighthouse - heading structure valid)"]
+  } else if (htmlIsEmpty && lhHeadings.length === 0) {
+    // We can't access HTML AND Lighthouse didn't give us heading data
+    // This often happens when sites block scrapers
+    // We can't definitively say if H1 exists or not - don't flag as an error
+    h1Texts = ["(Unable to verify - site may block automated access)"]
     h1Inferred = true
-    console.log("[v0] H1 Detection: Inferred from passing Lighthouse audit")
   } else {
-    // No H1 found anywhere
+    // No H1 found anywhere - this is legitimately a missing H1
     h1Texts = []
-    console.log("[v0] H1 Detection: No H1 found")
   }
-
-  console.log("[v0] Final H1 Result:", {
-    h1Count: h1Texts.length,
-    h1Text: h1Texts[0],
-    h1Inferred,
-  })
 
   const h1Count = h1Texts.length
   const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
@@ -200,7 +173,8 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // Status
   const issues: string[] = []
-  if (h1Count === 0) issues.push("No H1 heading found on the page.")
+  // Only flag missing H1 if we could actually verify it (not blocked/inferred)
+  if (h1Count === 0 && !h1Inferred) issues.push("No H1 heading found on the page.")
   else if (h1Count > 1 && !h1Inferred) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
   if (h1Text && h1Vague) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
   if (!h1AboveFold && h1Count > 0 && !h1Inferred) issues.push("The H1 does not appear to be above the fold on mobile.")
