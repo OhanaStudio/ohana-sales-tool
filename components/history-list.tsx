@@ -136,7 +136,7 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
 
   return (
     <>
-    <div className="space-y-3">
+      <div className="space-y-3">
       {groups.map((group) => {
         const isExpanded = expandedUrls.has(group.displayUrl)
         const hasMultiple = group.items.length > 1
@@ -321,18 +321,18 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
           </div>
         )
       })}
-    </div>
+      </div>
 
-    {sendItem && (
-      <SendToMakeDialog
-        open={!!sendItem}
-        onOpenChange={(open) => { if (!open) setSendItem(null) }}
-        reportId={sendItem.id}
-        reportUrl={sendItem.url}
-        reportScore={sendItem.overallScore}
-        reportDate={sendItem.timestamp}
-      />
-    )}
+      {sendItem && (
+        <SendToMakeDialog
+          open={!!sendItem}
+          onOpenChange={(open) => { if (!open) setSendItem(null) }}
+          reportId={sendItem.id}
+          reportUrl={sendItem.url}
+          reportScore={sendItem.overallScore}
+          reportDate={sendItem.timestamp}
+        />
+      )}
     </>
   )
 }
