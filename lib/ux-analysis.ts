@@ -93,7 +93,6 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // --- H1 detection ---
   console.log("[v0] H1 Detection Debug:", {
-    url,
     headingOrderPasses,
     headingOrderScore: mobileAudits?.["heading-order"]?.score,
     htmlLength: html.length,
