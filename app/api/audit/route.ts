@@ -919,22 +919,21 @@ export async function POST(request: Request) {
       )
     }
 
-    const url = normalizeUrl(rawUrl)
+  const url = normalizeUrl(rawUrl)
 
-    if (!isValidUrl(url)) {
-      return NextResponse.json(
-        { error: "The URL provided is not valid. Please include the full address." },
-        { status: 400 }
-      )
-    }
-
-    // Check cache
-  const cached = await getCachedReportForUrl(url)
-  if (cached) {
-  return NextResponse.json(cached.result)
+  if (!isValidUrl(url)) {
+    return NextResponse.json(
+      { error: "The URL provided is not valid. Please include the full address." },
+      { status: 400 }
+    )
   }
 
-    // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
+  console.log("[v0] [SERVER] Running fresh audit for:", url)
+
+  // REMOVED CACHING: Every POST /api/audit now runs a fresh audit
+  // This ensures "rerun" always generates new data for before/after comparisons
+
+  // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     const emptyResult: StrategyResult = {
       strategy: "mobile",
       performanceScore: 0,
