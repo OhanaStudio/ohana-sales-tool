@@ -92,14 +92,33 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
   // --- H1 detection ---
+  console.log("[v0] H1 Detection Debug:", {
+    url,
+    headingOrderPasses,
+    headingOrderScore: mobileAudits?.["heading-order"]?.score,
+    htmlLength: html.length,
+    htmlIsEmpty,
+  })
+
   // 1. Try Lighthouse heading-order detail items (present when audit fails, sometimes when passes)
   const lhHeadings = mobileAudits ? extractLighthouseHeadings(mobileAudits) : []
   const lhH1s = lhHeadings.filter((h) => h.level === 1)
+
+  console.log("[v0] Lighthouse Headings:", {
+    totalHeadings: lhHeadings.length,
+    h1Count: lhH1s.length,
+    h1s: lhH1s,
+  })
 
   // 2. Try HTML regex
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
+
+  console.log("[v0] HTML H1s:", {
+    matchCount: htmlH1Matches.length,
+    h1Texts: htmlH1Texts,
+  })
 
   // 3. Infer from Lighthouse score: heading-order passes = headings exist in correct order
   // IMPORTANT: Lighthouse heading-order audit only returns detail items when there's an ERROR.
@@ -110,18 +129,28 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   if (lhH1s.length > 0) {
     // Lighthouse explicitly shows us H1s (usually only when there's a heading order problem)
     h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
+    console.log("[v0] H1 Detection: Using Lighthouse H1s")
   } else if (htmlH1Texts.length > 0) {
     // We found H1s in the HTML
     h1Texts = htmlH1Texts
+    console.log("[v0] H1 Detection: Using HTML H1s")
   } else if (headingOrderPasses) {
     // Lighthouse confirms heading structure is valid (score=1), but we can't see the H1
     // This means H1 DOES exist, we just can't access it
     h1Texts = ["(H1 detected by Lighthouse - heading structure valid)"]
     h1Inferred = true
+    console.log("[v0] H1 Detection: Inferred from passing Lighthouse audit")
   } else {
     // No H1 found anywhere
     h1Texts = []
+    console.log("[v0] H1 Detection: No H1 found")
   }
+
+  console.log("[v0] Final H1 Result:", {
+    h1Count: h1Texts.length,
+    h1Text: h1Texts[0],
+    h1Inferred,
+  })
 
   const h1Count = h1Texts.length
   const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
