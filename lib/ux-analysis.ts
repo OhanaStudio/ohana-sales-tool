@@ -101,34 +101,23 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
 
-  // 3. Check if we found an H1
-  // NOTE: We cannot infer H1 presence from Lighthouse heading-order audit passing.
-  // That audit only checks sequential order (H1→H2→H3), not H1 presence.
-  // A site with H2→H3 (no H1) would still pass heading-order.
+  // 3. Infer from Lighthouse score: heading-order passes = headings exist in correct order
   let h1Texts: string[]
   let h1Inferred = false
   if (lhH1s.length > 0) {
-    // Lighthouse explicitly shows us H1s in the detail items
     h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
   } else if (htmlH1Texts.length > 0) {
-    // We found H1s in the HTML
     h1Texts = htmlH1Texts
-  } else if (htmlIsEmpty && lhHeadings.length === 0) {
-    // We can't access HTML AND Lighthouse didn't give us heading data
-    // We can't definitively say if H1 exists or not - don't show any H1 issues
-    h1Texts = []
+  } else if (headingOrderPasses && htmlIsEmpty) {
+    // Lighthouse confirmed headings are fine but we can't see the HTML
+    h1Texts = ["(detected by Lighthouse - heading structure valid)"]
     h1Inferred = true
   } else {
-    // No H1 found anywhere - this is legitimately a missing H1
     h1Texts = []
   }
 
   const h1Count = h1Texts.length
   const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
-  // H1 above fold detection:
-  // - If Lighthouse gave us heading data and first heading is H1, it's above fold
-  // - If we inferred H1 exists from passing audit, assume it's above fold (best practice)
-  // - Otherwise check HTML (which may be empty if blocked)
   const h1AboveFold = lhH1s.length > 0
     ? (lhHeadings.length > 0 && lhHeadings[0].level === 1)
     : h1Inferred ? true : aboveFold.includes("<h1")
@@ -172,8 +161,7 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // Status
   const issues: string[] = []
-  // Only flag missing H1 if we could actually verify it (not blocked/inferred)
-  if (h1Count === 0 && !h1Inferred) issues.push("No H1 heading found on the page.")
+  if (h1Count === 0) issues.push("No H1 heading found on the page.")
   else if (h1Count > 1 && !h1Inferred) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
   if (h1Text && h1Vague) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
   if (!h1AboveFold && h1Count > 0 && !h1Inferred) issues.push("The H1 does not appear to be above the fold on mobile.")

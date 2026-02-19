@@ -1,24 +1,8 @@
 import { neon } from "@neondatabase/serverless"
 import type { StoredReport } from "./types"
 
-let cachedDb: ReturnType<typeof neon> | null = null
-
 function getDb() {
-  // Use cached connection if available
-  if (cachedDb) return cachedDb
-  
-  const databaseUrl = process.env.DATABASE_URL
-  if (!databaseUrl) {
-    console.error("[v0] DATABASE_URL not found in environment. Database operations will fail.")
-    console.error("[v0] This may be temporary during environment reload. Please check Vars section.")
-    throw new Error(
-      "DATABASE_URL environment variable is not set. Please check the Vars section in v0 sidebar."
-    )
-  }
-  
-  // Cache the connection for reuse
-  cachedDb = neon(databaseUrl)
-  return cachedDb
+  return neon(process.env.DATABASE_URL!)
 }
 
 /** Strip www., trailing slashes, lowercase hostname so variants match */
