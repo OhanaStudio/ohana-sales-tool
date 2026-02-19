@@ -16,14 +16,27 @@ export function useAuth() {
       console.log("[v0] useAuth: Response status:", res.status, "ok:", res.ok)
       
       if (res.ok) {
-        const data = await res.json()
+        const text = await res.text()
+        if (!text) {
+          console.log("[v0] useAuth: Empty response body, skipping")
+          setUser(null)
+          return
+        }
+        let data: { username?: string; name?: string }
+        try {
+          data = JSON.parse(text)
+        } catch {
+          console.log("[v0] useAuth: Invalid JSON response, skipping")
+          setUser(null)
+          return
+        }
         console.log("[v0] useAuth: Received data:", data)
         // Store in localStorage as backup
         if (typeof window !== "undefined" && data.name) {
           localStorage.setItem("auth_user_name", data.name)
-          localStorage.setItem("auth_username", data.username)
+          localStorage.setItem("auth_username", data.username ?? "")
         }
-        setUser({ username: data.username, name: data.name })
+        setUser({ username: data.username ?? "", name: data.name ?? "" })
         console.log("[v0] useAuth: Set user to:", { username: data.username, name: data.name })
       } else {
         console.log("[v0] useAuth: Response not ok, checking localStorage")
