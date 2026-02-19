@@ -928,8 +928,6 @@ export async function POST(request: Request) {
     )
   }
 
-  console.log("[v0] [SERVER] Running fresh audit for:", url)
-
   // REMOVED CACHING: Every POST /api/audit now runs a fresh audit
   // This ensures "rerun" always generates new data for before/after comparisons
 
