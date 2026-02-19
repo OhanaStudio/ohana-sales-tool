@@ -92,35 +92,30 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
   // --- H1 detection ---
-  // 1. Try Lighthouse heading-order detail items (present when audit fails, sometimes when passes)
-  const lhHeadings = mobileAudits ? extractLighthouseHeadings(mobileAudits) : []
-  const lhH1s = lhHeadings.filter((h) => h.level === 1)
-
-  // 2. Try HTML regex
+  // SIMPLIFIED: Only flag missing H1 if we can actually see the HTML and confirm it's missing
+  // If HTML is blocked or empty, don't show H1 checks at all
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
 
-  // 3. Infer from Lighthouse score: heading-order passes = headings exist in correct order
   let h1Texts: string[]
   let h1Inferred = false
-  if (lhH1s.length > 0) {
-    h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
-  } else if (htmlH1Texts.length > 0) {
-    h1Texts = htmlH1Texts
-  } else if (headingOrderPasses && htmlIsEmpty) {
-    // Lighthouse confirmed headings are fine but we can't see the HTML
-    h1Texts = ["(detected by Lighthouse - heading structure valid)"]
+  
+  if (htmlIsEmpty) {
+    // Can't verify - suppress all H1 checks
+    h1Texts = []
     h1Inferred = true
+  } else if (htmlH1Texts.length > 0) {
+    // Found H1s in HTML
+    h1Texts = htmlH1Texts
   } else {
+    // HTML available but no H1 found - this is a real issue
     h1Texts = []
   }
 
   const h1Count = h1Texts.length
   const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
-  const h1AboveFold = lhH1s.length > 0
-    ? (lhHeadings.length > 0 && lhHeadings[0].level === 1)
-    : h1Inferred ? true : aboveFold.includes("<h1")
+  const h1AboveFold = h1Inferred ? true : aboveFold.includes("<h1")
 
   const vaguePatterns = [
     "welcome", "we help", "solutions for", "your partner", "grow your",
@@ -161,9 +156,10 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // Status
   const issues: string[] = []
-  if (h1Count === 0) issues.push("No H1 heading found on the page.")
+  // Only flag H1 issues if we could actually verify (not inferred)
+  if (h1Count === 0 && !h1Inferred) issues.push("No H1 heading found on the page.")
   else if (h1Count > 1 && !h1Inferred) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
-  if (h1Text && h1Vague) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
+  if (h1Text && h1Vague && !h1Inferred) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
   if (!h1AboveFold && h1Count > 0 && !h1Inferred) issues.push("The H1 does not appear to be above the fold on mobile.")
   if (!primaryCtaAboveFold) issues.push("No clear call-to-action detected above the fold.")
   if (competingCtasAboveFold > 3) issues.push(`${competingCtasAboveFold} competing CTAs above the fold can create decision fatigue.`)
