@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio"
 import type {
   FirstImpressionIndicators,
   NavigationFrictionIndicators,
@@ -96,10 +97,19 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhHeadings = mobileAudits ? extractLighthouseHeadings(mobileAudits) : []
   const lhH1s = lhHeadings.filter((h) => h.level === 1)
 
-  // 2. Try HTML regex
-  const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
-  const htmlH1Matches = [...html.matchAll(h1Regex)]
-  const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
+  // 2. Try extracting H1s from HTML using Cheerio (more reliable than regex)
+  let htmlH1Texts: string[] = []
+  if (html.length > 0) {
+    try {
+      const $ = cheerio.load(html)
+      htmlH1Texts = $("h1")
+        .map((_, el) => $(el).text().trim().slice(0, 120))
+        .get()
+    } catch (e) {
+      // If Cheerio fails, fall back to empty array
+      htmlH1Texts = []
+    }
+  }
 
   // 3. Check if we found an H1
   // NOTE: We cannot infer H1 presence from Lighthouse heading-order audit passing.
