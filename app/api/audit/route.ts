@@ -980,17 +980,10 @@ export async function POST(request: Request) {
       desktopData.result.screenshot,
       mobileData.result.screenshot,
     )
-    // Use Puppeteer to extract H1 if HTML is blocked or empty
-    let puppeteerH1s: string[] = []
-    if (fetchedHtml.length < 500 || siteHtml.blocked) {
-      console.log("[v0] HTML blocked or empty - using Puppeteer to extract H1")
-      puppeteerH1s = await extractH1WithPuppeteer(url)
-    }
-
     const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
     const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
-    const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits, puppeteerH1s)
+    const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)

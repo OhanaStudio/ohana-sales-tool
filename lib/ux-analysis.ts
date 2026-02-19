@@ -80,7 +80,7 @@ function extractLighthouseHeadings(audits: any): Array<{ level: number; text: st
 
 // ─── 1. First-impression clarity ────────────────────────
 // biome-ignore lint: audits is complex PSI shape
-export function analyseFirstImpression(html: string, mobileAudits?: any, puppeteerH1s?: string[]): FirstImpressionIndicators {
+export function analyseFirstImpression(html: string, mobileAudits?: any): FirstImpressionIndicators {
   const lower = html.toLowerCase()
   const aboveFold = lower.slice(0, ABOVE_FOLD_CHARS)
   const htmlIsEmpty = !html || html.length < 500
@@ -108,12 +108,7 @@ export function analyseFirstImpression(html: string, mobileAudits?: any, puppete
   console.log("[v0] HTML H1 matches:", htmlH1Matches.length)
   if (htmlH1Texts.length > 0) console.log("[v0] HTML H1 texts:", htmlH1Texts)
 
-  // 3. Try Puppeteer H1s (if provided - only used when HTML is blocked)
-  const puppeteerH1Texts = puppeteerH1s || []
-  console.log("[v0] Puppeteer H1 matches:", puppeteerH1Texts.length)
-  if (puppeteerH1Texts.length > 0) console.log("[v0] Puppeteer H1 texts:", puppeteerH1Texts)
-
-  // 4. Check if we found an H1
+  // 3. Check if we found an H1
   // NOTE: We cannot infer H1 presence from Lighthouse heading-order audit passing.
   // That audit only checks sequential order (H1→H2→H3), not H1 presence.
   // A site with H2→H3 (no H1) would still pass heading-order.
@@ -127,10 +122,6 @@ export function analyseFirstImpression(html: string, mobileAudits?: any, puppete
     // We found H1s in the HTML
     h1Texts = htmlH1Texts
     console.log("[v0] ✓ Using HTML H1s")
-  } else if (puppeteerH1Texts.length > 0) {
-    // Puppeteer found H1s (used when HTML blocked)
-    h1Texts = puppeteerH1Texts
-    console.log("[v0] ✓ Using Puppeteer H1s")
   } else if (htmlIsEmpty && lhHeadings.length === 0) {
     // We can't access HTML AND Lighthouse didn't give us heading data
     // AND Puppeteer didn't find anything (or wasn't run)
@@ -616,9 +607,9 @@ export function analyseMobileFriction(html: string, mobileAudits?: any): MobileF
 
 // ─── Master extraction ──────────────────────────────────
 // biome-ignore lint: audits is complex PSI shape
-export function extractAdvancedUXIndicators(html: string, mobileAudits?: any, puppeteerH1s?: string[]): AdvancedUXIndicators {
+export function extractAdvancedUXIndicators(html: string, mobileAudits?: any): AdvancedUXIndicators {
   return {
-    firstImpression: analyseFirstImpression(html, mobileAudits, puppeteerH1s),
+    firstImpression: analyseFirstImpression(html, mobileAudits),
     navigationFriction: analyseNavigation(html, mobileAudits),
     scanability: analyseScanability(html),
     conversionPath: analyseConversionPath(html, mobileAudits),
