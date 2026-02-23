@@ -930,7 +930,7 @@ export function ROIPage({ roiData, url, date, introText }: { roiData: ROICalcula
               <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmt(roiData.inputs.monthlySessions)}</p>
             </div>
             <div>
-              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Current CR</p>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Current Conversion Rate</p>
               <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmtPct(roiData.inputs.currentConversionRate * 100, 2)}%</p>
             </div>
             <div>

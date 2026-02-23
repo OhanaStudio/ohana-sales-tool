@@ -180,7 +180,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                   <p className="text-foreground font-medium">{fmt(result.inputs.monthlySessions)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Current CR</p>
+                  <p className="text-xs text-muted-foreground mb-1">Current Conversion Rate</p>
                   <p className="text-foreground font-medium">{fmtPct(result.inputs.currentConversionRate * 100, 2)}%</p>
                 </div>
                 <div>

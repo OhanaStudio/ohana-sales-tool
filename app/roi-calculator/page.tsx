@@ -198,7 +198,7 @@ export default function ROICalculatorPage() {
                   <p className="font-medium text-foreground">{formatNumber(result.inputs.monthlySessions)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Current CR</p>
+                  <p className="text-muted-foreground">Current Conversion Rate</p>
                   <p className="font-medium text-foreground">
                     {formatPercent(result.inputs.currentConversionRate, 2)}
                   </p>
