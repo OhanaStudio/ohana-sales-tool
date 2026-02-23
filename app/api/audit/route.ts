@@ -938,6 +938,7 @@ export async function POST(request: Request) {
 
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     console.log("[v0] Fetching PSI data and HTML...")
+    // Fetch all data in parallel for performance
     const [mobileData, desktopData, siteHtml] = await Promise.all([
       fetchPSI(url, "mobile").catch(() => defaultPSIResult),
       fetchPSI(url, "desktop").catch(() => defaultPSIResult),
