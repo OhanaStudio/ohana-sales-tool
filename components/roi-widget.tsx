@@ -178,8 +178,41 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
               </div>
             )}
 
+            {/* Calculation Assumptions */}
+            <div className="bg-background border border-border rounded-lg p-4 mt-6">
+              <h4 className="text-sm font-semibold text-foreground mb-3">Calculation Assumptions</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3 text-sm">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Industry</p>
+                  <p className="text-foreground font-medium">
+                    {INDUSTRY_OPTIONS.find(opt => opt.value === inputs.industry)?.label || inputs.industry}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Monthly Sessions</p>
+                  <p className="text-foreground font-medium">{fmt(result.inputs.monthlySessions)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Current CR</p>
+                  <p className="text-foreground font-medium">{fmtPct(result.inputs.currentConversionRate * 100, 2)}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Average Order Value</p>
+                  <p className="text-foreground font-medium">£{fmt(result.inputs.averageOrderValue)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Project Cost</p>
+                  <p className="text-foreground font-medium">£{fmt(result.inputs.projectCost)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Gross Margin</p>
+                  <p className="text-foreground font-medium">{fmtPct(result.benchmark.grossMargin * 100, 0)}%</p>
+                </div>
+              </div>
+            </div>
+
             {/* Results Preview - Three Scenarios */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {result.scenarios.map((scenario) => (
                 <div key={scenario.scenario} className="bg-background border border-border rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-foreground mb-1">{scenario.label}</h4>
@@ -202,6 +235,16 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Methodology */}
+            <div className="bg-muted/30 rounded-lg p-4 mt-4">
+              <h4 className="text-sm font-semibold text-foreground mb-2">Methodology</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Calculations assume conservative CR improvements based on industry research: +0.3% (conservative), +0.5% (moderate), 
+                and +1.0% (optimistic). Revenue uplift is calculated as additional conversions × AOV × gross margin × (1 - return rate). 
+                Break-even and ROI figures account for net profit margins specific to your industry.
+              </p>
             </div>
 
             {/* Save Button */}
