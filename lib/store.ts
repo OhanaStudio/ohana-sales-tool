@@ -131,3 +131,11 @@ export async function deleteReport(id: string): Promise<void> {
   const sql = getDb()
   await sql`DELETE FROM reports WHERE id = ${id}`
 }
+
+export async function deleteAllReports(): Promise<number> {
+  const sql = getDb()
+  const countRows = await sql`SELECT COUNT(*) AS count FROM reports`
+  const count = Number(countRows[0]?.count ?? 0)
+  await sql`DELETE FROM reports`
+  return count
+}
