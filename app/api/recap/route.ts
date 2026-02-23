@@ -42,14 +42,23 @@ export async function POST(req: Request) {
       `EAA/WCAG issues: ${a11y.eaaIssues?.length ?? 0}`,
     ]
 
-    const { object } = await generateObject({
+    const { output } = await generateText({
       model: "openai/gpt-4o-mini",
-      schema: recapSchema,
-      system: "You are a concise sales consultant writing a short paragraph that summarises a website audit for a potential client. Be direct and focus on actionable issues that affect their business performance.",
-      prompt: contextLines.join("\n"),
+      output: Output.object({ schema: recapSchema }),
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a concise sales consultant writing a short paragraph that summarises a website audit for a potential client. Be direct and focus on actionable issues that affect their business performance.",
+        },
+        {
+          role: "user",
+          content: contextLines.join("\n"),
+        },
+      ],
     })
 
-    return Response.json({ recap: object?.recap ?? "" })
+    return Response.json({ recap: output?.recap ?? "" })
   } catch (error) {
     console.error("Recap generation failed:", error)
     return Response.json(
