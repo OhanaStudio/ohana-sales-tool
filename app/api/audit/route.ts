@@ -908,11 +908,14 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
 }
 
 export async function POST(request: Request) {
+  console.log("[v0] ========== AUDIT API POST CALLED ==========")
   try {
     const body = await request.json()
     const rawUrl = body.url as string
+    console.log("[v0] Received URL:", rawUrl)
 
     if (!rawUrl || typeof rawUrl !== "string") {
+      console.log("[v0] Invalid URL provided")
       return NextResponse.json(
         { error: "Please provide a valid URL." },
         { status: 400 }
@@ -920,6 +923,7 @@ export async function POST(request: Request) {
     }
 
     const url = normalizeUrl(rawUrl)
+    console.log("[v0] Normalized URL:", url)
 
     if (!isValidUrl(url)) {
       return NextResponse.json(
