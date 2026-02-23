@@ -94,9 +94,14 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   // --- H1 detection ---
   // SIMPLIFIED: Only flag missing H1 if we can actually see the HTML and confirm it's missing
   // If HTML is blocked or empty, don't show H1 checks at all
+  console.log("[v0] H1 Detection - htmlIsEmpty:", htmlIsEmpty, "html.length:", html.length)
+  
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
+  
+  console.log("[v0] H1 Detection - found", htmlH1Matches.length, "H1 tags in HTML")
+  if (htmlH1Texts.length > 0) console.log("[v0] H1 texts:", htmlH1Texts)
 
   let h1Texts: string[]
   let h1Inferred = false
@@ -105,12 +110,15 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
     // Can't verify - suppress all H1 checks
     h1Texts = []
     h1Inferred = true
+    console.log("[v0] H1 Detection - HTML empty, suppressing H1 checks")
   } else if (htmlH1Texts.length > 0) {
     // Found H1s in HTML
     h1Texts = htmlH1Texts
+    console.log("[v0] H1 Detection - Using", h1Texts.length, "H1s from HTML")
   } else {
     // HTML available but no H1 found - this is a real issue
     h1Texts = []
+    console.log("[v0] H1 Detection - HTML available but NO H1 found (real issue)")
   }
 
   const h1Count = h1Texts.length

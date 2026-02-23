@@ -928,11 +928,9 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check cache
-  const cached = await getCachedReportForUrl(url)
-  if (cached) {
-  return NextResponse.json(cached.result)
-  }
+    console.log("[v0] Running FRESH audit for:", url)
+
+    // CACHE REMOVED: Every POST /api/audit now runs a fresh audit for accurate before/after comparisons
 
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     const emptyResult: StrategyResult = {
