@@ -3,7 +3,7 @@
 
 import Image from "next/image"
 import { useAuth } from "@/hooks/use-auth"
-import { LogOut, History } from "lucide-react"
+import { LogOut, History, Plus } from "lucide-react"
 
 export function TopBar() {
   const { user, logout } = useAuth()
@@ -25,6 +25,13 @@ export function TopBar() {
             {user.name}
           </div>
         )}
+        <a 
+          href="/" 
+          className="text-zinc-400 hover:text-white transition-colors flex items-center min-h-[44px] px-2"
+          aria-label="Run new report"
+        >
+          <Plus className="h-5 w-5" />
+        </a>
         <a 
           href="/history" 
           className="text-zinc-400 hover:text-white transition-colors flex items-center min-h-[44px] px-2"

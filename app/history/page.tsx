@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { TopBar } from "@/components/top-bar"
 import { HistoryList } from "@/components/history-list"
-import { Loader2, Trash2 } from "lucide-react"
+import { Loader2, Trash2, Plus } from "lucide-react"
 
 interface HistoryItem {
   id: string
@@ -66,14 +66,23 @@ export default function HistoryPage() {
             </p>
           </div>
           {!loading && items.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setShowDeleteModal(true)}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] px-3 py-2 border border-border rounded-lg hover:border-red-300 bg-transparent shrink-0"
-            >
-              <Trash2 className="h-4 w-4" />
-              <span className="hidden md:inline">Delete All</span>
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href="/"
+                className="inline-flex items-center gap-2 text-sm text-foreground hover:text-foreground/80 transition-colors min-h-[44px] px-3 py-2 border border-border rounded-lg hover:border-foreground/20 bg-transparent"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden md:inline">New Report</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(true)}
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] px-3 py-2 border border-border rounded-lg hover:border-red-300 bg-transparent"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="hidden md:inline">Delete All</span>
+              </button>
+            </div>
           )}
         </div>
 
