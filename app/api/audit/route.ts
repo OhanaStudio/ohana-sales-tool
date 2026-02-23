@@ -959,7 +959,23 @@ export async function POST(request: Request) {
     const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
     const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
-    const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
+    // Always run HTML-based analysis for H1 detection (AI vision can't detect H1 tags from screenshots)
+    const htmlAdvancedUX = extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
+    // Use AI result for everything except firstImpression H1 data, which must come from HTML parsing
+    const advancedUX = aiResult?.advancedUX
+      ? {
+          ...aiResult.advancedUX,
+          firstImpression: {
+            ...aiResult.advancedUX.firstImpression,
+            h1Count: htmlAdvancedUX.firstImpression.h1Count,
+            h1Text: htmlAdvancedUX.firstImpression.h1Text,
+            h1AboveFold: htmlAdvancedUX.firstImpression.h1AboveFold,
+            h1Vague: htmlAdvancedUX.firstImpression.h1Vague,
+            issues: htmlAdvancedUX.firstImpression.issues,
+            status: htmlAdvancedUX.firstImpression.status,
+          },
+        }
+      : htmlAdvancedUX
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)
