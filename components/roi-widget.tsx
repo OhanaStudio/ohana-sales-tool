@@ -4,7 +4,7 @@ import { useState } from "react"
 import { INDUSTRY_BENCHMARKS, INDUSTRY_OPTIONS } from "@/lib/roi-benchmarks"
 import { calculateROI } from "@/lib/roi-calculations"
 import type { ROIInputs, ROICalculationResult } from "@/lib/roi-types"
-import { Calculator, ChevronDown, ChevronUp } from "lucide-react"
+import { Calculator } from "lucide-react"
 
 interface ROIWidgetProps {
   reportId: string
@@ -13,7 +13,6 @@ interface ROIWidgetProps {
 }
 
 export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
-  const [isOpen, setIsOpen] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [saving, setSaving] = useState(false)
   const [inputs, setInputs] = useState<ROIInputs>(() => 
@@ -59,34 +58,22 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
     }).format(n)
 
   return (
-    <div className="border border-border rounded-lg bg-card">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/50 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <Calculator className="h-5 w-5 text-muted-foreground" />
-          <div>
-            <h3 className="text-base font-semibold text-foreground">
-              {existingROI ? "ROI Estimation" : "Calculate Potential ROI"}
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {existingROI 
-                ? "See the projected return on investment for UX improvements" 
-                : "Add ROI projections to this report"}
-            </p>
-          </div>
+    <div>
+      {/* Header - matching Platform detection style */}
+      <div className="flex items-start gap-3 mb-5">
+        <Calculator className="h-5 w-5 text-muted-foreground mt-1" />
+        <div className="flex-1">
+          <h3 className="font-sans text-2xl font-bold text-foreground mb-2">
+            Calculate Potential ROI
+          </h3>
+          <p className="text-sm text-muted-foreground italic">
+            Add ROI projections to this report
+          </p>
         </div>
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
-        )}
-      </button>
+      </div>
 
-      {isOpen && (
-        <div className="p-4 border-t border-border">
+      {/* Content */}
+      <div className="border border-border rounded-lg bg-card p-4">
           <div className="space-y-4">
             {/* Industry Selector */}
             <div>
@@ -260,7 +247,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
