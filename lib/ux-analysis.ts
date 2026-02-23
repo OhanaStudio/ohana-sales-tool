@@ -94,7 +94,8 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   // --- H1 detection ---
   // SIMPLIFIED: Only flag missing H1 if we can actually see the HTML and confirm it's missing
   // If HTML is blocked or empty, don't show H1 checks at all
-  console.log("[v0] H1 Detection - htmlIsEmpty:", htmlIsEmpty, "html.length:", html.length)
+  console.log("[v0] H1 Detection START - htmlIsEmpty:", htmlIsEmpty, "html.length:", html.length)
+  console.log("[v0] First 500 chars of HTML:", html.slice(0, 500))
   
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
