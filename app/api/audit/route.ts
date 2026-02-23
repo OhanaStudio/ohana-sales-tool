@@ -23,6 +23,75 @@ import {
 import { extractAdvancedUXIndicators } from "@/lib/ux-analysis"
 import { analyseScreenshotsWithAI, type AIAnalysisResult } from "@/lib/ai-ux-analysis"
 
+// Status severity rankings: lower = better. AI can rescue (upgrade) but never downgrade.
+const statusSeverity: Record<string, number> = {
+  // firstImpression
+  clear: 0, mixed: 1, unclear: 2,
+  // navigationFriction, formFriction, mobileFriction
+  low: 0, medium: 1, high: 2,
+  // scanability
+  scannable: 0, /* mixed: 1 already above, */ dense: 2,
+  // conversionPath
+  clear_path: 0, partial: 1, broken: 2,
+  // trustDepth
+  strong: 0, moderate: 1, weak: 2,
+}
+
+function getSeverity(status: string): number {
+  return statusSeverity[status] ?? 1
+}
+
+/**
+ * Merge HTML-based and AI-based advancedUX results.
+ * Strategy: HTML is always the primary source for structural data (h1Count, navItemCount, etc.).
+ * AI can RESCUE false negatives: if HTML flags an issue (bad status) but AI says it's fine,
+ * use the better (lower-severity) status and keep the better bullets.
+ * AI can NEVER downgrade: if HTML says "clear" and AI says "unclear", HTML wins.
+ */
+function mergeAdvancedUX(
+  html: import("@/lib/types").AdvancedUXIndicators,
+  ai: import("@/lib/types").AdvancedUXIndicators,
+): import("@/lib/types").AdvancedUXIndicators {
+  function mergeCategory<T extends { status: string; bullets: string[] }>(
+    htmlCat: T,
+    aiCat: { status: string; bullets: string[] },
+  ): T {
+    const htmlSev = getSeverity(htmlCat.status)
+    const aiSev = getSeverity(aiCat.status)
+
+    // AI can only rescue (improve status), never make it worse
+    if (aiSev < htmlSev) {
+      // AI says it's better than HTML detected - rescue the false negative
+      return {
+        ...htmlCat,
+        status: aiCat.status,
+        // Use AI bullets (fewer issues) but keep any HTML structural data
+        bullets: aiCat.bullets.length > 0 ? aiCat.bullets : [],
+      }
+    }
+
+    // HTML status is same or better - keep HTML as-is
+    return htmlCat
+  }
+
+  return {
+    // firstImpression: always HTML for H1 data, no AI rescue on H1 checks
+    firstImpression: html.firstImpression,
+    // #2 Navigation: AI can rescue if it sees good nav that HTML missed
+    navigationFriction: mergeCategory(html.navigationFriction, ai.navigationFriction),
+    // Scanability: HTML is authoritative for paragraph/heading structure
+    scanability: html.scanability,
+    // Conversion: AI can see visual CTAs that HTML regex might miss
+    conversionPath: mergeCategory(html.conversionPath, ai.conversionPath),
+    // Forms: HTML is authoritative for form field parsing
+    formFriction: html.formFriction,
+    // Trust: AI can visually spot trust signals HTML might miss
+    trustDepth: mergeCategory(html.trustDepth, ai.trustDepth),
+    // Mobile: AI can see actual mobile rendering issues
+    mobileFriction: mergeCategory(html.mobileFriction, ai.mobileFriction),
+  }
+}
+
 function isValidUrl(str: string): boolean {
   try {
     const url = new URL(str)
@@ -919,45 +988,23 @@ export async function POST(request: Request) {
       )
     }
 
-  const url = normalizeUrl(rawUrl)
+    const url = normalizeUrl(rawUrl)
 
-  if (!isValidUrl(url)) {
-    return NextResponse.json(
-      { error: "The URL provided is not valid. Please include the full address." },
-      { status: 400 }
-    )
-  }
-
-  // REMOVED CACHING: Every POST /api/audit now runs a fresh audit
-  // This ensures "rerun" always generates new data for before/after comparisons
-
-  // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
-    const emptyResult: StrategyResult = {
-      strategy: "mobile",
-      performanceScore: 0,
-      accessibilityScore: 0,
-      seoScore: 0,
-      bestPracticesScore: 0,
-      metrics: { lcp: null, cls: null, tbt: null, fcp: null, speedIndex: null },
-      fieldDataAvailable: false,
-      notes: ["Lighthouse analysis failed for this strategy. Results may be incomplete."],
-      screenshot: undefined,
+    if (!isValidUrl(url)) {
+      return NextResponse.json(
+        { error: "The URL provided is not valid. Please include the full address." },
+        { status: 400 }
+      )
     }
 
-    const [mobileResult, desktopResult, siteHtml] = await Promise.all([
-      fetchPSI(url, "mobile").catch((err) => {
-        console.error("Mobile PSI failed:", err.message)
-        return { result: { ...emptyResult, strategy: "mobile" as const }, rawAudits: {} }
-      }),
-      fetchPSI(url, "desktop").catch((err) => {
-        console.error("Desktop PSI failed:", err.message)
-        return { result: { ...emptyResult, strategy: "desktop" as const }, rawAudits: {} }
-      }),
-      fetchSiteHtml(url),
-    ])
+    // CACHE REMOVED: Every POST /api/audit now runs a fresh audit for accurate before/after comparisons
 
-    const mobileData = mobileResult
-    const desktopData = desktopResult
+    // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
+    const [mobileData, desktopData, siteHtml] = await Promise.all([
+      fetchPSI(url, "mobile").catch(() => defaultPSIResult),
+      fetchPSI(url, "desktop").catch(() => defaultPSIResult),
+      fetchSiteHtml(url).catch(() => ({ html: "", blocked: true })),
+    ])
 
     // If BOTH strategies failed, we can't produce a useful report
     const mobileFailed = mobileData.result.notes?.some((n: string) => n.includes("Lighthouse analysis failed"))
@@ -978,10 +1025,36 @@ export async function POST(request: Request) {
       desktopData.result.screenshot,
       mobileData.result.screenshot,
     )
-    const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
+    // ALWAYS run HTML/Lighthouse-based analysis as the primary source of truth
+    const htmlUxIndicators = analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
+    const htmlAdvancedUX = extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
+
+    // AI vision analysis supplements HTML checks - AI is better for visual elements
+    // (CTAs, trust signals, phone/email visibility) but HTML is better for structural
+    // checks (H1 tags, nav structure, heading hierarchy, form fields, meta tags)
+    const uxIndicators = aiResult?.uxIndicators
+      ? {
+          ...htmlUxIndicators,
+          // AI is better at visually confirming these exist on screen
+          ctaFound: aiResult.uxIndicators.ctaFound || htmlUxIndicators.ctaFound,
+          ctaKeywords: aiResult.uxIndicators.ctaKeywords?.length > 0 ? aiResult.uxIndicators.ctaKeywords : htmlUxIndicators.ctaKeywords,
+          trustSignalsFound: aiResult.uxIndicators.trustSignalsFound || htmlUxIndicators.trustSignalsFound,
+          trustKeywords: aiResult.uxIndicators.trustKeywords?.length > 0 ? aiResult.uxIndicators.trustKeywords : htmlUxIndicators.trustKeywords,
+          socialProofAboveFold: aiResult.uxIndicators.socialProofAboveFold || htmlUxIndicators.socialProofAboveFold,
+          testimonialsVerified: aiResult.uxIndicators.testimonialsVerified || htmlUxIndicators.testimonialsVerified,
+          phoneFound: aiResult.uxIndicators.phoneFound || htmlUxIndicators.phoneFound,
+          emailFound: aiResult.uxIndicators.emailFound || htmlUxIndicators.emailFound,
+        }
+      : htmlUxIndicators
+
     const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
-    const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
+
+    // For advancedUX: HTML parsing is the primary source, but AI can rescue false negatives
+    // If HTML flags an issue (bad status) but AI says it's fine, AI can override to the better status
+    const advancedUX = aiResult?.advancedUX
+      ? mergeAdvancedUX(htmlAdvancedUX, aiResult.advancedUX)
+      : htmlAdvancedUX
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)

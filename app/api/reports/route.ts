@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getAllReports, getReportsForUrl, deleteReport } from "@/lib/store"
+import { getAllReports, getReportsForUrl, deleteReport, deleteAllReports } from "@/lib/store"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -19,6 +19,12 @@ export async function GET(request: Request) {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get("id")
+  const all = searchParams.get("all")
+
+  if (all === "true") {
+    const count = await deleteAllReports()
+    return NextResponse.json({ success: true, deleted: count })
+  }
 
   if (!id) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 })

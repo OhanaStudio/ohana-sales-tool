@@ -48,21 +48,12 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `You are a digital marketing consultant writing a brief recap for a salesperson to share with a prospect after a website health check. 
-
-Rules:
-- Write 2-4 sentences maximum in a single paragraph
-- Be specific about the issues found on THIS website
-- Use plain business language, not technical jargon
-- Focus on the impact on the business (lost customers, lower search rankings, etc.)
-- End with an encouraging tone about what can be improved
-- Wrap the most important phrases and key findings in **double asterisks** for emphasis (e.g. **slow mobile loading times**, **no visible trust signals**). Use this sparingly on 3-5 key phrases only.
-- Do NOT use bullet points, headers, or any other formatting besides **bold**
-- Do NOT mention scores or numbers`,
+          content:
+            "You are a concise sales consultant writing a short paragraph that summarises a website audit for a potential client. Be direct and focus on actionable issues that affect their business performance.",
         },
         {
           role: "user",
-          content: `Here are the health check findings for this website:\n\n${contextLines.join("\n")}\n\nWrite a short recap paragraph of the key issues and why they matter.`,
+          content: contextLines.join("\n"),
         },
       ],
     })

@@ -148,115 +148,84 @@ export function HistoryList({ items }: { items: HistoryItem[] }) {
             className="border border-border bg-card overflow-hidden"
           >
             {/* Group header — always shows latest version */}
-            <div className="flex items-center gap-3 px-4 py-3">
-              {/* Expand toggle */}
-              {hasMultiple ? (
-                <button
-                  type="button"
-                  onClick={() => toggleExpand(group.displayUrl)}
-                  className="flex items-center justify-center w-6 h-6 shrink-0 text-muted-foreground hover:text-foreground transition-colors bg-transparent min-h-[44px] min-w-[44px] -m-2"
-                  aria-label={isExpanded ? "Collapse versions" : "Expand versions"}
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-              ) : (
-                <div className="w-6 shrink-0" />
-              )}
+            <div className="px-4 py-3">
+              {/* Top row: expand + URL + score */}
+              <div className="flex items-center gap-3">
+                {/* Expand toggle */}
+                {hasMultiple ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleExpand(group.displayUrl)}
+                    className="flex items-center justify-center w-6 h-6 shrink-0 text-muted-foreground hover:text-foreground transition-colors bg-transparent min-h-[44px] min-w-[44px] -m-2"
+                    aria-label={isExpanded ? "Collapse versions" : "Expand versions"}
+                  >
+                    {isExpanded ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </button>
+                ) : (
+                  <div className="w-6 shrink-0" />
+                )}
 
-              {/* URL and meta */}
-              <div className="min-w-0 flex-1">
-                <p className="text-sm text-foreground font-medium truncate">
-                  {group.displayUrl}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {hasMultiple
-                    ? `${group.items.length} versions -- latest: ${formatDate(latest.timestamp)}, ${formatTime(latest.timestamp)}`
-                    : `v${latest.version} -- ${formatDate(latest.timestamp)}, ${formatTime(latest.timestamp)}`}
-                </p>
+                {/* URL and meta */}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-foreground font-medium truncate">
+                    {group.displayUrl}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {hasMultiple
+                      ? `${group.items.length} versions -- ${formatDate(latest.timestamp)}`
+                      : `v${latest.version} -- ${formatDate(latest.timestamp)}, ${formatTime(latest.timestamp)}`}
+                  </p>
+                </div>
+
+                {/* Latest score */}
+                <span
+                  className={cn(
+                    "text-xl font-sans tabular-nums shrink-0 font-medium",
+                    scoreColor(latest.overallScore)
+                  )}
+                >
+                  {latest.overallScore}
+                </span>
               </div>
 
-              {/* Latest score */}
-              <span
-                className={cn(
-                  "text-xl font-sans tabular-nums shrink-0 font-medium",
-                  scoreColor(latest.overallScore)
-                )}
-              >
-                {latest.overallScore}
-              </span>
-
-              {/* Actions for latest */}
-              <div className="hidden md:flex items-center gap-1 shrink-0">
+              {/* Actions row - always visible, compact on mobile */}
+              <div className="flex items-center gap-1 mt-2 ml-9">
                 <a
                   href={`/report/${latest.id}`}
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                  Report
+                  <span className="hidden md:inline">Report</span>
                 </a>
                 <button
                   type="button"
                   onClick={() => setSendItem(latest)}
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 bg-transparent"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 bg-transparent"
                   title="Send to Drive & Notion"
                 >
                   <Send className="h-3.5 w-3.5" />
-                  Send
+                  <span className="hidden md:inline">Send</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRerun(latest.id, latest.url)}
                   disabled={rerunningId === latest.id}
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent"
                 >
                   <RotateCcw className={`h-3.5 w-3.5 ${rerunningId === latest.id ? "animate-spin" : ""}`} />
-                  {rerunningId === latest.id ? "Running..." : "Rerun"}
+                  <span className="hidden md:inline">{rerunningId === latest.id ? "Running..." : "Rerun"}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDelete(latest.id)}
                   disabled={deletingId === latest.id}
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-600 transition-colors min-h-[44px] px-2 disabled:opacity-50 bg-transparent ml-auto"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              {/* Mobile actions for latest */}
-              <div className="flex md:hidden items-center gap-1 shrink-0">
-                <a
-                  href={`/report/${latest.id}`}
-                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setSendItem(latest)}
-                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-foreground transition-colors bg-transparent"
-                  title="Send to Drive & Notion"
-                >
-                  <Send className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRerun(latest.id, latest.url)}
-                  disabled={rerunningId === latest.id}
-                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 bg-transparent"
-                >
-                  <RotateCcw className={`h-4 w-4 ${rerunningId === latest.id ? "animate-spin" : ""}`} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(latest.id)}
-                  disabled={deletingId === latest.id}
-                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] text-muted-foreground hover:text-red-600 transition-colors disabled:opacity-50 bg-transparent"
-                >
-                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>

@@ -6,7 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Force rebuild - no middleware exists
+  // Force rebuild: 2026-02-23-16:21 - H1 detection restored, cache cleared
   experimental: {},
 };
 

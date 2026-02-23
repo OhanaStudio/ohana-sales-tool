@@ -92,46 +92,14 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
   // --- H1 detection ---
-  // 1. Try Lighthouse heading-order detail items (present when audit fails, sometimes when passes)
-  const lhHeadings = mobileAudits ? extractLighthouseHeadings(mobileAudits) : []
-  const lhH1s = lhHeadings.filter((h) => h.level === 1)
-
-  // 2. Try HTML regex
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
 
-  // 3. Check if we found an H1
-  // NOTE: We cannot infer H1 presence from Lighthouse heading-order audit passing.
-  // That audit only checks sequential order (H1→H2→H3), not H1 presence.
-  // A site with H2→H3 (no H1) would still pass heading-order.
-  let h1Texts: string[]
-  let h1Inferred = false
-  if (lhH1s.length > 0) {
-    // Lighthouse explicitly shows us H1s in the detail items
-    h1Texts = lhH1s.map((h) => h.text.slice(0, 120))
-  } else if (htmlH1Texts.length > 0) {
-    // We found H1s in the HTML
-    h1Texts = htmlH1Texts
-  } else if (htmlIsEmpty && lhHeadings.length === 0) {
-    // We can't access HTML AND Lighthouse didn't give us heading data
-    // We can't definitively say if H1 exists or not - don't show any H1 issues
-    h1Texts = []
-    h1Inferred = true
-  } else {
-    // No H1 found anywhere - this is legitimately a missing H1
-    h1Texts = []
-  }
-
-  const h1Count = h1Texts.length
-  const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
-  // H1 above fold detection:
-  // - If Lighthouse gave us heading data and first heading is H1, it's above fold
-  // - If we inferred H1 exists from passing audit, assume it's above fold (best practice)
-  // - Otherwise check HTML (which may be empty if blocked)
-  const h1AboveFold = lhH1s.length > 0
-    ? (lhHeadings.length > 0 && lhHeadings[0].level === 1)
-    : h1Inferred ? true : aboveFold.includes("<h1")
+  const h1Count = htmlH1Texts.length
+  const h1Text = htmlH1Texts.length > 0 ? htmlH1Texts[0] : null
+  const h1AboveFold = aboveFold.includes("<h1")
+  const h1Inferred = false
 
   const vaguePatterns = [
     "welcome", "we help", "solutions for", "your partner", "grow your",
@@ -139,7 +107,7 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
     "better future", "home page", "homepage",
   ]
   const h1Lower = (h1Text || "").toLowerCase()
-  const h1Vague = (h1Text && !h1Inferred) ? vaguePatterns.some((p) => h1Lower.includes(p)) : false
+  const h1Vague = h1Text ? vaguePatterns.some((p) => h1Lower.includes(p)) : false
 
   // --- CTA detection ---
   // 1. Lighthouse detail items (only failing items, but still try)
@@ -172,11 +140,10 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // Status
   const issues: string[] = []
-  // Only flag missing H1 if we could actually verify it (not blocked/inferred)
-  if (h1Count === 0 && !h1Inferred) issues.push("No H1 heading found on the page.")
-  else if (h1Count > 1 && !h1Inferred) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
+  if (h1Count === 0) issues.push("No H1 heading found on the page.")
+  else if (h1Count > 1) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
   if (h1Text && h1Vague) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
-  if (!h1AboveFold && h1Count > 0 && !h1Inferred) issues.push("The H1 does not appear to be above the fold on mobile.")
+  if (!h1AboveFold && h1Count > 0) issues.push("The H1 does not appear to be above the fold on mobile.")
   if (!primaryCtaAboveFold) issues.push("No clear call-to-action detected above the fold.")
   if (competingCtasAboveFold > 3) issues.push(`${competingCtasAboveFold} competing CTAs above the fold can create decision fatigue.`)
   if (autoplayAboveFold) issues.push("Autoplay video or animation detected above the fold, which can distract from the message.")
@@ -189,7 +156,7 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   }
 }
 
-// ─── 2. Navigation and decision friction ────────────────
+// ─── 2. Navigation and decision friction ──────────────���─
 // biome-ignore lint: audits is complex PSI shape
 export function analyseNavigation(html: string, mobileAudits?: any): NavigationFrictionIndicators {
   const lower = html.toLowerCase()
