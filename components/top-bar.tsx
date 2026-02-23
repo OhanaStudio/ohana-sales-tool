@@ -3,7 +3,7 @@
 
 import Image from "next/image"
 import { useAuth } from "@/hooks/use-auth"
-import { LogOut, History, Plus } from "lucide-react"
+import { LogOut, History, Plus, Calculator } from "lucide-react"
 
 export function TopBar() {
   const { user, logout } = useAuth()
@@ -31,6 +31,13 @@ export function TopBar() {
           aria-label="Run new report"
         >
           <Plus className="h-5 w-5" />
+        </a>
+        <a 
+          href="/roi-calculator" 
+          className="text-zinc-400 hover:text-white transition-colors flex items-center min-h-[44px] px-2"
+          aria-label="ROI Calculator"
+        >
+          <Calculator className="h-5 w-5" />
         </a>
         <a 
           href="/history" 
