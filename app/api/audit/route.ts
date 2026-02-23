@@ -1003,7 +1003,7 @@ export async function POST(request: Request) {
     const [mobileData, desktopData, siteHtml] = await Promise.all([
       fetchPSI(url, "mobile").catch(() => defaultPSIResult),
       fetchPSI(url, "desktop").catch(() => defaultPSIResult),
-      fetchSiteHtml(url).catch(() => ({ html: "", blocked: true })),
+      fetchSiteHtml(url).catch(() => ({ html: "", blocked: true, responseHeaders: {} })),
     ])
 
     // If BOTH strategies failed, we can't produce a useful report

@@ -6,7 +6,7 @@ import Image from "next/image"
 import { useState } from "react"
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, login } = useAuth()
+  const { user, login, loading: authLoading } = useAuth()
   const [username, setUsername] = useState("ollie")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -22,12 +22,21 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }
 
+  // Show nothing while checking auth status
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground text-sm">Loading...</div>
+      </div>
+    )
+  }
+
   // Show children if user is logged in
   if (user) {
     return <>{children}</>
   }
 
-  // Show login form while loading or not authenticated
+  // Show login form if not authenticated
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-5">
       <div className="w-full max-w-sm">
