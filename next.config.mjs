@@ -6,7 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Force rebuild - no middleware exists
+  // Cache bust: 2026-02-23-15:10
   experimental: {},
 };
 
