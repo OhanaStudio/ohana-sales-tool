@@ -6,7 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Cache bust: 2026-02-23-15:10
+  // Force rebuild: 2026-02-23-16:21 - H1 detection restored, cache cleared
   experimental: {},
 };
 
