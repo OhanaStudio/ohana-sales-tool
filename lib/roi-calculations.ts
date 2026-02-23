@@ -99,7 +99,11 @@ export function formatCurrency(value: number): string {
 }
 
 export function formatPercent(value: number, decimals = 1): string {
-  return `${(value * 100).toFixed(decimals)}%`
+  const percentValue = value * 100
+  return `${new Intl.NumberFormat("en-GB", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(percentValue)}%`
 }
 
 export function formatNumber(value: number): string {

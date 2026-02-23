@@ -260,13 +260,23 @@ export default function ROICalculatorPage() {
                       <p className="text-xs text-muted-foreground mb-1">First Year ROI</p>
                       <p className="text-lg font-semibold text-green-600 dark:text-green-400">
                         {scenario.annualROI > 0 ? "+" : ""}
-                        {scenario.annualROI.toFixed(0)}%
+                        {new Intl.NumberFormat("en-GB", {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(scenario.annualROI)}
+                        %
                       </p>
                     </div>
 
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">ROI Multiple</p>
-                      <p className="text-sm font-medium text-foreground">{scenario.roiMultiple.toFixed(1)}x</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {new Intl.NumberFormat("en-GB", {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        }).format(scenario.roiMultiple)}
+                        x
+                      </p>
                     </div>
                   </div>
                 </div>
