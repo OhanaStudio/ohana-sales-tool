@@ -939,14 +939,11 @@ export async function POST(request: Request) {
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     console.log("[v0] Fetching PSI data and HTML...")
     const [mobileData, desktopData, siteHtml] = await Promise.all([
-      runPSI(url, "mobile").catch(() => defaultPSIResult),
-      runPSI(url, "desktop").catch(() => defaultPSIResult),
+      fetchPSI(url, "mobile").catch(() => defaultPSIResult),
+      fetchPSI(url, "desktop").catch(() => defaultPSIResult),
       fetchSiteHtml(url).catch(() => ({ html: "", blocked: true })),
     ])
     console.log("[v0] HTML fetched - length:", siteHtml.html.length, "blocked:", siteHtml.blocked)
-
-    const mobileData = mobileResult
-    const desktopData = desktopResult
 
     // If BOTH strategies failed, we can't produce a useful report
     const mobileFailed = mobileData.result.notes?.some((n: string) => n.includes("Lighthouse analysis failed"))
