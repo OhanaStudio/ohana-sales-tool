@@ -173,24 +173,18 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
   }
 
   const handleRerun = async () => {
-    console.log("[v0] Rerun button clicked for URL:", result.url)
     setRerunning(true)
     try {
-      console.log("[v0] Calling POST /api/audit...")
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: result.url }),
       })
-      console.log("[v0] Response received:", res.status, res.ok)
       const data = await res.json()
-      console.log("[v0] Response data:", data)
       if (data.id) {
-        console.log("[v0] Redirecting to new report:", data.id)
         window.location.assign(`/report/${data.id}`)
       }
-    } catch (error) {
-      console.log("[v0] Rerun failed:", error)
+    } catch {
       setRerunning(false)
     }
   }

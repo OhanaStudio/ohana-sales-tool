@@ -91,48 +91,14 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const buttonNamePasses = mobileAudits?.["button-name"]?.score === 1
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
-  // --- H1 detection ---
-  // SIMPLIFIED: Only flag missing H1 if we can actually see the HTML and confirm it's missing
-  // If HTML is blocked or empty, don't show H1 checks at all
-  console.log("[v0] H1 Detection START - htmlIsEmpty:", htmlIsEmpty, "html.length:", html.length)
-  console.log("[v0] First 500 chars of HTML:", html.slice(0, 500))
-  
-  const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
-  const htmlH1Matches = [...html.matchAll(h1Regex)]
-  const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
-  
-  console.log("[v0] H1 Detection - found", htmlH1Matches.length, "H1 tags in HTML")
-  if (htmlH1Texts.length > 0) console.log("[v0] H1 texts:", htmlH1Texts)
-
-  let h1Texts: string[]
-  let h1Inferred = false
-  
-  if (htmlIsEmpty) {
-    // Can't verify - suppress all H1 checks
-    h1Texts = []
-    h1Inferred = true
-    console.log("[v0] H1 Detection - HTML empty, suppressing H1 checks")
-  } else if (htmlH1Texts.length > 0) {
-    // Found H1s in HTML
-    h1Texts = htmlH1Texts
-    console.log("[v0] H1 Detection - Using", h1Texts.length, "H1s from HTML")
-  } else {
-    // HTML available but no H1 found - this is a real issue
-    h1Texts = []
-    console.log("[v0] H1 Detection - HTML available but NO H1 found (real issue)")
-  }
-
-  const h1Count = h1Texts.length
-  const h1Text = h1Texts.length > 0 ? h1Texts[0] : null
-  const h1AboveFold = h1Inferred ? true : aboveFold.includes("<h1")
-
-  const vaguePatterns = [
-    "welcome", "we help", "solutions for", "your partner", "grow your",
-    "innovate", "transform", "leading", "world-class", "next level",
-    "better future", "home page", "homepage",
-  ]
-  const h1Lower = (h1Text || "").toLowerCase()
-  const h1Vague = (h1Text && !h1Inferred) ? vaguePatterns.some((p) => h1Lower.includes(p)) : false
+  // --- H1 detection REMOVED ---
+  // H1 detection removed due to unreliability with JavaScript-rendered sites
+  // Many modern sites render H1s client-side, so raw HTML check produces false positives
+  const h1Count = 0
+  const h1Text = null
+  const h1AboveFold = true
+  const h1Vague = false
+  const h1Inferred = true // Always treat as inferred/unverifiable
 
   // --- CTA detection ---
   // 1. Lighthouse detail items (only failing items, but still try)
@@ -165,11 +131,7 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // Status
   const issues: string[] = []
-  // Only flag H1 issues if we could actually verify (not inferred)
-  if (h1Count === 0 && !h1Inferred) issues.push("No H1 heading found on the page.")
-  else if (h1Count > 1 && !h1Inferred) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
-  if (h1Text && h1Vague && !h1Inferred) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
-  if (!h1AboveFold && h1Count > 0 && !h1Inferred) issues.push("The H1 does not appear to be above the fold on mobile.")
+  // H1 checks removed - too many false positives with JS-rendered sites
   if (!primaryCtaAboveFold) issues.push("No clear call-to-action detected above the fold.")
   if (competingCtasAboveFold > 3) issues.push(`${competingCtasAboveFold} competing CTAs above the fold can create decision fatigue.`)
   if (autoplayAboveFold) issues.push("Autoplay video or animation detected above the fold, which can distract from the message.")
