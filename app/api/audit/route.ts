@@ -976,6 +976,20 @@ function detectPlatform(html: string, url: string, responseHeaders: Record<strin
   return { platform: null, confidence: "low", details }
 }
 
+const defaultPSIResult = {
+  result: {
+    strategy: "mobile" as const,
+    performanceScore: 0,
+    accessibilityScore: 0,
+    seoScore: 0,
+    bestPracticesScore: 0,
+    metrics: { lcp: null, cls: null, tbt: null, fcp: null, speedIndex: null },
+    fieldDataAvailable: false,
+    notes: ["PageSpeed Insights data unavailable – audit ran with limited data."],
+  },
+  rawAudits: {},
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
