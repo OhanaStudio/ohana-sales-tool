@@ -50,7 +50,7 @@ export default function ROICalculatorPage() {
           {/* Industry Selector */}
           <div className="mb-6">
             <label htmlFor="industry" className="block text-sm font-medium text-foreground mb-2">
-              Industry <span className="text-red-500">*</span>
+              Select Your Industry
             </label>
             <select
               id="industry"
@@ -66,6 +66,24 @@ export default function ROICalculatorPage() {
             </select>
             <p className="text-xs text-muted-foreground mt-1">
               We'll use industry benchmarks unless you provide your own data below.
+            </p>
+          </div>
+
+          {/* Project Cost - Always Visible */}
+          <div className="mb-6">
+            <label htmlFor="projectCost" className="block text-sm font-medium text-foreground mb-2">
+              Project starts from (£)
+            </label>
+            <input
+              id="projectCost"
+              type="number"
+              placeholder="e.g., 15000"
+              value={inputs.projectCost || ""}
+              onChange={(e) => handleInputChange("projectCost", parseFloat(e.target.value) || undefined)}
+              className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Enter the estimated project cost to calculate ROI and break-even timeline.
             </p>
           </div>
 
@@ -133,19 +151,6 @@ export default function ROICalculatorPage() {
                   placeholder="e.g., 95"
                   value={inputs.averageOrderValue || ""}
                   onChange={(e) => handleInputChange("averageOrderValue", parseFloat(e.target.value) || undefined)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
-                />
-              </div>
-              <div>
-                <label htmlFor="projectCost" className="block text-sm font-medium text-foreground mb-2">
-                  Project Cost (£)
-                </label>
-                <input
-                  id="projectCost"
-                  type="number"
-                  placeholder="e.g., 15000"
-                  value={inputs.projectCost || ""}
-                  onChange={(e) => handleInputChange("projectCost", parseFloat(e.target.value) || undefined)}
                   className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                 />
               </div>
