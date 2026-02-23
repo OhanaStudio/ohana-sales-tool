@@ -956,26 +956,34 @@ export async function POST(request: Request) {
       desktopData.result.screenshot,
       mobileData.result.screenshot,
     )
-    const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
+    // ALWAYS run HTML/Lighthouse-based analysis as the primary source of truth
+    const htmlUxIndicators = analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
-    const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
-    // Always run HTML-based analysis for H1 detection (AI vision can't detect H1 tags from screenshots)
     const htmlAdvancedUX = extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
-    // Use AI result for everything except firstImpression H1 data, which must come from HTML parsing
-    const advancedUX = aiResult?.advancedUX
+
+    // AI vision analysis supplements HTML checks - AI is better for visual elements
+    // (CTAs, trust signals, phone/email visibility) but HTML is better for structural
+    // checks (H1 tags, nav structure, heading hierarchy, form fields, meta tags)
+    const uxIndicators = aiResult?.uxIndicators
       ? {
-          ...aiResult.advancedUX,
-          firstImpression: {
-            ...aiResult.advancedUX.firstImpression,
-            h1Count: htmlAdvancedUX.firstImpression.h1Count,
-            h1Text: htmlAdvancedUX.firstImpression.h1Text,
-            h1AboveFold: htmlAdvancedUX.firstImpression.h1AboveFold,
-            h1Vague: htmlAdvancedUX.firstImpression.h1Vague,
-            issues: htmlAdvancedUX.firstImpression.issues,
-            status: htmlAdvancedUX.firstImpression.status,
-          },
+          ...htmlUxIndicators,
+          // AI is better at visually confirming these exist on screen
+          ctaFound: aiResult.uxIndicators.ctaFound || htmlUxIndicators.ctaFound,
+          ctaKeywords: aiResult.uxIndicators.ctaKeywords?.length > 0 ? aiResult.uxIndicators.ctaKeywords : htmlUxIndicators.ctaKeywords,
+          trustSignalsFound: aiResult.uxIndicators.trustSignalsFound || htmlUxIndicators.trustSignalsFound,
+          trustKeywords: aiResult.uxIndicators.trustKeywords?.length > 0 ? aiResult.uxIndicators.trustKeywords : htmlUxIndicators.trustKeywords,
+          socialProofAboveFold: aiResult.uxIndicators.socialProofAboveFold || htmlUxIndicators.socialProofAboveFold,
+          testimonialsVerified: aiResult.uxIndicators.testimonialsVerified || htmlUxIndicators.testimonialsVerified,
+          phoneFound: aiResult.uxIndicators.phoneFound || htmlUxIndicators.phoneFound,
+          emailFound: aiResult.uxIndicators.emailFound || htmlUxIndicators.emailFound,
         }
-      : htmlAdvancedUX
+      : htmlUxIndicators
+
+    const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
+
+    // For advancedUX: always use HTML-based analysis as the foundation
+    // HTML parsing is authoritative for structural checks; AI only supplements visual observations
+    const advancedUX = htmlAdvancedUX
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)
