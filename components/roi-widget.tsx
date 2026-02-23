@@ -84,7 +84,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                 id="roi-industry"
                 value={inputs.industry}
                 onChange={(e) => handleInputChange("industry", e.target.value)}
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
               >
                 {INDUSTRY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -105,7 +105,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                 placeholder="e.g., 15000"
                 value={inputs.projectCost || ""}
                 onChange={(e) => handleInputChange("projectCost", parseFloat(e.target.value) || undefined)}
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
               />
             </div>
 
@@ -131,7 +131,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                       placeholder={`e.g., ${INDUSTRY_BENCHMARKS[inputs.industry].monthlySessions}`}
                       value={inputs.monthlySessions || ""}
                       onChange={(e) => handleInputChange("monthlySessions", parseFloat(e.target.value) || undefined)}
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                      className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                     />
                   </div>
                   <div>
@@ -145,7 +145,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                       placeholder={`e.g., ${(INDUSTRY_BENCHMARKS[inputs.industry].conversionRate * 100).toFixed(2)}`}
                       value={inputs.currentConversionRate ? (inputs.currentConversionRate * 100).toFixed(2) : ""}
                       onChange={(e) => handleInputChange("currentConversionRate", (parseFloat(e.target.value) || 0) / 100)}
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                      className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                     />
                   </div>
                   <div>
@@ -158,7 +158,7 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
                       placeholder={`e.g., ${INDUSTRY_BENCHMARKS[inputs.industry].averageOrderValue}`}
                       value={inputs.averageOrderValue || ""}
                       onChange={(e) => handleInputChange("averageOrderValue", parseFloat(e.target.value) || undefined)}
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                      className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                     />
                   </div>
                 </div>

@@ -109,7 +109,7 @@ export default function ROICalculatorPage() {
                   placeholder="e.g., 50000"
                   value={inputs.monthlyRevenue || ""}
                   onChange={(e) => handleInputChange("monthlyRevenue", parseFloat(e.target.value) || undefined)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                 />
               </div>
               <div>
@@ -122,7 +122,7 @@ export default function ROICalculatorPage() {
                   placeholder="e.g., 100000"
                   value={inputs.monthlySessions || ""}
                   onChange={(e) => handleInputChange("monthlySessions", parseFloat(e.target.value) || undefined)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                 />
               </div>
               <div>
@@ -138,7 +138,7 @@ export default function ROICalculatorPage() {
                   onChange={(e) =>
                     handleInputChange("currentConversionRate", parseFloat(e.target.value) / 100 || undefined)
                   }
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                 />
               </div>
               <div>
@@ -151,7 +151,7 @@ export default function ROICalculatorPage() {
                   placeholder="e.g., 95"
                   value={inputs.averageOrderValue || ""}
                   onChange={(e) => handleInputChange("averageOrderValue", parseFloat(e.target.value) || undefined)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 min-h-[44px]"
                 />
               </div>
             </div>
