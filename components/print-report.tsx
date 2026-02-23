@@ -902,7 +902,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
 }
 
 /* ═══ ROI PAGE ═══ */
-export function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationResult; url: string; date: string; introText?: string }) {
+function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationResult; url: string; date: string; introText?: string }) {
   const fmt = (n: number) => new Intl.NumberFormat('en-GB').format(Math.round(n))
   const fmtPct = (n: number, dec = 1) => new Intl.NumberFormat('en-GB', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n)
 
@@ -1005,7 +1005,7 @@ export function ROIPage({ roiData, url, date, introText }: { roiData: ROICalcula
 }
 
 /* ═══ CTA PAGE ═══ */
-export function CTAPage({ url, date }: { url: string; date: string }) {
+function CTAPage({ url, date }: { url: string; date: string }) {
   return (
     <div style={PAGE}>
       <PH url={url} date={date} />
@@ -1093,7 +1093,7 @@ export function CTAPage({ url, date }: { url: string; date: string }) {
 }
 
 /* ═══ HELPERS ═══ */
-export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, CTAPage, PAGE, BODY, C }
+export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, ROIPage, CTAPage, PAGE, BODY, C }
 
 /* ═══ MAIN EXPORT (print-only) ═══ */
 export function PrintReport({ result, preparedBy }: { result: AuditResult; preparedBy?: string }) {
