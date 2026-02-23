@@ -92,9 +92,14 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
   // --- H1 detection ---
+  console.log("[v0] H1 Detection - Scanning HTML (length:", html.length, ")")
   const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
   const htmlH1Matches = [...html.matchAll(h1Regex)]
   const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
+  console.log("[v0] H1 Detection - Found", htmlH1Matches.length, "H1 tags")
+  if (htmlH1Texts.length > 0) {
+    console.log("[v0] H1 texts:", htmlH1Texts.slice(0, 3))
+  }
 
   const h1Count = htmlH1Texts.length
   const h1Text = htmlH1Texts.length > 0 ? htmlH1Texts[0] : null
