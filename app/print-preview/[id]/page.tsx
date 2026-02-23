@@ -15,8 +15,9 @@ import {
   UXPage,
   FrictionPage,
   A11yPage,
+  ROIPage,
   CTAPage,
-} from "@/components/print-report"
+  } from "@/components/print-report"
 import { ArrowLeft, Loader2, Printer } from "lucide-react"
 
 
@@ -112,10 +113,11 @@ export default function PrintPreviewPage() {
     { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
     { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },
-    { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
-    { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
-    { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
-    { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
+  { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
+  { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
+  { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
+  ...(result.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
+  { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
   ]
 
   /*

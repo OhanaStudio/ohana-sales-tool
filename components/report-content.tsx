@@ -19,6 +19,7 @@ import { PlatformInfoSection } from "./platform-info-section"
 import { SectionToggle } from "./section-toggle"
 import { RiskGroups } from "./risk-groups"
 import { RecapSection } from "./recap-section"
+import { ROIWidget } from "./roi-widget"
 import { PrintReport } from "./print-report"
 import { SendToMakeDialog } from "./send-to-make-dialog"
 import {
@@ -301,6 +302,20 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
         ────────────────────────────────────────────── */}
         <div data-reveal-group>
           <RecapSection result={result} />
+        </div>
+
+        {/* ──────────────────────────────────────────────
+            ROI CALCULATOR
+        ────────────────────────────────────────────── */}
+        <div className="mt-6 mb-10" data-reveal-group>
+          <ROIWidget 
+            reportId={result.id} 
+            existingROI={result.roiCalculation}
+            onSave={(roiData) => {
+              // Update local state optimistically
+              result.roiCalculation = roiData
+            }}
+          />
         </div>
 
         {/* ──────────────────────────────────────────────

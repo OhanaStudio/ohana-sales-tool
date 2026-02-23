@@ -214,6 +214,7 @@ export interface AuditResult {
     trust: RiskCard
   }
   salesTalkTrack: SalesTalkTrack
+  roiCalculation?: import("./roi-types").ROICalculationResult
 }
 
 export interface StoredReport {
