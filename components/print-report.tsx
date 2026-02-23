@@ -3,6 +3,7 @@
 import React from "react"
 
 import type { AuditResult, RiskCard, RiskLevel } from "@/lib/types"
+import type { ROICalculationResult } from "@/lib/roi-types"
 import { getMetricStatus, getScoreStatus } from "@/lib/metric-thresholds"
 import { ImageIcon, Paintbrush, Move, Clock, Gauge, Zap, Eye, ShieldCheck, Globe, HelpCircle } from "lucide-react"
 
@@ -893,6 +894,109 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
               </div>
             )}
           </div>
+        </div>
+      </div>
+      <PF />
+    </div>
+  )
+}
+
+/* ═══ ROI PAGE ═══ */
+export function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationResult; url: string; date: string; introText?: string }) {
+  const fmt = (n: number) => new Intl.NumberFormat('en-GB').format(Math.round(n))
+  const fmtPct = (n: number, dec = 1) => new Intl.NumberFormat('en-GB', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n)
+
+  return (
+    <div style={PAGE}>
+      <PH url={url} date={date} />
+      <div style={BODY}>
+        <div>
+          <h1 style={{ fontFamily: SERIF, fontSize: 28, lineHeight: 1.1, color: C.black, margin: '0 0 8px' }}>ROI Estimation</h1>
+          <p style={{ margin: 0, fontSize: 10, lineHeight: 1.55, color: C.grey }}>
+            {introText || "Based on your current site performance and industry benchmarks, here's the potential return on investment from UX improvements."}
+          </p>
+        </div>
+
+        {/* Calculation Assumptions */}
+        <div style={{ background: C.white, border: `1px solid ${C.border}`, padding: 12 }}>
+          <h2 style={{ margin: '0 0 10px', fontSize: 11, fontWeight: 700, color: C.black }}>Calculation Assumptions</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, fontSize: 9 }}>
+            <div>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Industry</p>
+              <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{roiData.inputs.industry}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Monthly Sessions</p>
+              <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmt(roiData.inputs.monthlySessions)}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Current CR</p>
+              <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmtPct(roiData.inputs.currentConversionRate * 100, 2)}%</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Average Order Value</p>
+              <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>£{fmt(roiData.inputs.averageOrderValue)}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Project Cost</p>
+              <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>£{fmt(roiData.inputs.projectCost)}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Gross Margin</p>
+              <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmtPct(roiData.benchmark.grossMargin * 100, 0)}%</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Three Scenarios */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+          {roiData.scenarios.map(scenario => (
+            <div key={scenario.scenario} style={{ background: C.white, border: `1px solid ${C.border}`, padding: 10 }}>
+              <h3 style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: C.black }}>{scenario.label}</h3>
+              <p style={{ margin: '0 0 10px', fontSize: 8, color: C.light }}>+{fmtPct(scenario.crImprovement * 100, 1)}% CR improvement</p>
+              
+              <div style={{ marginBottom: 8 }}>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>Monthly Revenue Uplift</p>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: C.black }}>£{fmt(scenario.monthlyRevenueUplift)}</p>
+              </div>
+
+              <div style={{ marginBottom: 8 }}>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>Annual Revenue Uplift</p>
+                <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: C.black }}>£{fmt(scenario.annualRevenueUplift)}</p>
+              </div>
+
+              <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 6, marginTop: 6 }}>
+                <p style={{ margin: '0 0 2px', fontSize: 8, color: C.light }}>Break-even Timeline</p>
+                <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 600, color: C.black }}>
+                  {scenario.breakEvenMonths.toFixed(1)} months
+                </p>
+              </div>
+
+              <div>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>First Year ROI</p>
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#16a34a' }}>
+                  +{fmtPct(scenario.annualROI, 0)}%
+                </p>
+              </div>
+
+              <div>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>ROI Multiple</p>
+                <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: C.black }}>
+                  {fmtPct(scenario.roiMultiple, 1)}x
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Methodology */}
+        <div style={{ background: '#f5f5f4', padding: 10 }}>
+          <h3 style={{ margin: '0 0 6px', fontSize: 10, fontWeight: 700, color: C.black }}>Methodology</h3>
+          <p style={{ margin: 0, fontSize: 8, lineHeight: 1.5, color: C.grey }}>
+            Calculations assume conservative CR improvements based on industry research: +0.3% (conservative), +0.5% (moderate), and +1.0% 
+            (optimistic). Revenue uplift is calculated as additional conversions × AOV × gross margin × (1 - return rate). Break-even and 
+            ROI figures account for net profit margins specific to your industry.
+          </p>
         </div>
       </div>
       <PF />
