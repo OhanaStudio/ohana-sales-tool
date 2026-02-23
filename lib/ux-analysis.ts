@@ -91,14 +91,23 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
   const buttonNamePasses = mobileAudits?.["button-name"]?.score === 1
   const lhCtasInferred = linkNamePasses || buttonNamePasses
 
-  // --- H1 detection REMOVED ---
-  // H1 detection removed due to unreliability with JavaScript-rendered sites
-  // Many modern sites render H1s client-side, so raw HTML check produces false positives
-  const h1Count = 0
-  const h1Text = null
-  const h1AboveFold = true
-  const h1Vague = false
-  const h1Inferred = true // Always treat as inferred/unverifiable
+  // --- H1 detection ---
+  const h1Regex = /<h1[^>]*>([\s\S]*?)<\/h1>/gi
+  const htmlH1Matches = [...html.matchAll(h1Regex)]
+  const htmlH1Texts = htmlH1Matches.map((m) => stripTags(m[1]).slice(0, 120))
+
+  const h1Count = htmlH1Texts.length
+  const h1Text = htmlH1Texts.length > 0 ? htmlH1Texts[0] : null
+  const h1AboveFold = aboveFold.includes("<h1")
+  const h1Inferred = false
+
+  const vaguePatterns = [
+    "welcome", "we help", "solutions for", "your partner", "grow your",
+    "innovate", "transform", "leading", "world-class", "next level",
+    "better future", "home page", "homepage",
+  ]
+  const h1Lower = (h1Text || "").toLowerCase()
+  const h1Vague = h1Text ? vaguePatterns.some((p) => h1Lower.includes(p)) : false
 
   // --- CTA detection ---
   // 1. Lighthouse detail items (only failing items, but still try)
@@ -131,7 +140,10 @@ export function analyseFirstImpression(html: string, mobileAudits?: any): FirstI
 
   // Status
   const issues: string[] = []
-  // H1 checks removed - too many false positives with JS-rendered sites
+  if (h1Count === 0) issues.push("No H1 heading found on the page.")
+  else if (h1Count > 1) issues.push(`${h1Count} H1 headings found; pages should typically have one clear H1.`)
+  if (h1Text && h1Vague) issues.push("The H1 text appears generic, which can reduce first-impression clarity.")
+  if (!h1AboveFold && h1Count > 0) issues.push("The H1 does not appear to be above the fold on mobile.")
   if (!primaryCtaAboveFold) issues.push("No clear call-to-action detected above the fold.")
   if (competingCtasAboveFold > 3) issues.push(`${competingCtasAboveFold} competing CTAs above the fold can create decision fatigue.`)
   if (autoplayAboveFold) issues.push("Autoplay video or animation detected above the fold, which can distract from the message.")
