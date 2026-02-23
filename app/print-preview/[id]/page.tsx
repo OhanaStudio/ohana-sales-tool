@@ -108,16 +108,19 @@ export default function PrintPreviewPage() {
     risks.moderate > 0 ? `${risks.moderate} Moderate Risks` : "",
   ].filter(Boolean).join(" | ")
 
+  // Build pages array with ROI second-to-last when available
   const pages = [
     { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy={user?.name} /> },
     { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
     { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },
-  { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
-  { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
-  { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
-  ...(result.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
-  { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
+    { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
+    // ROI Estimation appears second-to-last when data exists
+    ...(result.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
+    // CTA page always last
+    { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
   ]
 
   /*
