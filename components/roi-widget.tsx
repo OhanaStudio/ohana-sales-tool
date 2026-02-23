@@ -247,7 +247,6 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
             </div>
           </div>
         </div>
-      </div>
     </div>
   )
 }
