@@ -937,29 +937,13 @@ export async function POST(request: Request) {
     // CACHE REMOVED: Every POST /api/audit now runs a fresh audit for accurate before/after comparisons
 
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
-    const emptyResult: StrategyResult = {
-      strategy: "mobile",
-      performanceScore: 0,
-      accessibilityScore: 0,
-      seoScore: 0,
-      bestPracticesScore: 0,
-      metrics: { lcp: null, cls: null, tbt: null, fcp: null, speedIndex: null },
-      fieldDataAvailable: false,
-      notes: ["Lighthouse analysis failed for this strategy. Results may be incomplete."],
-      screenshot: undefined,
-    }
-
-    const [mobileResult, desktopResult, siteHtml] = await Promise.all([
-      fetchPSI(url, "mobile").catch((err) => {
-        console.error("Mobile PSI failed:", err.message)
-        return { result: { ...emptyResult, strategy: "mobile" as const }, rawAudits: {} }
-      }),
-      fetchPSI(url, "desktop").catch((err) => {
-        console.error("Desktop PSI failed:", err.message)
-        return { result: { ...emptyResult, strategy: "desktop" as const }, rawAudits: {} }
-      }),
-      fetchSiteHtml(url),
+    console.log("[v0] Fetching PSI data and HTML...")
+    const [mobileData, desktopData, siteHtml] = await Promise.all([
+      runPSI(url, "mobile").catch(() => defaultPSIResult),
+      runPSI(url, "desktop").catch(() => defaultPSIResult),
+      fetchSiteHtml(url).catch(() => ({ html: "", blocked: true })),
     ])
+    console.log("[v0] HTML fetched - length:", siteHtml.html.length, "blocked:", siteHtml.blocked)
 
     const mobileData = mobileResult
     const desktopData = desktopResult
@@ -977,6 +961,7 @@ export async function POST(request: Request) {
     const mobile = mobileData.result
     const desktop = desktopData.result
     const fetchedHtml = siteHtml.html
+    console.log("[v0] fetchedHtml length:", fetchedHtml.length, "blocked:", siteHtml.blocked)
 
     // Try AI vision analysis first (uses screenshots), fall back to HTML/Lighthouse parsing
     const aiResult = await analyseScreenshotsWithAI(
@@ -986,7 +971,9 @@ export async function POST(request: Request) {
     const uxIndicators = aiResult?.uxIndicators ?? analyseUXIndicators(fetchedHtml, siteHtml.blocked, mobileData.rawAudits)
     const designIndicators = extractDesignIndicators(mobileData.rawAudits, fetchedHtml)
     const accessibilityIndicators = extractAccessibilityIndicators(mobileData.rawAudits, fetchedHtml, aiResult?.cookieConsentVisible ?? false)
+    console.log("[v0] Calling extractAdvancedUXIndicators with HTML length:", fetchedHtml.length)
     const advancedUX = aiResult?.advancedUX ?? extractAdvancedUXIndicators(fetchedHtml, mobileData.rawAudits)
+    console.log("[v0] extractAdvancedUXIndicators complete, H1 count:", advancedUX.firstImpression.h1Count)
 
     const overallScore = calculateOverallScore(mobile, desktop)
     const summaryText = generateSummary(overallScore)
