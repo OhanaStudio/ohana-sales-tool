@@ -6,49 +6,46 @@ interface AuthUser {
 }
 
 export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    // Initialize from localStorage immediately to avoid flash of login screen
-    if (typeof window !== "undefined") {
-      const storedName = localStorage.getItem("auth_user_name")
-      const storedUsername = localStorage.getItem("auth_username")
-      if (storedName && storedUsername) {
-        return { username: storedUsername, name: storedName }
-      }
-    }
-    return null
-  })
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
 
   const checkAuth = useCallback(async () => {
+    console.log("[v0] useAuth: Starting auth check")
     try {
       const res = await fetch("/api/auth", { credentials: "include" })
+      console.log("[v0] useAuth: Response status:", res.status, "ok:", res.ok)
       
       if (res.ok) {
         const text = await res.text()
         if (!text) {
-          // Empty response but localStorage user exists - keep them logged in
-          if (!user) setUser(null)
+          console.log("[v0] useAuth: Empty response body, skipping")
+          setUser(null)
           return
         }
         let data: { username?: string; name?: string }
         try {
           data = JSON.parse(text)
         } catch {
-          if (!user) setUser(null)
+          console.log("[v0] useAuth: Invalid JSON response, skipping")
+          setUser(null)
           return
         }
+        console.log("[v0] useAuth: Received data:", data)
         // Store in localStorage as backup
         if (typeof window !== "undefined" && data.name) {
           localStorage.setItem("auth_user_name", data.name)
           localStorage.setItem("auth_username", data.username ?? "")
         }
         setUser({ username: data.username ?? "", name: data.name ?? "" })
+        console.log("[v0] useAuth: Set user to:", { username: data.username, name: data.name })
       } else {
-        // Cookie lost (e.g. HMR) - fall back to localStorage
+        console.log("[v0] useAuth: Response not ok, checking localStorage")
+        // Fallback to localStorage if API fails
         if (typeof window !== "undefined") {
           const storedName = localStorage.getItem("auth_user_name")
           const storedUsername = localStorage.getItem("auth_username")
           if (storedName && storedUsername) {
+            console.log("[v0] useAuth: Using localStorage fallback:", storedName)
             setUser({ username: storedUsername, name: storedName })
           } else {
             setUser(null)
@@ -57,21 +54,14 @@ export function useAuth() {
           setUser(null)
         }
       }
-    } catch {
-      // Network error - keep existing user if localStorage has them
-      if (typeof window !== "undefined") {
-        const storedName = localStorage.getItem("auth_user_name")
-        const storedUsername = localStorage.getItem("auth_username")
-        if (storedName && storedUsername) {
-          setUser({ username: storedUsername, name: storedName })
-        } else {
-          setUser(null)
-        }
-      }
+    } catch (error) {
+      console.error("[v0] useAuth: Error during auth check:", error)
+      setUser(null)
     } finally {
+      console.log("[v0] useAuth: Setting loading to false")
       setLoading(false)
     }
-  }, [user])
+  }, [])
 
   useEffect(() => {
     checkAuth()

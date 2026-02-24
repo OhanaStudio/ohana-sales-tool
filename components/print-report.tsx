@@ -902,7 +902,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
 }
 
 /* ═══ ROI PAGE ═══ */
-function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationResult; url: string; date: string; introText?: string }) {
+export function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationResult; url: string; date: string; introText?: string }) {
   const fmt = (n: number) => new Intl.NumberFormat('en-GB').format(Math.round(n))
   const fmtPct = (n: number, dec = 1) => new Intl.NumberFormat('en-GB', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n)
 
@@ -930,7 +930,7 @@ function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationRes
               <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmt(roiData.inputs.monthlySessions)}</p>
             </div>
             <div>
-              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Current Conversion Rate</p>
+              <p style={{ margin: '0 0 2px', color: C.light, fontWeight: 600 }}>Current CR</p>
               <p style={{ margin: 0, color: C.black, fontWeight: 600 }}>{fmtPct(roiData.inputs.currentConversionRate * 100, 2)}%</p>
             </div>
             <div>
@@ -1005,7 +1005,7 @@ function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationRes
 }
 
 /* ═══ CTA PAGE ═══ */
-function CTAPage({ url, date }: { url: string; date: string }) {
+export function CTAPage({ url, date }: { url: string; date: string }) {
   return (
     <div style={PAGE}>
       <PH url={url} date={date} />
@@ -1093,7 +1093,7 @@ function CTAPage({ url, date }: { url: string; date: string }) {
 }
 
 /* ═══ HELPERS ═══ */
-export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, ROIPage, CTAPage, PAGE, BODY, C }
+export { formatDate, countRisks, CoverPage, IntroPage, RiskPage, PerfPage, UXPage, FrictionPage, A11yPage, CTAPage, PAGE, BODY, C }
 
 /* ═══ MAIN EXPORT (print-only) ═══ */
 export function PrintReport({ result, preparedBy }: { result: AuditResult; preparedBy?: string }) {
