@@ -4,7 +4,7 @@ import type { ROICalculationResult } from "@/lib/roi-types"
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const { id } = params
+    const { id } = await params
     const roiData: ROICalculationResult = await request.json()
 
     const sql = neon(process.env.DATABASE_URL!)

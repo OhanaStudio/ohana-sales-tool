@@ -529,10 +529,6 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
   <ROIWidget 
     reportId={result.id} 
     existingROI={result.roiCalculation}
-    onSave={(roiData) => {
-      // Update local state optimistically
-      result.roiCalculation = roiData
-    }}
   />
   </div>
   </PrintSection>
