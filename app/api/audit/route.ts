@@ -1013,10 +1013,12 @@ export async function POST(request: Request) {
 
     // CACHE REMOVED: Every POST /api/audit now runs a fresh audit for accurate before/after comparisons
 
+    // Fallback when PSI request fails entirely
+    const psiBase = { performanceScore: 0, accessibilityScore: 0, seoScore: 0, bestPracticesScore: 0, metrics: { lcp: null, cls: null, tbt: null, fcp: null, speedIndex: null }, fieldDataAvailable: false, notes: ["Lighthouse analysis failed"] }
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     const [mobileData, desktopData, siteHtml] = await Promise.all([
-      fetchPSI(url, "mobile").catch(() => defaultPSIResult),
-      fetchPSI(url, "desktop").catch(() => defaultPSIResult),
+      fetchPSI(url, "mobile").catch(() => ({ result: { strategy: "mobile" as const, ...psiBase }, rawAudits: {} })),
+      fetchPSI(url, "desktop").catch(() => ({ result: { strategy: "desktop" as const, ...psiBase }, rawAudits: {} })),
       fetchSiteHtml(url).catch(() => ({ html: "", blocked: true, responseHeaders: {} })),
     ])
 
