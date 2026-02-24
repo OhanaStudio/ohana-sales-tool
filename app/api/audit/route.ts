@@ -1001,10 +1001,12 @@ export async function POST(request: Request) {
 
     // Fallback when PSI fails
     const psiBase = { performanceScore: 0, accessibilityScore: 0, seoScore: 0, bestPracticesScore: 0, metrics: { lcp: null, cls: null, tbt: null, fcp: null, speedIndex: null }, fieldDataAvailable: false, notes: ["Lighthouse analysis failed"] }
+    let psiMobileError: string | null = null
+    let psiDesktopError: string | null = null
     // Run PSI (both strategies) + HTML fetch in parallel, handle individual failures
     const [mobileData, desktopData, siteHtml] = await Promise.all([
-      fetchPSI(url, "mobile").catch(() => ({ result: { strategy: "mobile" as const, ...psiBase }, rawAudits: {} })),
-      fetchPSI(url, "desktop").catch(() => ({ result: { strategy: "desktop" as const, ...psiBase }, rawAudits: {} })),
+      fetchPSI(url, "mobile").catch((e) => { psiMobileError = e?.message || String(e); console.error("[v0] PSI mobile failed:", psiMobileError); return { result: { strategy: "mobile" as const, ...psiBase }, rawAudits: {} } }),
+      fetchPSI(url, "desktop").catch((e) => { psiDesktopError = e?.message || String(e); console.error("[v0] PSI desktop failed:", psiDesktopError); return { result: { strategy: "desktop" as const, ...psiBase }, rawAudits: {} } }),
       fetchSiteHtml(url).catch(() => ({ html: "", blocked: true })),
     ])
 
@@ -1012,8 +1014,10 @@ export async function POST(request: Request) {
     const mobileFailed = mobileData.result.notes?.some((n: string) => n.includes("Lighthouse analysis failed"))
     const desktopFailed = desktopData.result.notes?.some((n: string) => n.includes("Lighthouse analysis failed"))
     if (mobileFailed && desktopFailed) {
+      const detail = psiMobileError || psiDesktopError || "Unknown error"
+      console.error("[v0] Both PSI strategies failed. Mobile:", psiMobileError, "Desktop:", psiDesktopError)
       return NextResponse.json(
-        { error: "Lighthouse could not analyse this site. The site may be blocking automated testing, require authentication, or be temporarily unavailable. Please try again in a moment." },
+        { error: `Lighthouse could not analyse this site. ${detail}` },
         { status: 502 }
       )
     }
