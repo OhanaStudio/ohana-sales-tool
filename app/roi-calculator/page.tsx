@@ -2,12 +2,15 @@
 
 import { useState } from "react"
 import { TopBar } from "@/components/top-bar"
+import { AdminBenchmarksPanel } from "@/components/admin-benchmarks-panel"
+import { useAuth } from "@/hooks/use-auth"
 import { calculateROI, formatCurrency, formatPercent, formatNumber } from "@/lib/roi-calculations"
 import { INDUSTRY_OPTIONS } from "@/lib/roi-benchmarks"
 import type { ROIInputs, ROICalculationResult } from "@/lib/roi-types"
 import { TrendingUp, Calculator, AlertCircle } from "lucide-react"
 
 export default function ROICalculatorPage() {
+  const { user } = useAuth()
   const [inputs, setInputs] = useState<ROIInputs>({
     industry: "retail-general",
   })
@@ -294,6 +297,10 @@ export default function ROICalculatorPage() {
               </p>
             </div>
           </>
+        )}
+        {/* Admin panel — only visible to ollie */}
+        {user?.username === "ollie" && (
+          <AdminBenchmarksPanel />
         )}
       </main>
     </div>
