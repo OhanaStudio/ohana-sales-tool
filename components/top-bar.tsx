@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { useAuth } from "@/hooks/use-auth"
-import { LogOut, History, Plus, Calculator, Menu, X } from "lucide-react"
+import { LogOut, History, Plus, Calculator, Menu, X, Settings } from "lucide-react"
 
 export function TopBar() {
   const { user, logout } = useAuth()
@@ -73,6 +73,14 @@ export function TopBar() {
             >
               <History className="h-4 w-4 shrink-0" />
               History
+            </a>
+            <a
+              href="/settings"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              <Settings className="h-4 w-4 shrink-0" />
+              Settings
             </a>
             <div className="border-t border-zinc-800" />
             <button
