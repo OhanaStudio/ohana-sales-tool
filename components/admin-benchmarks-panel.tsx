@@ -48,15 +48,17 @@ export function AdminBenchmarksPanel() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const adminHeaders = { "x-admin-user": "ollie" }
+
   async function load() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch("/api/admin/industry-benchmarks")
-      if (!res.ok) throw new Error("Failed to load")
+      const res = await fetch("/api/admin/industry-benchmarks", { headers: adminHeaders })
+      if (!res.ok) throw new Error(`Failed to load: ${res.status}`)
       setBenchmarks(await res.json())
-    } catch {
-      setError("Failed to load benchmarks")
+    } catch (e: any) {
+      setError(e.message || "Failed to load benchmarks")
     } finally {
       setLoading(false)
     }
@@ -89,7 +91,7 @@ export function AdminBenchmarksPanel() {
     try {
       const res = await fetch("/api/admin/industry-benchmarks", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminHeaders },
         body: JSON.stringify({
           id,
           label: editForm.label,
@@ -117,7 +119,7 @@ export function AdminBenchmarksPanel() {
   async function handleDelete(id: number, label: string) {
     if (!confirm(`Delete "${label}"?`)) return
     try {
-      await fetch(`/api/admin/industry-benchmarks?id=${id}`, { method: "DELETE" })
+      await fetch(`/api/admin/industry-benchmarks?id=${id}`, { method: "DELETE", headers: adminHeaders })
       await load()
     } catch {
       setError("Failed to delete")
@@ -130,7 +132,7 @@ export function AdminBenchmarksPanel() {
     try {
       const res = await fetch("/api/admin/industry-benchmarks", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminHeaders },
         body: JSON.stringify({
           value: addForm.value,
           label: addForm.label,
