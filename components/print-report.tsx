@@ -990,8 +990,8 @@ function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationRes
         </div>
 
         {/* Methodology */}
-        <div style={{ background: '#f5f5f4', padding: 10 }}>
-          <h3 style={{ margin: '0 0 6px', fontSize: 10, fontWeight: 700, color: C.black }}>Methodology</h3>
+        <div style={{ marginTop: 8 }}>
+          <h3 style={{ margin: '0 0 4px', fontSize: 10, fontWeight: 700, color: C.black }}>Methodology</h3>
           <p style={{ margin: 0, fontSize: 8, lineHeight: 1.5, color: C.grey }}>
             Calculations assume conservative CR improvements based on industry research: +0.3% (conservative), +0.5% (moderate), and +1.0% 
             (optimistic). Revenue uplift is calculated as additional conversions × AOV × gross margin × (1 - return rate). Break-even and 
