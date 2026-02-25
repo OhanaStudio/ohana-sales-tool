@@ -4,17 +4,17 @@ import { neon } from "@neondatabase/serverless"
 
 const ADMIN_USERS = ["ollie"]
 
+const VALID_USERS: Record<string, { name: string }> = {
+  ollie: { name: "Ollie Brown" },
+  mark: { name: "Mark Halliwell" },
+  james: { name: "James Brown-Clarke" },
+}
+
 async function getAuthUser() {
   const cookieStore = await cookies()
-  const session = cookieStore.get("session")?.value
-  if (!session) return null
-  try {
-    const decoded = Buffer.from(session, "base64").toString("utf-8")
-    const data = JSON.parse(decoded)
-    return data as { username: string; name: string }
-  } catch {
-    return null
-  }
+  const username = cookieStore.get("auth")?.value
+  if (!username || !VALID_USERS[username]) return null
+  return { username, name: VALID_USERS[username].name }
 }
 
 function isAdmin(user: { username: string } | null) {
