@@ -19,6 +19,7 @@ import { PlatformInfoSection } from "./platform-info-section"
 import { SectionToggle } from "./section-toggle"
 import { RiskGroups } from "./risk-groups"
 import { RecapSection } from "./recap-section"
+import { ROIWidget } from "./roi-widget"
 import { PrintReport } from "./print-report"
 import { SendToMakeDialog } from "./send-to-make-dialog"
 import {
@@ -123,6 +124,7 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
     design: true,
     advancedUx: true,
     accessibility: true,
+    roi: true,
   })
 
   const toggle = (key: keyof typeof sections) =>
@@ -498,25 +500,41 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
           </PrintSection>
         )}
 
-        {/* ──────────────────────────────────────────────
-            ACCESSIBILITY
-        ────────────────────────────────────────────── */}
-        {result.accessibilityIndicators && (
-          <div id="risk-accessibility">
-            <PrintSection
-              enabled={sections.accessibility}
-              className="mb-10 print-break-before print-compact"
-              toggle={<SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />}
-            >
-              <div data-reveal-group>
-                <AccessibilitySection indicators={result.accessibilityIndicators} />
-              </div>
-            </PrintSection>
-          </div>
-        )}
+  {/* ──────────────────────────────────────────────
+      ACCESSIBILITY
+  ────────────────────────────────────────────── */}
+  {result.accessibilityIndicators && (
+  <div id="risk-accessibility">
+  <PrintSection
+  enabled={sections.accessibility}
+  className="mb-10 print-break-before print-compact"
+  toggle={<SectionToggle label="Accessibility" enabled={sections.accessibility} onToggle={() => toggle("accessibility")} />}
+  >
+  <div data-reveal-group>
+  <AccessibilitySection indicators={result.accessibilityIndicators} />
+  </div>
+  </PrintSection>
+  </div>
+  )}
 
-        {/* ──────────────────────────────────────────────
-            FOOTER (web only)
+  {/* ──────────────────────────────────────────────
+      ROI ESTIMATION
+  ────────────────────────────────────────────── */}
+  <PrintSection
+  enabled={sections.roi}
+  className="mb-10 print-break-before print-compact"
+  toggle={<SectionToggle label="ROI Estimation" enabled={sections.roi} onToggle={() => toggle("roi")} />}
+  >
+  <div data-reveal-group>
+  <ROIWidget 
+    reportId={result.id} 
+    existingROI={result.roiCalculation}
+  />
+  </div>
+  </PrintSection>
+
+  {/* ──────────────────────────────────────────────
+      FOOTER (web only)
         ────────────────────────────────────────────── */}
         <div className="border-t border-border pt-6 pb-8 no-print">
           <div className="flex items-center justify-between">
