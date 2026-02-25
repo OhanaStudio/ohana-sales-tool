@@ -194,21 +194,21 @@ export function ROIWidget({ reportId, existingROI, onSave }: ROIWidgetProps) {
         {/* Results Preview - Three Scenarios */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {result.scenarios.map((scenario) => (
-            <div key={scenario.scenario} className="bg-card border border-border rounded-lg p-4">
-              <h4 className="text-sm font-semibold text-foreground mb-1">{scenario.label}</h4>
-              <p className="text-xs text-muted-foreground mb-3">
+            <div key={scenario.scenario} className="bg-foreground rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-background mb-1">{scenario.label}</h4>
+              <p className="text-xs text-background/50 mb-3">
                 +{fmtPct(scenario.crImprovement * 100, 1)}% CR improvement
               </p>
               <div className="space-y-2">
                 <div>
-                  <p className="text-xs text-muted-foreground">First Year ROI</p>
-                  <p className="text-lg font-semibold text-green-600 dark:text-green-400">
+                  <p className="text-xs text-background/50">First Year ROI</p>
+                  <p className="text-lg font-semibold text-green-400">
                     +{fmtPct(scenario.annualROI, 0)}%
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Break-even</p>
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-xs text-background/50">Break-even</p>
+                  <p className="text-sm font-medium text-background">
                     {scenario.breakEvenMonths.toFixed(1)} months
                   </p>
                 </div>

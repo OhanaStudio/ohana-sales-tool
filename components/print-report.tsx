@@ -951,37 +951,37 @@ function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationRes
         {/* Three Scenarios */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
           {roiData.scenarios.map(scenario => (
-            <div key={scenario.scenario} style={{ background: C.pampas, border: `1px solid ${C.border}`, padding: 10 }}>
-              <h3 style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: C.black }}>{scenario.label}</h3>
-              <p style={{ margin: '0 0 10px', fontSize: 8, color: C.light }}>+{fmtPct(scenario.crImprovement * 100, 1)}% CR improvement</p>
+            <div key={scenario.scenario} style={{ background: C.black, border: `1px solid ${C.black}`, padding: 10 }}>
+              <h3 style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: C.white }}>{scenario.label}</h3>
+              <p style={{ margin: '0 0 10px', fontSize: 8, color: C.faint }}>+{fmtPct(scenario.crImprovement * 100, 1)}% CR improvement</p>
               
               <div style={{ marginBottom: 8 }}>
-                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>Monthly Revenue Uplift</p>
-                <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: C.black }}>£{fmt(scenario.monthlyRevenueUplift)}</p>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.faint }}>Monthly Revenue Uplift</p>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: C.white }}>£{fmt(scenario.monthlyRevenueUplift)}</p>
               </div>
 
               <div style={{ marginBottom: 8 }}>
-                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>Annual Revenue Uplift</p>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: C.black }}>£{fmt(scenario.annualRevenueUplift)}</p>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.faint }}>Annual Revenue Uplift</p>
+                <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: C.white }}>£{fmt(scenario.annualRevenueUplift)}</p>
               </div>
 
-              <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 6, marginTop: 6 }}>
-                <p style={{ margin: '0 0 2px', fontSize: 8, color: C.light }}>Break-even Timeline</p>
-                <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 600, color: C.black }}>
+              <div style={{ borderTop: `1px solid #333333`, paddingTop: 6, marginTop: 6 }}>
+                <p style={{ margin: '0 0 2px', fontSize: 8, color: C.faint }}>Break-even Timeline</p>
+                <p style={{ margin: '0 0 6px', fontSize: 9, fontWeight: 600, color: C.white }}>
                   {scenario.breakEvenMonths.toFixed(1)} months
                 </p>
               </div>
 
               <div>
-                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>First Year ROI</p>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#16a34a' }}>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.faint }}>First Year ROI</p>
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#4ade80' }}>
                   +{fmtPct(scenario.annualROI, 0)}%
                 </p>
               </div>
 
               <div>
-                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.light }}>ROI Multiple</p>
-                <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: C.black }}>
+                <p style={{ margin: '0 0 1px', fontSize: 8, color: C.faint }}>ROI Multiple</p>
+                <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: C.white }}>
                   {fmtPct(scenario.roiMultiple, 1)}x
                 </p>
               </div>
