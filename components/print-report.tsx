@@ -917,8 +917,8 @@ function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationRes
           </p>
         </div>
 
-        {/* Calculation Assumptions */}
-        <div style={{ background: C.white, border: `1px solid ${C.border}`, padding: 12 }}>
+  {/* Calculation Assumptions */}
+  <div style={{ background: C.pampas, border: `1px solid ${C.border}`, padding: 12 }}>
           <h2 style={{ margin: '0 0 10px', fontSize: 11, fontWeight: 700, color: C.black }}>Calculation Assumptions</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, fontSize: 9 }}>
             <div>
@@ -951,7 +951,7 @@ function ROIPage({ roiData, url, date, introText }: { roiData: ROICalculationRes
         {/* Three Scenarios */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
           {roiData.scenarios.map(scenario => (
-            <div key={scenario.scenario} style={{ background: C.white, border: `1px solid ${C.border}`, padding: 10 }}>
+            <div key={scenario.scenario} style={{ background: C.pampas, border: `1px solid ${C.border}`, padding: 10 }}>
               <h3 style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: C.black }}>{scenario.label}</h3>
               <p style={{ margin: '0 0 10px', fontSize: 8, color: C.light }}>+{fmtPct(scenario.crImprovement * 100, 1)}% CR improvement</p>
               
