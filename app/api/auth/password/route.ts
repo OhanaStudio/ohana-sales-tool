@@ -53,9 +53,9 @@ export async function PUT(request: NextRequest) {
     // Check current password
     // If password_hash is 'placeholder', accept the hardcoded password for migration
     const LEGACY_PASSWORDS: Record<string, string> = {
-      ollie: "Ohana2025!",
-      mark: "Sales2025!",
-      james: "Design2025!",
+      ollie: "notber-8syjvi-sivnaV",
+      mark: "xelpar-4tyrwi-huvQax",
+      james: "qonzev-3bemki-xyNfur",
     }
 
     let passwordValid = false
