@@ -40,9 +40,12 @@ export async function POST(request: NextRequest) {
   let passwordValid = false
   try {
     const users = await sql`SELECT * FROM users WHERE username = ${username}`
-    if (users.length > 0 && users[0].password_hash !== "placeholder") {
+    const hash = users[0]?.password_hash || ""
+    const isPlaceholder = !hash || hash === "placeholder" || hash.includes("placeholder")
+    
+    if (users.length > 0 && !isPlaceholder) {
       // Check against hashed password in DB
-      passwordValid = await bcrypt.compare(password, users[0].password_hash)
+      passwordValid = await bcrypt.compare(password, hash)
     } else {
       // Fallback to legacy hardcoded password
       passwordValid = password === LEGACY_PASSWORDS[username]
