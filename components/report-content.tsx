@@ -35,6 +35,8 @@ import {
   Zap,
   Eye,
   ShieldCheck,
+  Link2,
+  Check,
 } from "lucide-react"
 
 
@@ -135,6 +137,25 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
   const [isPrintingPDF, setIsPrintingPDF] = useState(false)
 
   const [sendDialogOpen, setSendDialogOpen] = useState(false)
+  const [shareLoading, setShareLoading] = useState(false)
+  const [shareCopied, setShareCopied] = useState(false)
+
+  const handleShare = async () => {
+    setShareLoading(true)
+    try {
+      const res = await fetch(`/api/report/${result.id}/share`, { method: "POST" })
+      if (!res.ok) throw new Error("Failed to generate share link")
+      const { token } = await res.json()
+      const shareUrl = `${window.location.origin}/share/${token}`
+      await navigator.clipboard.writeText(shareUrl)
+      setShareCopied(true)
+      setTimeout(() => setShareCopied(false), 2000)
+    } catch (e) {
+      alert("Failed to generate share link")
+    } finally {
+      setShareLoading(false)
+    }
+  }
 
   const handlePrint = () => {
     setIsPrintingPDF(true)
@@ -236,6 +257,16 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
           >
             <Eye className="h-4 w-4" />
           </a>
+          <button
+            type="button"
+            onClick={handleShare}
+            disabled={shareLoading}
+            aria-label={shareCopied ? "Link copied!" : "Copy share link"}
+            title={shareCopied ? "Link copied!" : "Copy share link for client"}
+            className="inline-flex items-center justify-center w-10 h-10 border border-border bg-transparent text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            {shareCopied ? <Check className="h-4 w-4 text-green-600" /> : <Link2 className="h-4 w-4" />}
+          </button>
           <button
             type="button"
             onClick={() => setSendDialogOpen(true)}
