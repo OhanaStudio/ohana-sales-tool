@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams } from "next/navigation"
 import type { AuditResult } from "@/lib/types"
 import type { ROICalculationResult } from "@/lib/roi-types"
@@ -17,8 +17,10 @@ import {
   ROIPage,
   CTAPage,
 } from "@/components/print-report"
-import { Loader2, Printer } from "lucide-react"
+import { Loader2, Printer, Download } from "lucide-react"
 import Image from "next/image"
+import html2canvas from "html2canvas"
+import { jsPDF } from "jspdf"
 
 interface SharedReportData {
   id: string
@@ -39,6 +41,23 @@ export default function SharePage() {
   const [recapText, setRecapText] = useState<string>("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [generating, setGenerating] = useState(false)
+  const pageRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  // Detect iOS/mobile
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const checkMobile = () => {
+      const ua = navigator.userAgent
+      const isIOS = /iPad|iPhone|iPod/.test(ua)
+      const isAndroid = /Android/.test(ua)
+      const isMobileWidth = window.innerWidth < 768
+      setIsMobile(isIOS || isAndroid || isMobileWidth)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -75,6 +94,53 @@ export default function SharePage() {
     }
     load()
   }, [token])
+
+  // Mobile PDF generation using html2canvas + jsPDF (avoids iOS Safari print bugs)
+  const generateMobilePDF = async () => {
+    if (!data) return
+    setGenerating(true)
+    
+    try {
+      const pdfWidth = 210
+      const pdfHeight = 297
+      
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      })
+      
+      const validRefs = pageRefs.current.filter((ref): ref is HTMLDivElement => ref !== null)
+      
+      for (let i = 0; i < validRefs.length; i++) {
+        const pageEl = validRefs[i]
+        
+        const canvas = await html2canvas(pageEl, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#F0ECE5",
+          logging: false,
+        })
+        
+        const imgData = canvas.toDataURL("image/jpeg", 0.95)
+        
+        if (i > 0) {
+          pdf.addPage()
+        }
+        
+        pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight)
+      }
+      
+      const siteName = data.url.replace(/^https?:\/\//, "").replace(/[^a-zA-Z0-9]/g, "-").replace(/-+/g, "-").substring(0, 30)
+      pdf.save(`Website-Audit-${siteName}.pdf`)
+    } catch (err) {
+      console.error("[v0] PDF generation failed:", err)
+      alert("Failed to generate PDF. Please try again.")
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -174,18 +240,43 @@ export default function SharePage() {
         <div className="print-chrome" style={{ maxWidth: A4_W, margin: "0 auto 32px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <Image src="/ohaha-logo.svg" alt="Ohana" width={85} height={44} className="h-8 w-auto" />
-            <button
-              onClick={() => window.print()}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
-                color: "#fff", backgroundColor: "#171717", border: "none", padding: "8px 12px",
-                borderRadius: 4, cursor: "pointer", minHeight: 44,
-              }}
-            >
-              <Printer style={{ width: 14, height: 14 }} />
-              Print / Save PDF
-            </button>
+            {isMobile ? (
+              <button
+                onClick={generateMobilePDF}
+                disabled={generating}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+                  color: "#fff", backgroundColor: generating ? "#737373" : "#171717", border: "none", padding: "8px 12px",
+                  borderRadius: 4, cursor: generating ? "wait" : "pointer", minHeight: 44,
+                }}
+              >
+                {generating ? (
+                  <>
+                    <Loader2 style={{ width: 14, height: 14, animation: "spin 1s linear infinite" }} />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Download style={{ width: 14, height: 14 }} />
+                    Save PDF
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={() => window.print()}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+                  color: "#fff", backgroundColor: "#171717", border: "none", padding: "8px 12px",
+                  borderRadius: 4, cursor: "pointer", minHeight: 44,
+                }}
+              >
+                <Printer style={{ width: 14, height: 14 }} />
+                Print / Save PDF
+              </button>
+            )}
           </div>
         </div>
 
@@ -206,6 +297,7 @@ export default function SharePage() {
               </p>
 
               <div
+                ref={(el) => { pageRefs.current[i] = el }}
                 className="print-page"
                 style={{
                   width: A4_W,
