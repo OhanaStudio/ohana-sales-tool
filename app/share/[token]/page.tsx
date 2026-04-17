@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import type { AuditResult } from "@/lib/types"
-import type { ROICalculationResult } from "@/lib/roi-types"
 import {
   formatDate,
   countRisks,
@@ -25,7 +24,6 @@ interface SharedReportData {
   url: string
   result: AuditResult
   created_at: string
-  roi_data?: ROICalculationResult
 }
 
 const A4_W = 595
@@ -123,20 +121,15 @@ export default function SharePage() {
     risks.moderate > 0 ? `${risks.moderate} Moderate Risks` : "",
   ].filter(Boolean).join(" | ")
 
-  // Merge ROI data if available
-  const resultWithROI = data.roi_data 
-    ? { ...result, roiCalculation: data.roi_data }
-    : result
-
   const pages = [
     { label: "Cover", node: <CoverPage url={result.url} date={date} preparedBy="Ohana Studio" /> },
-    { label: "Introduction", node: <IntroPage r={resultWithROI} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
-    { label: "Risk Cards", node: <RiskPage r={resultWithROI} date={date} riskLabel={riskLabel} /> },
-    { label: "Performance", node: <PerfPage r={resultWithROI} date={date} riskLabel={riskLabel} /> },
-    { label: "UX Indicators", node: <UXPage r={resultWithROI} date={date} riskLabel={riskLabel} /> },
-    { label: "UX Friction", node: <FrictionPage r={resultWithROI} date={date} riskLabel={riskLabel} /> },
-    { label: "Accessibility", node: <A11yPage r={resultWithROI} date={date} riskLabel={riskLabel} /> },
-    ...(resultWithROI.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={resultWithROI.roiCalculation} url={result.url} date={date} /> }] : []),
+    { label: "Introduction", node: <IntroPage r={result} date={date} riskLabel={riskLabel} risks={risks} recapText={recapText} /> },
+    { label: "Risk Cards", node: <RiskPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "Performance", node: <PerfPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
+    { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
+    ...(result.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
     { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
   ]
 
