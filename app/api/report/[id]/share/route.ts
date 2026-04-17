@@ -52,9 +52,13 @@ export async function POST(
       return NextResponse.json({ error: "Report not found" }, { status: 404 })
     }
 
-    if (existing[0].share_token) {
-      // Return existing token
-      return NextResponse.json({ token: existing[0].share_token })
+    const currentToken = existing[0].share_token
+    // Check if existing token is old hex format (32 chars, all hex) - regenerate if so
+    const isOldHexFormat = currentToken && /^[a-f0-9]{32}$/i.test(currentToken)
+    
+    if (currentToken && !isOldHexFormat) {
+      // Return existing vanity token
+      return NextResponse.json({ token: currentToken })
     }
 
     // Generate vanity token: sitename-ddmmyy
