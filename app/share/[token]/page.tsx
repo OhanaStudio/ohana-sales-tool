@@ -223,18 +223,7 @@ export default function SharePage() {
                 alignItems: "center",
               }}
             >
-              <p className="print-chrome" style={{
-                fontFamily: "system-ui, sans-serif",
-                fontSize: isMobile ? 10 : 11,
-                fontWeight: 600,
-                color: "#737373",
-                margin: "0 0 8px",
-                textTransform: "uppercase" as const,
-                letterSpacing: "0.08em",
-                width: isMobile ? A4_W * mobileScale : A4_W,
-              }}>
-                Page {i + 1} - {page.label}
-              </p>
+
 
               <div
                 className="print-page"
