@@ -218,8 +218,9 @@ export default function SharePage() {
               key={page.label} 
               className="print-page-flow"
               style={{
-                width: isMobile ? A4_W * mobileScale : A4_W,
-                height: isMobile ? A4_H * mobileScale : "auto",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
               <p className="print-chrome" style={{
@@ -230,6 +231,7 @@ export default function SharePage() {
                 margin: "0 0 8px",
                 textTransform: "uppercase" as const,
                 letterSpacing: "0.08em",
+                width: isMobile ? A4_W * mobileScale : A4_W,
               }}>
                 Page {i + 1} - {page.label}
               </p>
@@ -243,11 +245,13 @@ export default function SharePage() {
                   overflow: "hidden",
                   position: "relative",
                   transform: isMobile ? `scale(${mobileScale})` : "none",
-                  transformOrigin: "top left",
+                  transformOrigin: "top center",
                 }}
               >
                 {page.node}
               </div>
+              {/* Spacer to account for scaled height */}
+              {isMobile && <div style={{ marginTop: (A4_H * mobileScale) - A4_H }} />}
             </div>
           ))}
         </div>
