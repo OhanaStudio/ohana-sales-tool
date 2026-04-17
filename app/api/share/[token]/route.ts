@@ -24,9 +24,8 @@ export async function GET(
     return NextResponse.json({
       id: report.id,
       url: report.url,
-      result: report.result,
+      result: report.result_json,
       created_at: report.created_at,
-      roi_data: report.roi_data,
     })
   } catch (e) {
     console.error("[v0] Error fetching shared report:", e)
