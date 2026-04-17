@@ -91,7 +91,6 @@ export default function SharePage() {
     load()
   }, [token])
 
-  // Mobile PDF generation using html2canvas + jsPDF (avoids iOS Safari print bugs)
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-200 flex items-center justify-center">
