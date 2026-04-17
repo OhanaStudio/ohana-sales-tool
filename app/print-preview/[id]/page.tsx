@@ -39,6 +39,21 @@ export default function PrintPreviewPage() {
   const [result, setResult] = useState<AuditResult | null>(null)
   const [recapText, setRecapText] = useState<string>("")
   const [loading, setLoading] = useState(true)
+  
+  // Detect iOS/mobile
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const checkMobile = () => {
+      const ua = navigator.userAgent
+      const isIOS = /iPad|iPhone|iPod/.test(ua)
+      const isAndroid = /Android/.test(ua)
+      const isMobileWidth = window.innerWidth < 768
+      setIsMobile(isIOS || isAndroid || isMobileWidth)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -224,18 +239,20 @@ export default function PrintPreviewPage() {
               <ArrowLeft style={{ width: 14, height: 14 }} />
               Back to report
             </a>
-            <button
-              onClick={() => window.print()}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
-                color: "#fff", backgroundColor: "#171717", border: "none", padding: "8px 12px",
-                borderRadius: 4, cursor: "pointer", minHeight: 44,
-              }}
-            >
-              <Printer style={{ width: 14, height: 14 }} />
-              Print
-            </button>
+            {!isMobile && (
+              <button
+                onClick={() => window.print()}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  fontFamily: "system-ui, sans-serif", fontSize: 13, fontWeight: 500,
+                  color: "#fff", backgroundColor: "#171717", border: "none", padding: "8px 12px",
+                  borderRadius: 4, cursor: "pointer", minHeight: 44,
+                }}
+              >
+                <Printer style={{ width: 14, height: 14 }} />
+                Print / Save PDF
+              </button>
+            )}
           </div>
         </div>
 
