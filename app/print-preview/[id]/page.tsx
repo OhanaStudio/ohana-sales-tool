@@ -40,8 +40,9 @@ export default function PrintPreviewPage() {
   const [recapText, setRecapText] = useState<string>("")
   const [loading, setLoading] = useState(true)
   
-  // Detect iOS/mobile
+  // Detect iOS/mobile and calculate scale for mobile
   const [isMobile, setIsMobile] = useState(false)
+  const [mobileScale, setMobileScale] = useState(1)
   useEffect(() => {
     const checkMobile = () => {
       const ua = navigator.userAgent
@@ -49,6 +50,17 @@ export default function PrintPreviewPage() {
       const isAndroid = /Android/.test(ua)
       const isMobileWidth = window.innerWidth < 768
       setIsMobile(isIOS || isAndroid || isMobileWidth)
+      
+      // Calculate scale to fit A4 width (595px) into viewport with padding
+      if (isMobileWidth) {
+        const viewportWidth = window.innerWidth
+        const padding = 24 // 12px on each side
+        const availableWidth = viewportWidth - padding
+        const scale = Math.min(availableWidth / 595, 1)
+        setMobileScale(scale)
+      } else {
+        setMobileScale(1)
+      }
     }
     checkMobile()
     window.addEventListener("resize", checkMobile)
@@ -223,9 +235,9 @@ export default function PrintPreviewPage() {
         }
       `}</style>
 
-      <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: "40px 0" }}>
+      <div style={{ minHeight: "100vh", background: "#d4d0cb", padding: isMobile ? "20px 12px" : "40px 0" }}>
         {/* Title bar */}
-        <div className="print-chrome" style={{ maxWidth: A4_W, margin: "0 auto 32px", padding: "0 0 0 0" }}>
+        <div className="print-chrome" style={{ maxWidth: isMobile ? "100%" : A4_W, margin: "0 auto 24px", padding: "0 0 0 0" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <a
               href={`/report/${id}`}
@@ -257,13 +269,20 @@ export default function PrintPreviewPage() {
         </div>
 
         {/* Pages */}
-        <div className="print-page-wrapper" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 40 }}>
+        <div className="print-page-wrapper" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: isMobile ? 24 : 40 }}>
           {pages.map((page, i) => (
-            <div key={page.label} className="print-page-flow">
+            <div 
+              key={page.label} 
+              className="print-page-flow"
+              style={{
+                width: isMobile ? A4_W * mobileScale : A4_W,
+                height: isMobile ? A4_H * mobileScale : "auto",
+              }}
+            >
               {/* Page label */}
               <p className="print-chrome" style={{
                 fontFamily: "system-ui, sans-serif",
-                fontSize: 11,
+                fontSize: isMobile ? 10 : 11,
                 fontWeight: 600,
                 color: "#737373",
                 margin: "0 0 8px",
@@ -282,6 +301,8 @@ export default function PrintPreviewPage() {
                   boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
                   overflow: "hidden",
                   position: "relative",
+                  transform: isMobile ? `scale(${mobileScale})` : "none",
+                  transformOrigin: "top left",
                 }}
               >
                 {page.node}
