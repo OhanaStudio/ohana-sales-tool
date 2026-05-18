@@ -141,7 +141,7 @@ export default function SharePage() {
     { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
-    ...(result.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
+    ...(result.roiCalculation && !result.roiCalculation.hidden ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
     { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
   ]
 

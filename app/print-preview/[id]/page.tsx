@@ -144,8 +144,8 @@ export default function PrintPreviewPage() {
     { label: "UX Indicators", node: <UXPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "UX Friction", node: <FrictionPage r={result} date={date} riskLabel={riskLabel} /> },
     { label: "Accessibility", node: <A11yPage r={result} date={date} riskLabel={riskLabel} /> },
-    // ROI Estimation appears second-to-last when data exists
-    ...(result.roiCalculation ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
+    // ROI Estimation appears second-to-last when data exists and is not hidden
+    ...(result.roiCalculation && !result.roiCalculation.hidden ? [{ label: "ROI Estimation", node: <ROIPage roiData={result.roiCalculation} url={result.url} date={date} /> }] : []),
     // CTA page always last
     { label: "Let's Talk", node: <CTAPage url={result.url} date={date} /> },
   ]
