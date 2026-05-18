@@ -66,23 +66,23 @@ export function UXIndicatorsSection({
               ? `Found: ${displayCtas.join(", ")}`
               : "Interactive elements detected (links and buttons with proper accessible names)"
           })()
-        : "No clear CTA keywords detected in buttons or links",
+        : "No clear CTA buttons or links detected above the fold",
       note: indicators.ctaFound
         ? "Clear CTAs guide visitors toward taking action. Ensuring they are prominent and well-worded can further increase enquiry rates."
-        : "Without a clear call-to-action, visitors don't know what step to take next. This is one of the most common reasons websites fail to convert traffic into leads.",
+        : "Without a clear call-to-action button or link, visitors don't know what step to take next. This is one of the most common reasons websites fail to convert traffic into leads.",
     })
   }
 
   if (indicators.trustSignalsFound || !indicators.fetchBlocked) {
     items.push({
       found: indicators.trustSignalsFound,
-      label: "Trust signals",
+      label: "Third-party trust signals",
       detail: indicators.trustSignalsFound
         ? `Found: ${indicators.trustKeywords.join(", ")}`
-        : "No obvious trust indicators detected",
+        : "No third-party trust indicators detected (client logos, reviews, testimonials)",
       note: indicators.trustSignalsFound
-        ? "Trust signals reassure visitors the business is credible. Strengthening these can improve conversion rates further."
-        : "88% of consumers trust online reviews as much as personal recommendations. Without visible trust indicators, visitors have no reason to choose this business over a competitor.",
+        ? "Third-party trust signals reassure visitors the business is credible. The site's own branding doesn't count - you need external validation."
+        : "88% of consumers trust online reviews as much as personal recommendations. Without visible third-party trust indicators like client logos or review widgets, visitors have no reason to choose this business over a competitor.",
     })
   }
 

@@ -675,12 +675,12 @@ function frictionIsApplicable(status: string): boolean {
   return na !== 'na' && na !== 'n/a' && na !== 'notapplicable'
 }
 const frictionNotes: Record<string, { good: string; bad: string }> = {
-  firstImpression: { good: 'A clear first impression keeps visitors engaged and reduces bounce rates.', bad: 'Visitors decide in 3\u20135 seconds whether to stay. If the value proposition isn\u2019t immediately clear, they leave for a competitor.' },
-  navigationFriction: { good: 'Low decision friction means visitors can easily find what they need and take action.', bad: 'Confusing navigation overwhelms visitors with choices. Every extra click or unclear path is a chance for them to give up and leave.' },
+  firstImpression: { good: 'A clear first impression with a strong headline and visible CTA keeps visitors engaged.', bad: 'A hero that is just an image or logo with no clear headline or value proposition will cause visitors to leave within seconds.' },
+  navigationFriction: { good: 'Clear navigation helps visitors easily find what they need and take action.', bad: 'Missing or confusing navigation is a major usability issue. Without clear navigation, visitors cannot explore the site and will leave.' },
   scanability: { good: 'Scannable content structure helps visitors quickly find the information they need.', bad: 'Dense text walls cause visitors to bounce. Breaking content into clear, scannable sections can significantly increase time on page.' },
   conversionPath: { good: 'A clear conversion path guides visitors smoothly from interest to action.', bad: 'A broken conversion path with dead ends or inconsistent CTAs means potential customers get lost before completing an enquiry.' },
-  formFriction: { good: 'Low form friction means more visitors will complete enquiry forms.', bad: 'Complex or lengthy forms are the number one conversion killer. Reducing fields to essentials can double form completion rates.' },
-  trustDepth: { good: 'Strong trust depth with verified credentials helps convert hesitant visitors.', bad: 'Weak trust signals mean visitors have no evidence to support choosing this business. Named testimonials and case studies are far more convincing than anonymous quotes.' },
+  formFriction: { good: 'Easy-to-complete enquiry forms help convert interested visitors into leads.', bad: 'Without a contact form, visitors have no easy way to get in touch. Complex or lengthy forms also kill conversions.' },
+  trustDepth: { good: 'Strong trust depth with third-party credentials helps convert hesitant visitors.', bad: 'Weak trust signals mean visitors have no evidence to support choosing this business. The site\'s own branding doesn\'t count as trust - you need third-party validation.' },
   mobileFriction: { good: 'Low mobile friction ensures the growing majority of mobile visitors have a smooth experience.', bad: 'Over 60% of web traffic is mobile. High mobile friction means the majority of potential customers are having a frustrating experience.' },
 }
 
@@ -807,7 +807,7 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
   type Row = { label: string; status: 'pass' | 'warn' | 'fail'; detail: string; wcag?: string; note?: string }
   const rows: Row[] = []
 
-  // Video controls
+  // Video controls - only show if videos exist on the page
   if (a.videosFound > 0) {
     rows.push({
       label: 'Video controls',
@@ -816,8 +816,6 @@ function A11yPage({ r, date }: { r: AuditResult; date: string; riskLabel?: strin
       wcag: 'WCAG 1.4.2', note: 'Videos without user controls frustrate visitors and violate accessibility standards.',
     })
     if (a.videoCaptionIssues > 0) rows.push({ label: 'Video captions', status: 'fail', detail: `${a.videoCaptionIssues} video(s) missing captions.`, wcag: 'WCAG 1.2.2', note: 'Captions are essential for deaf and hard-of-hearing users.' })
-  } else {
-    rows.push({ label: 'Video controls', status: 'pass', detail: 'No video elements detected on the page.' })
   }
 
   rows.push(

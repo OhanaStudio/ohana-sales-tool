@@ -211,8 +211,12 @@ export function analyseNavigation(html: string, mobileAudits?: any): NavigationF
 
   // Status
   const issues: string[] = []
+  const noNavDetected = navItemCount === 0 && !navInferred
+  
+  if (noNavDetected) {
+    issues.push("No primary navigation detected - visitors cannot easily explore the site. This is a major usability issue.")
+  }
   if (navItemCount > 7) issues.push(`Navigation has ${navItemCount} items, which can overwhelm visitors on mobile.`)
-  if (navItemCount === 0 && !navInferred) issues.push("No primary navigation detected on the page.")
   // Don't report "no nav" if navInferred is true (Lighthouse confirmed it exists)
   if (!contactInNav && navItemCount > 0 && !navInferred) issues.push("No clear contact or enquiry link found in the main navigation.")
   if (genericNavLabels.length > 0) issues.push(`Generic navigation labels detected (${genericNavLabels.slice(0, 3).join(", ")}), which can create uncertainty.`)
@@ -220,7 +224,8 @@ export function analyseNavigation(html: string, mobileAudits?: any): NavigationF
   if (tapTargetIssues > 0) issues.push(`${tapTargetIssues} tap target(s) are too small or too close together on mobile.`)
 
   const frictionCount = issues.length
-  const status = frictionCount <= 1 ? "low" : frictionCount <= 3 ? "medium" : "high"
+  // No navigation = automatic high friction (major red flag)
+  const status = noNavDetected ? "high" : frictionCount <= 1 ? "low" : frictionCount <= 3 ? "medium" : "high"
 
   return {
     navItemCount: navInferred ? 0 : navItemCount, contactInNav, genericNavLabels, nestedMenuDepth,
@@ -420,7 +425,7 @@ export function analyseFormFriction(html: string): FormFrictionIndicators {
   // Status
   const issues: string[] = []
   if (formsFound === 0) {
-    issues.push("No forms detected on this page.")
+    issues.push("No contact or enquiry form detected - visitors have no easy way to get in touch or request information.")
   } else {
     if (highFieldCountForms > 0) issues.push(`${highFieldCountForms} form(s) have more than 6 fields, which can reduce completion rates.`)
     if (placeholderOnlyLabels > 0) issues.push(`${placeholderOnlyLabels} field(s) appear to use placeholder text as the only label, which disappears on focus.`)
@@ -428,7 +433,8 @@ export function analyseFormFriction(html: string): FormFrictionIndicators {
     if (avgFieldCount > 4) issues.push(`Average of ${avgFieldCount} fields per form. Shorter forms tend to see higher completion.`)
   }
 
-  const status = formsFound === 0 ? "low" : issues.length <= 1 ? "low" : issues.length <= 2 ? "medium" : "high"
+  // No forms = high friction for business sites (visitors can't enquire)
+  const status = formsFound === 0 ? "high" : issues.length <= 1 ? "low" : issues.length <= 2 ? "medium" : "high"
 
   return {
     formsFound, avgFieldCount, highFieldCountForms, placeholderOnlyLabels,

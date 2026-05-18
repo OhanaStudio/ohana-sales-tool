@@ -42,12 +42,12 @@ function StatusIcon({ color }: { color: StatusColor }) {
 
 const categoryNotes: Record<string, { good: string; bad: string }> = {
   firstImpression: {
-    good: "A clear first impression keeps visitors engaged and reduces bounce rates.",
-    bad: "Visitors decide in 3-5 seconds whether to stay. If the value proposition isn't immediately clear, they leave for a competitor.",
+    good: "A clear first impression with a strong headline and visible CTA keeps visitors engaged and reduces bounce rates.",
+    bad: "Visitors decide in 3-5 seconds whether to stay. A hero that's just an image or logo with no clear headline or value proposition will cause visitors to leave.",
   },
   navigationFriction: {
-    good: "Low decision friction means visitors can easily find what they need and take action.",
-    bad: "Confusing navigation overwhelms visitors with choices. Every extra click or unclear path is a chance for them to give up and leave.",
+    good: "Clear navigation helps visitors easily find what they need and take action.",
+    bad: "Missing or confusing navigation is a major usability issue. Without clear navigation, visitors cannot explore the site and will leave.",
   },
   scanability: {
     good: "Scannable content structure helps visitors quickly find the information they need.",
@@ -58,12 +58,12 @@ const categoryNotes: Record<string, { good: string; bad: string }> = {
     bad: "A broken conversion path with dead ends or inconsistent CTAs means potential customers get lost before completing an enquiry.",
   },
   formFriction: {
-    good: "Low form friction means more visitors will complete enquiry forms.",
-    bad: "Complex or lengthy forms are the number one conversion killer. Reducing fields to essentials can double form completion rates.",
+    good: "Easy-to-complete enquiry forms help convert interested visitors into leads.",
+    bad: "Without a contact form, visitors have no easy way to get in touch. Complex or lengthy forms also kill conversions - reducing fields to essentials can double completion rates.",
   },
   trustDepth: {
-    good: "Strong trust depth with verified credentials helps convert hesitant visitors.",
-    bad: "Weak trust signals mean visitors have no evidence to support choosing this business. Named testimonials and case studies are far more convincing than anonymous quotes.",
+    good: "Strong trust depth with verified third-party credentials helps convert hesitant visitors.",
+    bad: "Weak trust signals mean visitors have no evidence to support choosing this business. The site's own branding doesn't count - you need third-party validation like client logos, testimonials, or review widgets.",
   },
   mobileFriction: {
     good: "Low mobile friction ensures the growing majority of mobile visitors have a smooth experience.",

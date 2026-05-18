@@ -6,17 +6,19 @@ import type { UXIndicators, AdvancedUXIndicators } from "./types"
 // --- Schemas ---
 
 const uxVisionSchema = z.object({
-  ctaFound: z.boolean().describe("Whether any call-to-action buttons/links are visible on the page"),
-  ctaKeywords: z.array(z.string()).describe("The actual CTA text found, e.g. 'Get a Quote', 'Contact Us', 'Learn More'"),
-  trustSignalsFound: z.boolean().describe("Whether trust signals like reviews, testimonials, client logos, awards, or certifications are visible"),
-  trustKeywords: z.array(z.string()).describe("Specific trust signals found, e.g. 'client logos', 'testimonials section', '5-star reviews'"),
-  socialProofAboveFold: z.boolean().describe("Whether social proof (reviews, logos, stats) appears in the visible area before scrolling"),
-  socialProofKeywordsAboveFold: z.array(z.string()).describe("Social proof elements visible above the fold"),
-  testimonialsVerified: z.boolean().describe("Whether third-party review sources (Trustpilot, Google Reviews, G2, etc.) are visible"),
-  verifiedSources: z.array(z.string()).describe("Names of third-party review platforms found"),
+  ctaFound: z.boolean().describe("Whether any ACTUAL clickable call-to-action buttons/links are visible (not just words in body text). Must be styled buttons or clearly clickable links with action-oriented text."),
+  ctaKeywords: z.array(z.string()).describe("The actual CTA button/link text found, e.g. 'Get a Quote', 'Contact Us', 'Learn More'. Only include text from actual buttons/links, NOT words found in paragraphs."),
+  trustSignalsFound: z.boolean().describe("Whether THIRD-PARTY trust signals like external client logos (not the site's own logo), testimonials, reviews from real customers, awards, or certifications are visible"),
+  trustKeywords: z.array(z.string()).describe("Specific third-party trust signals found. Only include genuine external validation like 'Google Reviews', 'client logos section', 'customer testimonials'. Do NOT include the site's own branding/logo."),
+  socialProofAboveFold: z.boolean().describe("Whether genuine third-party social proof (real customer reviews, external client logos, stats from real customers) appears above the fold. The site's own logo/branding does NOT count."),
+  socialProofKeywordsAboveFold: z.array(z.string()).describe("Genuine third-party social proof elements visible above the fold"),
+  testimonialsVerified: z.boolean().describe("Whether third-party review sources (Trustpilot, Google Reviews, G2, etc.) are visible - must be actual widgets/badges, not just mentions"),
+  verifiedSources: z.array(z.string()).describe("Names of third-party review platforms actually integrated (widgets/badges visible)"),
   phoneFound: z.boolean().describe("Whether a phone number is visible anywhere on the page"),
   emailFound: z.boolean().describe("Whether an email address is visible anywhere on the page"),
-  cookieConsentVisible: z.boolean().describe("Whether a cookie consent banner, popup, or dialog is visible in either screenshot (e.g. 'Accept Cookies', 'Cookie Settings', 'Cookies Settings', GDPR notice)"),
+  cookieConsentVisible: z.boolean().describe("Whether a cookie consent banner, popup, or dialog is visible in either screenshot"),
+  heroHasHeadline: z.boolean().describe("Whether the hero section has actual readable headline TEXT (H1 or large text). A hero that is just a large image/logo with no text headline should return false."),
+  heroIssues: z.array(z.string()).describe("Issues with the hero section, e.g. 'Hero is just a logo image with no headline', 'No clear value proposition text', 'Hero text is unreadable'"),
 })
 
 const frictionCategorySchema = z.object({
@@ -26,10 +28,10 @@ const frictionCategorySchema = z.object({
 
 const advancedUXSchema = z.object({
   firstImpression: frictionCategorySchema.describe(
-    "First-impression clarity: Is the hero clear? Is there a visible H1? Is a CTA above the fold? Status: clear | mixed | unclear"
+    "First-impression clarity: Is there a clear headline (not just an image/logo)? Is the value proposition obvious? Is a CTA above the fold? If the hero is just a large image/logo with no text headline, status should be 'unclear'. Status: clear | mixed | unclear"
   ),
   navigationFriction: frictionCategorySchema.describe(
-    "Decision friction: Is there clear navigation? Too many or too few nav items? Generic labels? Status: low | medium | high"
+    "Decision friction: Is there clear navigation? If NO navigation menu is detected, that is HIGH friction and a major red flag. Status: low | medium | high"
   ),
   scanability: frictionCategorySchema.describe(
     "Scanability: Are there clear headings, bullet lists, short paragraphs? Or walls of text? Status: scannable | mixed | dense"
@@ -38,7 +40,7 @@ const advancedUXSchema = z.object({
     "Conversion path: Are there clear CTAs throughout the page? Consistent CTA labels? Dead-end sections? Status: clear_path | partial | broken"
   ),
   formFriction: frictionCategorySchema.describe(
-    "Form friction: If forms are visible, are they short? Clear labels? Obvious submit button? Status: low | medium | high"
+    "Form friction: If NO contact/enquiry form exists on a business site, that is HIGH friction - visitors have no way to enquire. If forms exist, check if they are short with clear labels. Status: low | medium | high"
   ),
   trustDepth: frictionCategorySchema.describe(
     "Trust depth: Are there named testimonials with roles? Case studies? About page link? Physical address? Status: strong | moderate | weak"
@@ -66,22 +68,39 @@ function buildImageContent(
   const content: Array<{ type: "image"; image: URL } | { type: "text"; text: string }> = [
     {
       type: "text",
-      text: `You are a UX auditor analysing website screenshots. You are given a DESKTOP screenshot and a MOBILE screenshot of the same page.
+      text: `You are a strict UX auditor analysing website screenshots. You are given a DESKTOP screenshot and a MOBILE screenshot of the same page.
+
+Be RIGOROUS and CRITICAL in your analysis. If something is missing or poor, flag it clearly.
 
 Analyse BOTH screenshots carefully and return two things:
 
 ## 1. UX Indicators
-Identify what is visible on the page:
-- **CTAs**: ALL buttons/links like "Get a Quote", "Contact Us", "Learn More", "Book Now", "Sign Up", etc. Ignore cookie-consent buttons unless no real CTAs exist.
-- **Trust signals**: Client logos, testimonials, reviews, awards, certifications, "trusted by" sections.
-- **Social proof above the fold**: Trust/social proof visible in the FIRST screenful (before scrolling).
-- **Third-party reviews**: Trustpilot, Google Reviews, G2, Capterra, Yelp, BBB widgets/badges.
-- **Phone number**: Any visible phone number.
-- **Email address**: Any visible email address.
-- **Cookie consent**: Is there a cookie consent banner, popup, or dialog visible? Look for "Accept Cookies", "Cookie Settings", "Manage Cookies", "Reject All", GDPR notices, etc.
+Identify what is ACTUALLY visible on the page:
+
+- **CTAs**: ONLY count actual styled buttons or clearly clickable links with action text (e.g. "Get a Quote", "Contact Us", "Book Now"). Do NOT count generic words like "contact" or "book" that appear in body text paragraphs. A CTA must be a CLICKABLE ELEMENT.
+
+- **Trust signals**: ONLY count THIRD-PARTY validation. The site's own logo/branding does NOT count. Look for:
+  - Logos of EXTERNAL clients/partners (e.g. "Trusted by Microsoft, Google")
+  - Testimonials with real customer names
+  - Review widgets from Trustpilot, Google, G2, etc.
+  - Award badges, certifications
+  - If you only see the company's own logo/branding, trustSignalsFound should be FALSE.
+
+- **Social proof above the fold**: Only genuine third-party proof. The site's own branding does NOT count.
+
+- **Third-party reviews**: Must be actual embedded widgets/badges from Trustpilot, Google Reviews, etc. - not just text saying "5 stars".
+
+- **Hero section**: Check if the hero has actual headline TEXT (H1 or prominent text). If the hero is dominated by a large image/logo with little or no readable headline text, set heroHasHeadline to false and describe the issue.
+
+- **Phone/Email**: Any visible contact information.
+
+- **Cookie consent**: Any cookie consent banner visible.
 
 ## 2. Advanced UX Friction Analysis
-For each of the 7 categories, provide a status and 0-3 bullet points describing specific issues. If no issues, return an empty bullets array.
+For each of the 7 categories, provide a status and 0-3 bullet points describing specific issues. Be CRITICAL:
+- If navigation is missing, that's HIGH friction (major red flag).
+- If there's no contact form on a business site, that's HIGH form friction.
+- If the hero is just an image with no headline, that's UNCLEAR first impression.
 - Be specific: reference actual text, buttons, or sections you can see.
 - Only flag real issues you observe, not hypothetical ones.
 - Each bullet should be 1 short sentence.
@@ -147,6 +166,8 @@ export async function analyseScreenshotsWithAI(
       uxIndicators: {
         ...output.uxIndicators,
         fetchBlocked: false,
+        heroHasHeadline: output.uxIndicators.heroHasHeadline ?? true,
+        heroIssues: output.uxIndicators.heroIssues ?? [],
       },
       advancedUX: {
         firstImpression: {
