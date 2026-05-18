@@ -152,7 +152,13 @@ export default function SharePage() {
       <style>{`
         @media print {
           @page { size: A4; margin: 0; }
-          html, body { margin: 0; padding: 0; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          html, body { 
+            margin: 0; 
+            padding: 0; 
+            background: white !important; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact; 
+          }
           .print-chrome { display: none !important; }
           .print-page-wrapper {
             box-shadow: none !important;
@@ -160,31 +166,37 @@ export default function SharePage() {
             padding: 0 !important;
             gap: 0 !important;
             align-items: flex-start !important;
-          }
-          .print-page {
-            width: ${A4_W}px !important;
-            min-height: ${A4_H}px !important;
-            height: auto !important;
-            transform: scale(${PRINT_SCALE}) !important;
-            transform-origin: top left !important;
-            margin-right: -${A4_W}px !important;
-            padding: 0 !important;
-            page-break-inside: auto !important;
-            break-inside: auto !important;
-            overflow: visible !important;
-            box-shadow: none !important;
+            display: block !important;
           }
           .print-page-flow {
-            width: ${Math.round(A4_W * PRINT_SCALE)}px !important;
-            height: auto !important;
-            min-height: ${Math.round(A4_H * PRINT_SCALE)}px !important;
-            overflow: visible !important;
-            page-break-inside: auto !important;
-            break-inside: auto !important;
+            width: 794px !important;
+            height: 1123px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-after: always !important;
+            break-after: page !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: stretch !important;
+            justify-content: stretch !important;
           }
           .print-page-flow:last-child {
             page-break-after: auto !important;
             break-after: auto !important;
+          }
+          .print-page {
+            /* Scale up to fill A4 (794x1123px at 96dpi) */
+            width: 794px !important;
+            height: 1123px !important;
+            min-height: 1123px !important;
+            transform: none !important;
+            box-shadow: none !important;
+            overflow: hidden !important;
+          }
+          /* Scale up the inner content proportionally */
+          .print-page > * {
+            transform: scale(${PRINT_SCALE});
+            transform-origin: top left;
           }
         }
       `}</style>
