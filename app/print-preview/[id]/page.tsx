@@ -163,7 +163,13 @@ export default function PrintPreviewPage() {
       <style>{`
         @media print {
           @page { size: A4; margin: 0; }
-          html, body { margin: 0; padding: 0; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          html, body { 
+            margin: 0; 
+            padding: 0; 
+            background: white !important; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact; 
+          }
           .print-chrome { display: none !important; }
           .print-page-wrapper {
             box-shadow: none !important;
@@ -171,66 +177,37 @@ export default function PrintPreviewPage() {
             padding: 0 !important;
             gap: 0 !important;
             align-items: flex-start !important;
+            display: block !important;
           }
-          .print-page {
-            /* The content is designed at ${A4_W}x595px.
-               A4 at 96dpi = ~794x1123px.
-               We scale the 595px content to fill the full 794px page width. */
-            width: ${A4_W}px !important;
-            /* Remove fixed height to allow content to flow across pages */
-            min-height: ${A4_H}px !important;
-            height: auto !important;
-            transform: scale(${PRINT_SCALE}) !important;
-            transform-origin: top left !important;
-            /* Reserve the SCALED dimensions in flow so the browser
-               lays out each page correctly on the A4 sheet. */
-            margin-right: -${A4_W}px !important;
-            padding: 0 !important;
-            page-break-inside: auto !important;
-            break-inside: auto !important;
-            /* Allow overflow to naturally create pages */
-            overflow: visible !important;
-            box-shadow: none !important;
-          }
-          /* Each page wrapper allows natural overflow to create new pages */
           .print-page-flow {
-            width: ${Math.round(A4_W * PRINT_SCALE)}px !important;
-            height: auto !important;
-            min-height: ${Math.round(A4_H * PRINT_SCALE)}px !important;
-            overflow: visible !important;
-            page-break-inside: auto !important;
-            break-inside: auto !important;
+            width: 794px !important;
+            height: 1123px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-after: always !important;
+            break-after: page !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: stretch !important;
+            justify-content: stretch !important;
           }
           .print-page-flow:last-child {
             page-break-after: auto !important;
             break-after: auto !important;
           }
-          /* Content break rules for tables and lists */
-          table {
-            break-inside: auto !important;
-            page-break-inside: auto !important;
+          .print-page {
+            /* Scale up to fill A4 (794x1123px at 96dpi) */
+            width: 794px !important;
+            height: 1123px !important;
+            min-height: 1123px !important;
+            transform: none !important;
+            box-shadow: none !important;
+            overflow: hidden !important;
           }
-          tr {
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-          }
-          thead {
-            display: table-header-group !important;
-          }
-          tfoot {
-            display: table-footer-group !important;
-          }
-          /* Allow divs containing lists to break across pages */
-          div[style*="border"] {
-            break-inside: auto !important;
-            page-break-inside: auto !important;
-          }
-          /* Individual check/item rows should avoid breaking but allow page breaks between them */
-          div[style*="borderTop"] {
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-            break-after: auto !important;
-            page-break-after: auto !important;
+          /* Scale up the inner content proportionally */
+          .print-page > * {
+            transform: scale(${PRINT_SCALE});
+            transform-origin: top left;
           }
         }
       `}</style>
