@@ -119,6 +119,9 @@ function PrintSection({
 export function ReportContent({ result, userName }: { result: AuditResult; userName?: string }) {
   useScrollReveal()
 
+  // Initialize ROI visibility from the stored hidden flag
+  const initialRoiVisible = result.roiCalculation ? !result.roiCalculation.hidden : true
+
   const [sections, setSections] = useState({
     platform: true,
     performance: true,
@@ -126,11 +129,22 @@ export function ReportContent({ result, userName }: { result: AuditResult; userN
     design: true,
     advancedUx: true,
     accessibility: true,
-    roi: true,
+    roi: initialRoiVisible,
   })
 
-  const toggle = (key: keyof typeof sections) =>
-    setSections((prev) => ({ ...prev, [key]: !prev[key] }))
+  const toggle = (key: keyof typeof sections) => {
+    const newValue = !sections[key]
+    setSections((prev) => ({ ...prev, [key]: newValue }))
+    
+    // If toggling ROI, persist to database
+    if (key === "roi") {
+      fetch(`/api/report/${result.id}/roi`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hidden: !newValue }),
+      }).catch(console.error)
+    }
+  }
 
   const [rerunning, setRerunning] = useState(false)
 

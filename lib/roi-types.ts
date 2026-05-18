@@ -46,4 +46,5 @@ export interface ROICalculationResult {
     isValid: boolean
   }
   scenarios: ScenarioResult[]
+  hidden?: boolean // If true, hide from client-facing share links
 }
