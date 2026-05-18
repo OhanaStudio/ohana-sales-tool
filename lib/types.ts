@@ -36,6 +36,8 @@ export interface UXIndicators {
   phoneFound: boolean
   emailFound: boolean
   fetchBlocked: boolean
+  heroHasHeadline?: boolean
+  heroIssues?: string[]
 }
 
 export interface ImageIssues {
